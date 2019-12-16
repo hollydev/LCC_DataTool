@@ -24,3 +24,8 @@ class test_program(unittest.TestCase):
 		input_string = 'lolwat'
 		self.assertEqual(example_program.calculate(input_string),
 						 None)
+
+	def test_will_fail(self):
+		input_string = float("nan")
+		self.assertEqual(example_program.calculate(input_string),
+						 float("nan"))

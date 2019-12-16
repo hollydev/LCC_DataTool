@@ -25,6 +25,10 @@ class test_program(unittest.TestCase):
 		a, b = float("inf"), 5
 		self.assertEqual(example_program.addition(a, b), float("inf"))
 
+	def test_will_fail(self):
+		a, b = None, None
+		self.assertEqual(example_program.addition(a, b), None)
+		
 	#test subtraction()
 	#test multiplication()
 	#test division()
