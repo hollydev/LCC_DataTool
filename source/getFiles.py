@@ -1,8 +1,8 @@
-# The fuction takes a pulls all the non-empty and non-duplicate files out.
-#   empty files: files with a size of 460 Bytes.
-#   duplicate files: files with 'Test' in the name.
+# This script removes all the empty and duplicate files from the directory
+# and loads the csv data into a pandas dataframe
 
 import os
+import pandas as pd
 
 # returns True if the file is not a duplicate or empty.
 def checkFile(fileName):
@@ -12,7 +12,7 @@ def checkFile(fileName):
     
     return ret
 
-# returns a list of all good files.
+# returns a list of all 'good' csv files
 def getFiles(myPath):
 
     files = []
@@ -24,7 +24,41 @@ def getFiles(myPath):
                 
                 if checkFile(fileName) == True:
                     files.append(fileName)
+                    
+                    
     return files
+
+ #individually reads the csv files and creates a list(readFiles) of all dataframes
+def getDataFrames(files):
+    readFiles = []
+    for file in files:
+        readFiles.append(pd.read_csv(file))
+        
+    return readFiles
+
+#concatenates all dataframes into one single dataframe to be used
+def concatDataFrames(files):
+    return pd.concat(files, sort=False)
+    
+
+if __name__ == '__main__':
+    path = r'./D2L Data'
+    files = getFiles(path)
+    
+    readFiles = getDataFrames(files)
+   
+    data = concatDataFrames(readFiles)
+    
+    
+     
+    
+    
+    
+    
+    
+    
+        
+
 
 
 
