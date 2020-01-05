@@ -8,17 +8,36 @@
 	Built to work with the rest of the data tool, validators are created as classes.
 
 """
+import numpy
+import pandas
+
+import warnings.VALIDATORS
+
 class NUMERIC_ID:
-	messages = list()
+	warnings = list()
 	errors = list()
 
-	def __init__(self, column)
+	def __init__(self, column, length, unique=True)
 		self.column = column
+		self.length = length
+		self.unique = unique
 
 	def run():
+		#Assert Numeric
+		values = column.values
+		
+		for value in values:
+			if not numpy.char.numeric(value):
+				warnings.append(warnings.VALIDATORS.notNumeric % value)
+
+		#Assert Unique
+		if unique == True:
+			#Check unique values using pandas
+			if not column.nunique() == len(column):
+				warnings.append(warnings.VALIDATORS.notUnique % )
 
 class MIXED_ID:
-	messages = list()
+	warnings = list()
 	errors = list()
 
 	def __init__(self, column)
@@ -27,7 +46,7 @@ class MIXED_ID:
 	def run():
 
 class PLAIN_TEXT:
-	messages = list()
+	warnings = list()
 	errors = list()
 
 	def __init__(self, column)
@@ -36,7 +55,7 @@ class PLAIN_TEXT:
 	def run():
 
 class MIXED_TEXT:
-	messages = list()
+	warnings = list()
 	errors = list()
 
 	def __init__(self, column)
@@ -45,7 +64,7 @@ class MIXED_TEXT:
 	def run():
 
 class SECTION_CODE:
-	messages = list()
+	warnings = list()
 	errors = list()
 
 	def __init__(self, column)
@@ -54,7 +73,7 @@ class SECTION_CODE:
 	def run():
 
 class GRADE_ITEM_CATEGORY:
-	messages = list()
+	warnings = list()
 	errors = list()
 
 	def __init__(self, column)
@@ -63,7 +82,7 @@ class GRADE_ITEM_CATEGORY:
 	def run():
 
 class GRADE_ITEM_NAME:
-	messages = list()
+	warnings = list()
 	errors = list()
 
 	def __init__(self, column)
@@ -72,7 +91,7 @@ class GRADE_ITEM_NAME:
 	def run():
 
 class GRADE_VALUE:
-	messages = list()
+	warnings = list()
 	errors = list()
 
 	def __init__(self, column)
@@ -81,7 +100,7 @@ class GRADE_VALUE:
 	def run():
 
 class DATE:
-	messages = list()
+	warnings = list()
 	errors = list()
 
 	def __init__(self, column)

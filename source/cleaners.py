@@ -8,6 +8,8 @@
 	Built to work with the rest of the data tool, validators are created as classes.
 
 """
+
+"""Remove all non-numeric values."""
 class NUMERIC_ID:
 	messages = list()
 	errors = list()
