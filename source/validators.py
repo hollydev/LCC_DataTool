@@ -14,27 +14,45 @@ import pandas
 import warnings.VALIDATORS
 
 class NUMERIC_ID:
-	warnings = list()
-	errors = list()
-
 	def __init__(self, column, length, unique=True)
+		warnings = list()
+		errors = list()
+
 		self.column = column
 		self.length = length
 		self.unique = unique
+		self.items  = 0
 
 	def run():
-		#Assert Numeric
 		values = column.values
-		
+
+		#Check unique values using pandas
+		if unique == True and not column.nunique() == len(column):
+			findUnique = True
+					
 		for value in values:
+			#Count Items
+			items += 1
+			
+			#Validate Numeric
 			if not numpy.char.numeric(value):
 				warnings.append(warnings.VALIDATORS.notNumeric % value)
 
-		#Assert Unique
-		if unique == True:
-			#Check unique values using pandas
-			if not column.nunique() == len(column):
-				warnings.append(warnings.VALIDATORS.notUnique % )
+			#Validate Unique 
+			if findUnique == True:
+				indexes = numpy.where(values == value)
+				if len(indexes) == 2:
+					warnings.append(warnings.VALIDATORS.notUniqueDup % (indexes[1],
+																		indexes[2]))
+				elif len(indexes) > 2:
+					warnings.append(warnings.VALIDATORS.notUniqueMult % (indexes))
+
+			#Validate Length
+			if len(value) != length:
+				warnings.append(warnings.VALIDATORS.length % (len(value), length))
+
+	def statistics():
+		return(warnings.SYSTEM.validatorStats % ("Numeric ID", self.items, len(self.warnings), len(self.errors)))
 
 class MIXED_ID:
 	warnings = list()
