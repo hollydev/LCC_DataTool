@@ -9,6 +9,7 @@
 import pandas as pd 
 import glob as gb 
 from enum import Enum 
+from cleaners import GRADE_ITEM_NAME
 
 class BASE_COLUMN(Enum):
     username = 1
@@ -47,6 +48,7 @@ def get_base_column(theColumn):
         
                                              #targeted column
         df = pd.read_csv(file, usecols = list(range(x, x+1)), sep = ',')
+        df = GRADE_ITEM_NAME(df)
 
 
         #print(df) -for testing
