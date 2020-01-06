@@ -8,83 +8,105 @@
 	Built to work with the rest of the data tool, validators are created as classes.
 
 """
-class NUMERIC_ID:
-	messages = list()
-	errors = list()
+import messages
 
-	def __init__(self, column)
-		self.column = column
+# """Remove all non-numeric values."""
+# class NUMERIC_ID:
+# 	messages = list()
+# 	errors = list()
 
-	def run():
+# 	def __init__(self, column):
+# 		self.column = column
 
-class MIXED_ID:
-	messages = list()
-	errors = list()
+# 	def run():
 
-	def __init__(self, column)
-		self.column = column
+# class MIXED_ID:
+# 	messages = list()
+# 	errors = list()
 
-	def run():
+# 	def __init__(self, column):
+# 		self.column = column
 
-class PLAIN_TEXT:
-	messages = list()
-	errors = list()
+# 	def run():
 
-	def __init__(self, column)
-		self.column = column
+# class PLAIN_TEXT:
+# 	messages = list()
+# 	errors = list()
 
-	def run():
+# 	def __init__(self, column):
+# 		self.column = column
 
-class MIXED_TEXT:
-	messages = list()
-	errors = list()
+# 	def run():
 
-	def __init__(self, column)
-		self.column = column
+# class MIXED_TEXT:
+# 	messages = list()
+# 	errors = list()
 
-	def run():
+# 	def __init__(self, column):
+# 		self.column = column
 
-class SECTION_CODE:
-	messages = list()
-	errors = list()
+# 	def run():
 
-	def __init__(self, column)
-		self.column = column
+# class SECTION_CODE:
+# 	messages = list()
+# 	errors = list()
 
-	def run():
+# 	def __init__(self, column):
+# 		self.column = column
 
-class GRADE_ITEM_CATEGORY:
-	messages = list()
-	errors = list()
+# 	def run():
 
-	def __init__(self, column)
-		self.column = column
+# class GRADE_ITEM_CATEGORY:
+# 	messages = list()
+# 	errors = list()
 
-	def run():
+# 	def __init__(self, column):
+# 		self.column = column
+
+# 	def run():
 
 class GRADE_ITEM_NAME:
 	messages = list()
 	errors = list()
 
-	def __init__(self, column)
+	def __init__(self, column):
 		self.column = column
+		self.values = column.values
 
-	def run():
+	def run(threshold):
+		#Get lexicon
+		uniqueWords = set()
+		for word in self.values: uniqueWords.add(word)
+		
+		#Nearest Distance
+		viableEdits = list()
+		editList = dict()
+		
+		#Iterate over the lexicon, finding words that fit within the edit distance threshold
+		for item in self.values:
+			for word in uniqueWords:
+				distance = editdistance.eval(item, word)
+				if word != item and distance < threshold:
+					viableEdits.append(word)
+					
+			editList[item] = viableEdits
+			viableEdits = list()
 
-class GRADE_VALUE:
-	messages = list()
-	errors = list()
 
-	def __init__(self, column)
-		self.column = column
+# class GRADE_VALUE:
+# 	messages = list()
+# 	errors = list()
 
-	def run():
+# 	def __init__(self, column):
+# 		self.column = column
 
-class DATE:
-	messages = list()
-	errors = list()
+# 	def run():
 
-	def __init__(self, column)
-		self.column = column
+# class DATE:
+# 	messages = list()
+# 	errors = list()
 
-	def run():
+# 	def __init__(self, column):
+# 		self.column = column
+
+# 	def run():
