@@ -11,26 +11,25 @@
 import numpy
 import pandas
 
-import warnings.VALIDATORS
+import messages
 
 class NUMERIC_ID:
-	def __init__(self, column, length, unique=True)
+	def __init__(self, column, length, unique=True):
 		warnings = list()
 		errors = list()
 
 		self.column = column
+		self.values = column.values
 		self.length = length
 		self.unique = unique
 		self.items  = 0
 
 	def run():
-		values = column.values
-
 		#Check unique values using pandas
-		if unique == True and not column.nunique() == len(column):
+		if self.unique == True and not self.column.nunique() == len(self.column):
 			findUnique = True
 					
-		for value in values:
+		for value in self.values:
 			#Count Items
 			items += 1
 			
@@ -40,7 +39,7 @@ class NUMERIC_ID:
 
 			#Validate Unique 
 			if findUnique == True:
-				indexes = numpy.where(values == value)
+				indexes = numpy.where(self.values == value)
 				if len(indexes) == 2:
 					warnings.append(warnings.VALIDATORS.notUniqueDup % (indexes[1],
 																		indexes[2]))
@@ -48,80 +47,79 @@ class NUMERIC_ID:
 					warnings.append(warnings.VALIDATORS.notUniqueMult % (indexes))
 
 			#Validate Length
-			if len(value) != length:
+			if len(value) != self.length:
 				warnings.append(warnings.VALIDATORS.length % (len(value), length))
 
 	def statistics():
 		return(warnings.SYSTEM.validatorStats % ("Numeric ID", self.items, len(self.warnings), len(self.errors)))
 
-class MIXED_ID:
-	warnings = list()
-	errors = list()
+# class MIXED_ID:
+# 	warnings = list()
+# 	errors = list()
 
-	def __init__(self, column)
-		self.column = column
+# 	def __init__(self, column):
+# 		self.column = column
 
-	def run():
+# 	def run():
 
-class PLAIN_TEXT:
-	warnings = list()
-	errors = list()
+# class PLAIN_TEXT:
+# 	warnings = list()
+# 	errors = list()
 
-	def __init__(self, column)
-		self.column = column
+# 	def __init__(self, column):
+# 		self.column = column
 
-	def run():
+# 	def run():
 
-class MIXED_TEXT:
-	warnings = list()
-	errors = list()
+# class MIXED_TEXT:
+# 	warnings = list()
+# 	errors = list()
 
-	def __init__(self, column)
-		self.column = column
+# 	def __init__(self, column):
+# 		self.column = column
 
-	def run():
+# 	def run():
 
-class SECTION_CODE:
-	warnings = list()
-	errors = list()
+# class SECTION_CODE:
+# 	warnings = list()
+# 	errors = list()
 
-	def __init__(self, column)
-		self.column = column
+# 	def __init__(self, column):
+# 		self.column = column
 
-	def run():
+# 	def run():
 
-class GRADE_ITEM_CATEGORY:
-	warnings = list()
-	errors = list()
+# class GRADE_ITEM_CATEGORY:
+# 	warnings = list()
+# 	errors = list()
 
-	def __init__(self, column)
-		self.column = column
+# 	def __init__(self, column):
+# 		self.column = column
 
-	def run():
+# 	def run():
 
-class GRADE_ITEM_NAME:
-	warnings = list()
-	errors = list()
+# class GRADE_ITEM_NAME:
+# 	warnings = list()
+# 	errors = list()
 
-	def __init__(self, column)
-		self.column = column
+# 	def __init__(self, column)::
 
-	def run():
+# 	def run():
+		
+# class GRADE_VALUE:
+# 	warnings = list()
+# 	errors = list()
 
-class GRADE_VALUE:
-	warnings = list()
-	errors = list()
+# 	def __init__(self, column):
+# 		self.column = column
 
-	def __init__(self, column)
-		self.column = column
+# 	def run():
 
-	def run():
+# class DATE:
+# 	warnings = list()
+# 	errors = list()
 
-class DATE:
-	warnings = list()
-	errors = list()
+# 	def __init__(self, column):
+# 		self.column = column
 
-	def __init__(self, column)
-		self.column = column
-
-	def run():
+# 	def run():

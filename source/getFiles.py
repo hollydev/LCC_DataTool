@@ -4,6 +4,9 @@
 import os
 import pandas as pd
 
+#Progress Bar
+import tqdm
+
 # returns True if the file is not a duplicate or empty.
 def checkFile(fileName):
     ret = False
