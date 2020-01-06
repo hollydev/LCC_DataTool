@@ -5,7 +5,7 @@ import os
 import pandas as pd
 
 #Progress Bar
-import tqdm
+from tqdm import tqdm
 
 # returns True if the file is not a duplicate or empty.
 def checkFile(fileName):
@@ -27,21 +27,40 @@ def getFiles(myPath):
                 
                 if checkFile(fileName) == True:
                     files.append(fileName)
-                    
+
+    print("Found %i files!" % len(files))                    
                     
     return files
 
- #individually reads the csv files and creates a list(readFiles) of all dataframes
+ #individually reads the csv files and creates a list(files) of all dataframes
 def getDataFrames(files):
     readFiles = []
-    for file in files:
+    #Iterate using tqdm to show a progress bar.
+    for file in tqdm(files, total=len(files)):
         readFiles.append(pd.read_csv(file))
-        
+    
     return readFiles
+#Recursion function to remove items from a loop while iterating.
+def recConcat(frames, concatFrame):
+    print(len(concatFrame))
+    if len(frames) > 1:
+        for frame in frames:
+            concatFrameNew = pd.concat([concatFrame, frame], sort=False)
+            del concatFrame
+            frames.remove(frame)
+            recConcat(frames, concatFrameNew)
+    else:
+        concatFrame = pd.concat([concatFrame,frames[0]], sort=False)
+    return(concatFrame)
 
 #concatenates all dataframes into one single dataframe to be used
-def concatDataFrames(files):
-    return pd.concat(files, sort=False)
+def concatDataFrames(frames):
+    concatFrame = pd.DataFrame()
+
+    for dframe in tqdm(frames, total=len(frames)):
+        recConcat(frames, concatFrame)
+
+    return concatFrame
     
 
 if __name__ == '__main__':
