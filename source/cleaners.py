@@ -4,8 +4,8 @@
 	Date Created: 01/02/2020
 	Last Update: File Created
 
-	Description: This file contains all validation logic that may be applied to the columns. 
-	Built to work with the rest of the data tool, validators are created as classes.
+	Description: This file contains all cleaning logic that may be applied to the columns. 
+	Built to work with the rest of the data tool, cleaners are created as classes.
 
 """
 import messages
@@ -73,7 +73,7 @@ class GRADE_ITEM_NAME:
 		self.column = column
 		self.values = column.values
 
-	def run(threshold):
+	def run(self, threshold):
 		#Get lexicon
 		uniqueWords = set()
 		for word in self.values: uniqueWords.add(word)

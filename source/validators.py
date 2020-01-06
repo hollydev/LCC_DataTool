@@ -14,17 +14,15 @@ import pandas
 import messages
 
 class NUMERIC_ID:
-	def __init__(self, column, length, unique=True):
+	def __init__(self, column):
 		warnings = list()
 		errors = list()
 
 		self.column = column
 		self.values = column.values
-		self.length = length
-		self.unique = unique
 		self.items  = 0
 
-	def run():
+	def run(length, unique=True):
 		#Check unique values using pandas
 		if self.unique == True and not self.column.nunique() == len(self.column):
 			findUnique = True
