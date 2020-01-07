@@ -73,7 +73,7 @@ class GRADE_ITEM_NAME:
 		self.column = column
 		self.values = column.values
 
-	def run(threshold):
+	def run(self, threshold):
 		#Get lexicon
 		uniqueWords = set()
 		for word in self.values: uniqueWords.add(word)
