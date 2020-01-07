@@ -30,7 +30,7 @@ class BASE_COLUMN(Enum):
     pointsdenominator = 16
     gradeValue = 17
     gradeLastModified = 18
-    
+     
 
 #setting for the displayed output (For testing)
 pd.set_option('display.max_columns', None)
