@@ -51,3 +51,5 @@ class SYSTEM:
 		#System Statistics Messages
 		self.validatorStats = "Validator [%s]: Items Validated [%i]\t Warnings: [%i]\t Errors: [%i]"
 		 
+		#System Output Messages
+		self.emptyPath = "Found empty path, enter a valid path."

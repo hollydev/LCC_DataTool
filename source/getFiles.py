@@ -1,11 +1,21 @@
-# This script removes all the empty and duplicate files from the directory
-# and loads the csv data into a pandas dataframe
+"""
+    Filename: getFiles.py
+    Programmer: 
+    Date Created: 01/03/2020
+    Last Update: File Created
+
+    Description: This script removes all the empty and duplicate files from the directory
+    and loads the csv data into a pandas dataframe
+
+"""
+
 
 import os
 import pandas as pd
 
 #Progress Bar
 from tqdm import tqdm
+
 
 # returns True if the file is not a duplicate or empty.
 def checkFile(fileName):
@@ -40,25 +50,21 @@ def getDataFrames(files):
         readFiles.append(pd.read_csv(file))
     
     return readFiles
-#Recursion function to remove items from a loop while iterating.
-def recConcat(frames, concatFrame):
-    print(len(concatFrame))
-    if len(frames) > 1:
-        for frame in frames:
-            concatFrameNew = pd.concat([concatFrame, frame], sort=False)
-            del concatFrame
-            frames.remove(frame)
-            recConcat(frames, concatFrameNew)
-    else:
-        concatFrame = pd.concat([concatFrame,frames[0]], sort=False)
-    return(concatFrame)
+
+#Seperate looping function to return removed items as it iterates.
+def recursiveConcat(frames):
+    for frame in frames:
+        frames.remove(frame)
+        return(frame)
 
 #concatenates all dataframes into one single dataframe to be used
 def concatDataFrames(frames):
     concatFrame = pd.DataFrame()
 
-    for dframe in tqdm(frames, total=len(frames)):
-        recConcat(frames, concatFrame)
+    #For each deleted frame, concat to the new frame.
+    for delFrame in tqdm(frames, total=len(frames)/2):
+        recursiveConcat(frames)
+        concatFrame = pd.concat([concatFrame, delFrame], sort=False)
 
     return concatFrame
     
