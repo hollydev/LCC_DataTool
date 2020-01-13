@@ -9,7 +9,8 @@
 import pandas as pd 
 import glob as gb 
 from enum import Enum 
-from cleaners import GRADE_ITEM_NAME
+import validators
+#from cleaners import GRADE_ITEM_NAME
 
 class BASE_COLUMN(Enum):
     userName = 1
@@ -40,21 +41,23 @@ pd.set_option('display.max_colwidth', -1)
 #this method accepts a string that is then used to compare against the enum values
 def get_base_column(theColumn):
     #using glob to find all files in the subdirectory 'GBinfo' that have the .csv extension
+   
     for file in gb.glob("./GBinfo/*.csv"):
-       
+        
         for column in BASE_COLUMN:
             if(theColumn == column.name):
-                x = column.value - 1
-        
-                                             #targeted column
+                x = column.value - 1  
+                                            #Target column
         df = pd.read_csv(file, usecols = list(range(x, x+1)), sep = ',')
-        grade_item_cleaned = GRADE_ITEM_NAME(df)
-        grade_item_cleaned.run(2)
 
-        #print(df) -for testing
-        return df
+        if(theColumn == "gradeItemID"):
+            checkUnique = validators.NUMERIC_ID(df)
+            checkUnique.run(len(df))
+  
+        
+        
+    return df
         
 
-get_base_column("firstname")
-
-
+if __name__ == '__main__':
+    get_base_column("gradeItemID")
