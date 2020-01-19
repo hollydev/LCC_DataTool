@@ -38,7 +38,7 @@ def getFiles(myPath):
                 if checkFile(fileName) == True:
                     files.append(fileName)
 
-    print("Found %i files!" % len(files))                    
+    print("Found %i files!" % len(files))     
                     
     return files
 

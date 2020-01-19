@@ -53,3 +53,10 @@ class SYSTEM:
 		 
 		#System Output Messages
 		self.emptyPath = "Found empty path, enter a valid path."
+		self.emptyPath_log = "User entered {}. When stripped string is empty".
+		self.notPath = "Entered path is invalid. Please check to make sure the folder exists."
+		self.notPath_stat = "Unable to check status of the given path. Contact the analyst."
+		self.notPath_log = "User entered {}. Failed to validate file path using 'os' package."
+		self.notPath_stat_log = "User entered {}. os.stat() call failed. Check permissions of path."
+		self.overwrite = "File {} already exists. Do you want to overwrite the file? (Yes/No)"
+		self.newPathSame = "Given path '{}' matches current output path."
