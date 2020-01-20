@@ -78,7 +78,7 @@ class MIXED_ID:
 				self.warnings.append(self.validate.expectedNonEmpty % str(value)[1:-1])
 
 	def statistics(self):
-		return(self.validated.validatorStats % ("Numeric ID", self.items, len(self.warnings), len(self.errors)))
+		return(self.validated.validatorStats % ("Mixed ID", self.items, len(self.warnings), len(self.errors)))
 
 
 
