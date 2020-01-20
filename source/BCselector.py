@@ -51,8 +51,6 @@ def get_base_column(theColumn):
 
         pd.concat([df, tempdf], axis=1)
 
-        df.to_csv('./testing.csv')
-
         print(df)
 
 
