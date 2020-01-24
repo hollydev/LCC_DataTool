@@ -15,36 +15,55 @@ import csv
 import pickle
 import os
 
-import messages
+from messages.system import SYSTEM, LOG
+
+# class InvalidPathError(Error):
+# 	def __init__(self, expression, message):
+# 		self.expression = expression
+# 		self.messages = message
 
 class FILE_WRITER():
-	self.messages = []
-	self.log = []
+	messages = []
+	log = []
 
-	def __init__(self, outName=None, outPath=None):
-		if(outPath == None):
-			self.path = get_path()
-			self.outName = "combined_gradebook"
+	def __init__(self, outPath=None, outName=None):
+		""" Writer init function. Handles all file writing capabilites. Performs path validation
+		on each instance. 
+
+		@Params:
+			self  - self object allows access to set path and outName.
+			outPath - A string indicating the name of the output file.
+			outPath (optional) - A path indicating the output location.
+			
+		@Raises:
+			FileNotFoundError - Indicates the given path does not point to a valid file or directory.
+		"""
+		self.outName = "combined_gradebook"
 
 		#Validate the path on initialization.
-		validate_path(self.path)
+		if outPath == None:
+			self.path = os.getcwd()
+		
+		elif not self.validate_path(outPath):
+			raise FileNotFoundError("Writer points to invalid file or path. Entered path was {}".format(outPath))
+		
 
 	def validate_path(cls, checkPath):
 		""" Check if the given path is valid. Checks emptp paths and path.exists() errors.
 
 		@Params:
 			cls - self object allows access to set path and outName.
-			outName (optional) - A string indicating the name of the output file.
-			outPath (optional) - A path indicating the output location.
+			checkPath - A string indicating the path to check for validity.
 			
 
 		@Returns:
 			BOOLEAN - Indicates whether new path is valid.
 		"""
+
 		#Validate empty path, trim extra spaces and see if the path minimized to empty.
 		if(checkPath.strip() == ''):
-			cls.messages.append(messages.SYSTEM.emptyPath)
-			cls.log.append(messages.SYSTEM.emptyPath_log)
+			cls.messages.append(SYSTEM.emptyPath)
+			cls.log.append(LOG.emptyPath)
 			return False
 
 		#Check if the path exists
@@ -52,17 +71,18 @@ class FILE_WRITER():
 			try:
 				os.stat(checkPath)
 			except:
-				cls.log.append(messages.SYSTEM.notPath_stat_log)
+				cls.log.append(LOG.notPath_stat)
 				return False
 		
-			cls.messages.append(messages.SYSTEM.notPath)
-			cls.log.append(messages.SYSTEM.notPath_log)
+			cls.messages.append(SYSTEM.notPath)
+			cls.log.append(LOG.notPath)
 			return False
 
 		return True
 	
 	def get_path(cls):
 		""" Get a path to initialize the writer."""
+		return input("No Path provided. Enter a path: ")
 
 	def set_path(cls, newPath):
 		""" Setter method ensuring that new path is valid.
@@ -75,14 +95,14 @@ class FILE_WRITER():
 			BOOLEAN - Indicates whether new path was set.
 		"""
 		if(not isinstance(newPath, str)):
-			cls.log.append(messages.SYSTEM.notStringPath)
+			cls.log.append(SYSTEM.notStringPath)
 			return False
 		
 		if(cls(path) == newPath):
-			cls.log.append(messages.SYSTEM.newPathSame.format(newPath))
+			cls.log.append(SYSTEM.newPathSame.format(newPath))
 			return True
 
-		if(validate_path(newPath)):
+		if(self.validate_path(newPath)):
 			cls.path = newPath
 			return True
 
@@ -113,7 +133,7 @@ class FILE_WRITER():
 			"""TODO: When GUI change overwrite handler to Windows"""
 			#Check if the file has the same name, check overwrite ok.
 			if(self.path.endswith(cls.outName, iStart, iEnd)):
-				overwriteOkay = input(messages.SYSTEM.overwrite % cls.outName).lower()
+				overwriteOkay = input(SYSTEM.overwrite % cls.outName).lower()
 				if (overwriteOkay == "yes" or\
 					overwriteOkay == "y"):
 					return True
@@ -123,7 +143,7 @@ class FILE_WRITER():
 				else:
 					return False
 
-			self.messages.append(messages.SYSTEM.existingFile)
+			self.messages.append(SYSTEM.existingFile)
 		else:
 			return True
 
@@ -190,4 +210,6 @@ class FILE_WRITER():
 				outFile = open(cls.outPath + cls.fileName, 'rw')
 				pickle.dump(file, outFile)
 				outFile.close()
-		
+
+			except OSError as e:
+				print("Unable to open file, please try again.", e)
