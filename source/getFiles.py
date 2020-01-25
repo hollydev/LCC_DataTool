@@ -68,7 +68,7 @@ def concat_data_frames(frames):
     
     concatFrames1 = pd.concat(frames1, sort = False)
     
-    #concatFrame = pd.concat(frames, sort = False)
+    
     #For each deleted frame, concat to the new frame.
     for delFrame in tqdm(frames1, total=len(frames1)/2):
         recursive_concat(frames1)
