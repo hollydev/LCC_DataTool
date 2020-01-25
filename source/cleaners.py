@@ -8,7 +8,7 @@
 	Built to work with the rest of the data tool, cleaners are created as classes.
 
 """
-import messages
+from messages.cleaners import cleaners
 
 # """Remove all non-numeric values."""
 # class NUMERIC_ID:

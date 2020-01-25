@@ -1,17 +1,17 @@
 #Data tool make file. Automates key functions. Including a help function.
 #
 #
-#run:
-#	python3 source/solve.py
+run:
+	python3 -m source.BCSelector
 
 test-unit:
-	pytest testing/unit/
+	python -m pytest testing/unit/
 
 test-system:
-	pytest testing/system/
+	python -m testing/system/
 
 test-all:
-	pytest testing/
+	python -m pytest testing/
 tar:
 	tar -czvf LCC_Data_Tool.tar.gz .
 

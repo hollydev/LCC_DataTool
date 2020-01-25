@@ -9,7 +9,9 @@
 import pandas as pd 
 import glob as gb 
 from enum import Enum 
-from cleaners import GRADE_ITEM_NAME
+
+from messages.validators import validators
+#from cleaners import GRADE_ITEM_NAME
 
 class BASE_COLUMN(Enum):
     userName = 1
@@ -21,8 +23,8 @@ class BASE_COLUMN(Enum):
     courseOfferingCode = 7
     courseOfferingName = 8
     CourseSectionCode = 9
-    gradeItemCateoryID = 10
-    gradeItemCateoryName = 11
+    gradeItemCategoryID = 10
+    gradeItemCategoryName = 11
     gradeItemID = 12
     gradeItemName = 13
     gradeItemWeight = 14
@@ -35,26 +37,93 @@ class BASE_COLUMN(Enum):
 #setting for the displayed output (For testing)
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
-pd.set_option('display.max_colwidth', -1)
+#pd.set_option('display.max_colwidth', -1)
 
 #this method accepts a string that is then used to compare against the enum values
 def get_base_column(theColumn):
     #using glob to find all files in the subdirectory 'GBinfo' that have the .csv extension
+    
     for file in gb.glob("./GBinfo/*.csv"):
-       
+
+        #call method for rearranging the columns..?
+        df = pd.read_csv(file, usecols = list(range(0,18)), sep = ',')
+
+        tempdf = df[['name', 'number', 'term']] = df.CourseOfferingCode.str.split("-", expand = True)
+
+        pd.concat([df, tempdf], axis=1)
+
+        print(df)
+
+
+        
         for column in BASE_COLUMN:
             if(theColumn == column.name):
-                x = column.value - 1
-        
-                                             #targeted column
+                x = column.value - 1  
+                
+                                              #Target column
         df = pd.read_csv(file, usecols = list(range(x, x+1)), sep = ',')
-        grade_item_cleaned = GRADE_ITEM_NAME(df)
-        grade_item_cleaned.run(2)
+        
+        if(theColumn == "userName"):
+            print(df)
 
-        #print(df) -for testing
-        return df
+        elif(theColumn == "firstName"):
+            print(df)
+
+        elif(theColumn == "lastName"):
+            print(df)
+
+        elif(theColumn == "roleID"):
+            print(df)
+
+        elif(theColumn == "courseOfferingID"):
+            print(df)
+
+        elif(theColumn == "courseOfferingCode"):
+            print(df)
+
+        elif(theColumn == "courseOfferingName"):
+            print(df)
+
+        elif(theColumn == "courseSectionCode"):
+            print(df)
+        
+        elif(theColumn == "gradeItemCategoryID"):
+            print(df)
+
+        elif(theColumn == "gradeItemCategoryName"):
+            validateMixedID = validators.MIXED_ID(df)
+            validateMixedID.run()
+            info = validateMixedID.statistics()
+            print(info)
+            #print(df)
+
+        elif(theColumn == "gradeItemID"):
+            validateNumeric = validators.NUMERIC_ID(df)
+            validateNumeric.run(7)
+            info = validateNumeric.statistics()
+            print(info)
+        
+        elif(theColumn == "gradeItemName"):
+            print(df)
+        
+        elif(theColumn == "gradeItemWeight"):
+            print(df)
+
+        elif(theColumn == "pointsNumerator"):
+            print(df)
+        
+        elif(theColumn == "pointsDenominator"):
+            print(df)
+        
+        elif(theColumn == "gradeValue"):
+            print(df)
+        
+        elif(theColumn == "gradeLastModified"):
+            print(df)
+                
+    return df
         
 
-get_base_column("firstname")
-
-
+if __name__ == '__main__':
+    get_base_column("gradeItemCategoryName")
+    get_base_column("gradeItemID")
