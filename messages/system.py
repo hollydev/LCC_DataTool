@@ -64,6 +64,10 @@ class SYSTEM:
 	overwrite = "File {} already exists. Do you want to overwrite the file? (Yes/No)"
 	newPathSame = "Given path '{}' matches current output path."
 
+	#System Exception Messages
+	FileNotFoundException = "Path points to invalid file or path. Entered path was {}"
+	TypeException = "Wrong variable type used. Expected: {}\tGot: {}"
+
 class LOG:
 	def __init__(self):
 		pass
