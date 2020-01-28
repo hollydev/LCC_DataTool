@@ -10,13 +10,13 @@
 """
 import numpy
 import pandas
-import messages
+from messages.system import VALIDATORS, SYSTEM
 import re
 
 class NUMERIC_ID:
 	def __init__(self, column):
-		self.validate = messages.VALIDATORS()
-		self.validated = messages.SYSTEM()
+		self.validate = VALIDATORS()
+		self.validated = SYSTEM()
 
 		self.warnings = list()
 		self.errors = list()
@@ -43,7 +43,7 @@ class NUMERIC_ID:
 			# if findUnique == True:
 			# 	indexes = numpy.where(self.values == value)
 			# 	if len(indexes) == 2:
-			# 		warnings.append(messages.VALIDATORS.notUniqueDup % (indexes[1],
+			# 		warnings.append(system.VALIDATORS.notUniqueDup % (indexes[1],
 			# 															indexes[2]))
 			# 	elif len(indexes) > 2:
 			# 		warnings.append(warnings.VALIDATORS.notUniqueMult % (indexes))
@@ -65,8 +65,8 @@ class NUMERIC_ID:
 class MIXED_TEXT:
 
 	def __init__(self, column):
-		self.validate = messages.VALIDATORS()
-		self.validated = messages.SYSTEM()
+		self.validate = VALIDATORS()
+		self.validated = SYSTEM()
 
 		self.warnings = list()
 		self.errors = list()
@@ -98,8 +98,8 @@ class MIXED_TEXT:
 class PLAIN_TEXT:
 
 	def __init__(self, column):
-		self.validate = messages.VALIDATORS()
-		self.validated = messages.SYSTEM()
+		self.validate = VALIDATORS()
+		self.validated = SYSTEM()
 
 		self.warnings = list()
 		self.errors = list()

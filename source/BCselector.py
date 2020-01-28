@@ -8,7 +8,7 @@
 
 import pandas as pd 
 import glob as gb 
-import validators
+from source import validators
 #from cleaners import GRADE_ITEM_NAME
 
 #setting for the displayed output (For testing)
@@ -22,7 +22,7 @@ def get_base_column(theColumn):
 
 
     #using glob to find all files in the subdirectory 'GBinfo' that have the .csv extension
-    for file in gb.glob("./GBinfo/*.csv"):
+    for file in gb.glob("source/GBinfo/*.csv"):
 
         #grab the base columns from the csv file
         df = pd.read_csv(file, usecols = list(range(0,18)), sep = ',')
@@ -230,7 +230,7 @@ def get_base_column(theColumn):
         elif(theColumn.lower() == "gradelastmodified"):
             print(df)
                 
-    return df
+        return df
 
 
 #splits CourseOfferingCode into three columns and replaces it with the new columns
@@ -254,6 +254,8 @@ def split_and_reorganize(theDataFrame):
 
 
 if __name__ == '__main__':
+
+    print("okay")
     
     get_base_column("courseOfferingName")
 
