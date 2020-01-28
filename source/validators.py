@@ -15,8 +15,8 @@ import re
 
 class NUMERIC_ID:
 	def __init__(self, column):
-		self.validate = system.VALIDATORS()
-		self.validated = system.SYSTEM()
+		self.validate = VALIDATORS()
+		self.validated = SYSTEM()
 
 		self.warnings = list()
 		self.errors = list()
@@ -65,8 +65,8 @@ class NUMERIC_ID:
 class MIXED_TEXT:
 
 	def __init__(self, column):
-		self.validate = system.VALIDATORS()
-		self.validated = system.SYSTEM()
+		self.validate = VALIDATORS()
+		self.validated = SYSTEM()
 
 		self.warnings = list()
 		self.errors = list()
@@ -98,8 +98,8 @@ class MIXED_TEXT:
 class PLAIN_TEXT:
 
 	def __init__(self, column):
-		self.validate = system.VALIDATORS()
-		self.validated = system.SYSTEM()
+		self.validate = VALIDATORS()
+		self.validated = SYSTEM()
 
 		self.warnings = list()
 		self.errors = list()
