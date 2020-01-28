@@ -10,8 +10,10 @@
 """
 import numpy
 import pandas
+
 from messages.system import VALIDATORS, SYSTEM
 import re
+
 
 class NUMERIC_ID:
 	def __init__(self, column):
@@ -56,13 +58,7 @@ class NUMERIC_ID:
 	def statistics(self):
 		return(self.validated.validatorStats % ("Numeric ID", self.items, len(self.warnings), len(self.errors)))
 
-	def get_warnings(self):
-		return(self.warnings)
-
-	def get_errors(self):
-		return(self.errors)
-
-class MIXED_TEXT:
+class MIXED_ID:
 
 	def __init__(self, column):
 		self.validate = VALIDATORS()
@@ -71,8 +67,8 @@ class MIXED_TEXT:
 		self.warnings = list()
 		self.errors = list()
 		self.column = column
-		self.values = column.values
 		self.items = 0
+		self.values = column.values
 
 	def run(self):
 
@@ -80,60 +76,40 @@ class MIXED_TEXT:
 			
 			self.items += 1
 
-			#Check that the cell is not empty
+			#Check for nan values
 			if value != value:
-				self.warnings.append(self.validate.expectedNonEmpty % value)
-				
+				self.warnings.append(self.validate.expectedNonEmpty % str(value)[1:-1])
 
 	def statistics(self):
 		return(self.validated.validatorStats % ("Mixed ID", self.items, len(self.warnings), len(self.errors)))
-	
-	def get_warnings(self):
-		return(self.warnings)
-
-	def get_errors(self):
-		return(self.errors)
 
 
-class PLAIN_TEXT:
+
+
 
 	def __init__(self, column):
 		self.validate = VALIDATORS()
 		self.validated = SYSTEM()
 
-		self.warnings = list()
-		self.errors = list()
-		self.column = column
-		self.values = column.values
-		self.items = 0
 
-	def run(self):
 
-		for value in self.values:
+# class PLAIN_TEXT:
+# 	warnings = list()
+# 	errors = list()
 
-			self.items += 1
+# 	def __init__(self, column):
+# 		self.column = column
 
-			#check that the cell is not empty
-			if(value != value):
-				self.warnings.append(self.validate.expectedNonEmpty % str(value)[1:-1])
+# 	def run():
 
-			#check that it contains no digits
-			if(bool(re.search(r'\d', str(value))) == True):
-				self.warnings.append(self.validate.expectedTextOnly % value)
+# class MIXED_TEXT:
+# 	warnings = list()
+# 	errors = list()
 
-			#check that it contains no symbols
-			if(bool(re.search(r'[@_!#$%^&*()<>?/\|}{~:\"]', str(value)[1:-1])) == True):
-				self.warnings.append(self.validate.expectedNoSymbols % value)
+# 	def __init__(self, column):
+# 		self.column = column
 
-	def statistics(self):
-		return(self.validated.validatorStats % ("PlainText", self.items, len(self.warnings), len(self.errors)))
-
-	def get_warnings(self):
-		return(self.warnings)
-
-	def get_errors(self):
-		return(self.errors)
-
+# 	def run():
 
 # class SECTION_CODE:
 # 	warnings = list()

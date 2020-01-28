@@ -32,8 +32,8 @@ class FILE_WRITER():
 
 		@Params:
 			self  - self object allows access to set path and outName.
-			outPath - A string indicating the name of the output file.
-			outPath (optional) - A path indicating the output location.
+			outPath - A path indicating the output location.
+			outName (optional) - A string indicating the name of the output file.
 			
 		@Raises:
 			FileNotFoundError - Indicates the given path does not point to a valid file or directory.
@@ -43,9 +43,11 @@ class FILE_WRITER():
 		#Validate the path on initialization.
 		if outPath == None:
 			self.path = os.getcwd()
+		elif self.validate_path(outPath):
+			self.outPath = outPath
+		else:
+			raise FileNotFoundError(SYSTEM.FileNotFoundException.format(outPath)) #{} pathValue
 		
-		elif not self.validate_path(outPath):
-			raise FileNotFoundError("Writer points to invalid file or path. Entered path was {}".format(outPath))
 		
 
 	def validate_path(cls, checkPath):
@@ -58,8 +60,14 @@ class FILE_WRITER():
 
 		@Returns:
 			BOOLEAN - Indicates whether new path is valid.
+			
+		@Raises:
+			TypeError - Indicates the given path variable is not a string.
 		"""
-
+		#Check type
+		if(not isinstance(checkPath, str)):
+			raise TypeError(SYSTEM.TypeException.format(type(str), type(checkPath))) #{} Expected, {} Got
+		
 		#Validate empty path, trim extra spaces and see if the path minimized to empty.
 		if(checkPath.strip() == ''):
 			cls.messages.append(SYSTEM.emptyPath)
@@ -81,8 +89,11 @@ class FILE_WRITER():
 		return True
 	
 	def get_path(cls):
-		""" Get a path to initialize the writer."""
-		return input("No Path provided. Enter a path: ")
+		""" Get a path to initialize the writer or return the current path"""
+		if cls.outPath == None:
+			return input("No Path provided. Enter a path: ")
+		else:
+			return cls.outPath
 
 	def set_path(cls, newPath):
 		""" Setter method ensuring that new path is valid.
@@ -95,16 +106,17 @@ class FILE_WRITER():
 			BOOLEAN - Indicates whether new path was set.
 		"""
 		if(not isinstance(newPath, str)):
-			cls.log.append(SYSTEM.notStringPath)
-			return False
+			raise TypeError(SYSTEM.TypeException.format(type(str), type(newPath)))
 		
-		if(cls(path) == newPath):
+		if(cls.outPath == newPath):
 			cls.log.append(SYSTEM.newPathSame.format(newPath))
 			return True
 
-		if(self.validate_path(newPath)):
-			cls.path = newPath
+		if(cls.validate_path(newPath)):
+			cls.outPath = newPath
 			return True
+		else:
+			return False
 
 		print("uncaught case")
 		return False
@@ -122,18 +134,18 @@ class FILE_WRITER():
 		
 		#Get the path and name lengths
 		nameLength = len(cls.outName)
-		pathLength = len(cls.path)
+		pathLength = len(cls.outPath)
 
 		#Get the start and end index. 4 indicates a file type .XXX
 		iStart = pathLength - nameLength - 4
 		iEnd = pathLength - 4
 
 		#Check if path points to a file.
-		if(os.path.isfile(cls.path)):
+		if(os.outPath.isfile(cls.outPath)):
 			"""TODO: When GUI change overwrite handler to Windows"""
 			#Check if the file has the same name, check overwrite ok.
-			if(self.path.endswith(cls.outName, iStart, iEnd)):
-				overwriteOkay = input(SYSTEM.overwrite % cls.outName).lower()
+			if(cls.outPath.endswith(cls.outName, iStart, iEnd)):
+				overwriteOkay = input(SYSTEM.overwrite.format(cls.outName).lower())
 				if (overwriteOkay == "yes" or\
 					overwriteOkay == "y"):
 					return True
@@ -143,7 +155,7 @@ class FILE_WRITER():
 				else:
 					return False
 
-			self.messages.append(SYSTEM.existingFile)
+			cls.messages.append(SYSTEM.existingFile)
 		else:
 			return True
 
@@ -174,7 +186,7 @@ class FILE_WRITER():
 		@Params:
 			cls - self object allows access to set path and outName.
 			file - The file to be saved.
-			path - The path where the file should be saved.
+			outPath - The path where the file should be saved.
 		
 		@Returns:
 			Saved - Boolean - Indicates whether the file was saved successfully.
@@ -182,12 +194,12 @@ class FILE_WRITER():
 
 		#Save Pandas DF using Pandas
 		if(isinstance(file, pd.DataFrame)):
-			pd.to_csv(file, cls.path, index=False, sort=False)
+			pd.to_csv(file, cls.outPath, index=False, sort=False)
 		
 		#Save dict object using CSV
 		elif (isinstance(file, dict)):
 			#Use the csv package to handle writing dicts to files.
-			writer = csv.Writer(cls.path)
+			writer = csv.Writer(cls.outPath)
 
 			for row in file:
 				writer.WriteRow(line)
