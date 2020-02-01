@@ -11,6 +11,7 @@
 import numpy
 import pandas
 from messages.system import VALIDATORS, SYSTEM
+import datetime
 import re
 
 class NUMERIC_ID:
@@ -134,6 +135,36 @@ class PLAIN_TEXT:
 	def get_errors(self):
 		return(self.errors)
 
+class DATE:
+
+	def __init__(self, column):
+
+		self.validate = VALIDATORS()
+		self.validated = SYSTEM()
+
+		self.warnings = list()
+		self.errors = list()
+		self.column = column
+		self.values = column.values
+		self.r = re.compile('\d{4,4}-\d{2,2}-\d{2,2}T\d{2,2}:\d{2,2}:\d{2,2}.\d{3,3}')
+		self.items = 0
+
+	def run(self):
+
+		for value in self.values:
+			
+			if(self.r.match(value) == None):
+				self.warnings.append(self.validate.unexpectedFormat % value)
+
+	def statistics(self):
+		return(self.validated.validatorStats % ("Date", self.items, len(self.warnings), len(self.errors)))
+
+	def get_warnings(self):
+		return(self.warnings)
+
+	def get_errors(self):
+		return(self.errors)
+
 
 # class SECTION_CODE:
 # 	warnings = list()
@@ -162,15 +193,6 @@ class PLAIN_TEXT:
 # 	def run():
 		
 # class GRADE_VALUE:
-# 	warnings = list()
-# 	errors = list()
-
-# 	def __init__(self, column):
-# 		self.column = column
-
-# 	def run():
-
-# class DATE:
 # 	warnings = list()
 # 	errors = list()
 
