@@ -33,6 +33,9 @@ class VALIDATORS:
 		self.expectedTextOnly = "%s contains a digit"
 		self.expectedNoSymbols = "%s contains a symbol"
 
+		#Date
+		self.unexpectedFormat = "%s is not in the correct format"
+
 
 
 ################
