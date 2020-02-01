@@ -228,7 +228,15 @@ def get_base_column(theColumn):
             print(df)
         
         elif(theColumn.lower() == "gradelastmodified"):
-            print(df)
+            validateDate = validators.DATE(df)
+            validateDate.run()
+            info = validateDate.statistics()
+            warnings = validateDate.get_warnings()
+            errors = validateDate.get_errors()
+
+            print(info)
+            print(warnings)
+            print(errors)
                 
         return df
 
@@ -255,7 +263,7 @@ def split_and_reorganize(theDataFrame):
 
 if __name__ == '__main__':
 
-    print("okay")
+    get_base_column("gradelastmodified")
     
     get_base_column("courseOfferingName")
 
