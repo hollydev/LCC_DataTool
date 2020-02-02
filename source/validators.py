@@ -51,8 +51,8 @@ class NUMERIC_ID:
 
 			
 			#Validate Length (convert value to string and remove the brackets)
-			if len(str(value)[1:-1]) != length:
-				self.warnings.append(self.validate.length % (value, len(value), length))
+			if len(str(value)) != length:
+				self.warnings.append(self.validate.length % (value, len(str(value)), length))
 
 	def statistics(self):
 		return(self.validated.validatorStats % ("Numeric ID", self.items, len(self.warnings), len(self.errors)))
