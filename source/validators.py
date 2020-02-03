@@ -10,13 +10,15 @@
 """
 import numpy
 import pandas
-from messages.system import VALIDATORS, SYSTEM
+from messages.validators import VALIDATORS
+from messages.system import SYSTEM, LOG
+import datetime
 import re
 
 class NUMERIC_ID:
 	def __init__(self, column):
-		self.validate = system.VALIDATORS()
-		self.validated = system.SYSTEM()
+		self.validate = VALIDATORS()
+		self.validated = SYSTEM()
 
 		self.warnings = list()
 		self.errors = list()
@@ -50,8 +52,8 @@ class NUMERIC_ID:
 
 			
 			#Validate Length (convert value to string and remove the brackets)
-			if len(str(value)[1:-1]) != length:
-				self.warnings.append(self.validate.length % (value, len(value), length))
+			if len(str(value)) != length:
+				self.warnings.append(self.validate.length % (value, len(str(value)), length))
 
 	def statistics(self):
 		return(self.validated.validatorStats % ("Numeric ID", self.items, len(self.warnings), len(self.errors)))
@@ -65,8 +67,8 @@ class NUMERIC_ID:
 class MIXED_TEXT:
 
 	def __init__(self, column):
-		self.validate = system.VALIDATORS()
-		self.validated = system.SYSTEM()
+		self.validate = VALIDATORS()
+		self.validated = SYSTEM()
 
 		self.warnings = list()
 		self.errors = list()
@@ -98,8 +100,8 @@ class MIXED_TEXT:
 class PLAIN_TEXT:
 
 	def __init__(self, column):
-		self.validate = system.VALIDATORS()
-		self.validated = system.SYSTEM()
+		self.validate = VALIDATORS()
+		self.validated = SYSTEM()
 
 		self.warnings = list()
 		self.errors = list()
@@ -134,15 +136,45 @@ class PLAIN_TEXT:
 	def get_errors(self):
 		return(self.errors)
 
+class DATE:
 
-# class SECTION_CODE:
-# 	warnings = list()
-# 	errors = list()
+	def __init__(self, column):
 
-# 	def __init__(self, column):
-# 		self.column = column
+		self.validate = VALIDATORS()
+		self.validated = SYSTEM()
 
-# 	def run():
+		self.warnings = list()
+		self.errors = list()
+		self.column = column
+		self.values = column.values
+		self.r = re.compile('\d{4,4}-\d{2,2}-\d{2,2}T\d{2,2}:\d{2,2}:\d{2,2}.\d{3,3}')
+		self.items = 0
+
+	def run(self):
+
+		for value in self.values:
+			
+			if(self.r.match(value) == None):
+				self.warnings.append(self.validate.unexpectedFormat % value)
+
+	def statistics(self):
+		return(self.validated.validatorStats % ("Date", self.items, len(self.warnings), len(self.errors)))
+
+	def get_warnings(self):
+		return(self.warnings)
+
+	def get_errors(self):
+		return(self.errors)
+
+
+class SECTION_CODE:
+	warnings = list()
+	errors = list()
+
+	def __init__(self, column):
+		self.column = column
+
+	def run(cls, termColumn):
 
 # class GRADE_ITEM_CATEGORY:
 # 	warnings = list()
@@ -162,15 +194,6 @@ class PLAIN_TEXT:
 # 	def run():
 		
 # class GRADE_VALUE:
-# 	warnings = list()
-# 	errors = list()
-
-# 	def __init__(self, column):
-# 		self.column = column
-
-# 	def run():
-
-# class DATE:
 # 	warnings = list()
 # 	errors = list()
 

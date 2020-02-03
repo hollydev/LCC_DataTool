@@ -10,44 +10,6 @@
 """
 
 ################
-## Validators ##
-################
-class VALIDATORS:
-	def __init__(self):
-		#Numeric ID
-		self.success = "Validator [%s] ran successfully."
-		self.failure = "Validator [%s] failed to pass."
-		self.notNumeric = "%s contains a non-numeric character."
-		self.notUniqueDup = "%i ID is not unique. Duplicate entry found at %i"
-		self.notUniqueMult = "Multiple IDs found. Duplicate entries found at %s"
-		self.length = "%i is of length %i, expected length %i"
-
-
-		#Mixed ID
-		self.expectMixedNum = "%s contains only numeric values, expected mixed values"
-		self.expectMixedChar = "%s contains only character values, expected mixed values"
-		self.expectedNonEmpty = "%s contains no values"
-
-
-		#PlainText
-		self.expectedTextOnly = "%s contains a digit"
-		self.expectedNoSymbols = "%s contains a symbol"
-
-
-
-################
-##  Cleaners  ##
-################
-class CLEANERS:
-
-	def __init__(self):
-		#Cleaners - Numeric ID
-		self.changedNumeric = "Removed non-numeric character in %s. Changed to %i"
-
-
-
-
-################
 ##   System   ##
 ################
 class SYSTEM:
@@ -63,6 +25,7 @@ class SYSTEM:
 	notPath_stat = "Unable to check status of the given path. Contact the analyst."
 	overwrite = "File {} already exists. Do you want to overwrite the file? (Yes/No)"
 	newPathSame = "Given path '{}' matches current output path."
+	noFilesFound = " "
 
 	#System Exception Messages
 	FileNotFoundException = "Path points to invalid file or path. Entered path was {}"

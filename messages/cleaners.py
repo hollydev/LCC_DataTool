@@ -1,4 +1,11 @@
+"""
+	Filename: system.py
+	Programmer: Holly Locke
+	Date Created: 01/03/2020
+	Last Update: File Created
 
+	Description: This file contains messages to be used by cleaning functions.
+"""
 
 ################
 ##  Cleaners  ##
