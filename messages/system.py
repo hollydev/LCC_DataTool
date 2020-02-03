@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """
 	Filename: system.py
 	Programmer: Holly Locke
