@@ -18,7 +18,7 @@ class VALIDATORS:
 		self.notNumeric = "%s contains a non-numeric character."
 		self.notUniqueDup = "%i ID is not unique. Duplicate entry found at %i"
 		self.notUniqueMult = "Multiple IDs found. Duplicate entries found at %s"
-		self.length = "%i is of length %i, expected length %i"
+		self.length = "%s is of length %i, expected length %i"
 
 
 		#Mixed ID
