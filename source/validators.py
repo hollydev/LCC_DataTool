@@ -175,7 +175,7 @@ class SECTION_CODE:
 		self.column = column
 
 	def run(cls, termColumn):
-
+            pass
 # class GRADE_ITEM_CATEGORY:
 # 	warnings = list()
 # 	errors = list()
