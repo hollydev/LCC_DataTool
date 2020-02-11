@@ -72,6 +72,7 @@ def main():
 
 			frames = inputs.get_data_frames(files)
 			data = inputs.concat_data_frames(frames)
+			
 
 			break
 		else:
@@ -79,7 +80,7 @@ def main():
 			readPath = readPath.replace("\"", "")
 
 	#Calling the Base Column Selector to handle cleaning and validation.
-	base_selector.get_base_column(data) #Handle data validation.
+	base_selector.get_base_column(data, "none") #Handle data validation.
 
 	#Handle data cleaning.
 

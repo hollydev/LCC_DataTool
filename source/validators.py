@@ -22,9 +22,8 @@ class NUMERIC_ID:
 
 		self.warnings = list()
 		self.errors = list()
-		self.column = column
-		self.values = column.values
-		self.length = len(self.column)
+		self.values = column
+		self.length = len(self.values)
 		self.items  = 0
 
 	def run(self, length):
@@ -72,8 +71,7 @@ class MIXED_TEXT:
 
 		self.warnings = list()
 		self.errors = list()
-		self.column = column
-		self.values = column.values
+		self.values = column
 		self.items = 0
 
 	def run(self):
@@ -105,8 +103,7 @@ class PLAIN_TEXT:
 
 		self.warnings = list()
 		self.errors = list()
-		self.column = column
-		self.values = column.values
+		self.values = column
 		self.items = 0
 
 	def run(self):
@@ -145,16 +142,15 @@ class DATE:
 
 		self.warnings = list()
 		self.errors = list()
-		self.column = column
-		self.values = column.values
+		self.values = column
 		self.r = re.compile('\d{4,4}-\d{2,2}-\d{2,2}T\d{2,2}:\d{2,2}:\d{2,2}.\d{3,3}')
 		self.items = 0
 
 	def run(self):
 
 		for value in self.values:
-			
-			if(self.r.match(value) == None):
+			self.items += 1
+			if(self.r.match(str(value)) == None):
 				self.warnings.append(self.validate.unexpectedFormat % value)
 
 	def statistics(self):
@@ -167,15 +163,15 @@ class DATE:
 		return(self.errors)
 
 
-class SECTION_CODE:
-	warnings = list()
-	errors = list()
+# class SECTION_CODE:
+# 	warnings = list()
+# 	errors = list()
 
-	def __init__(self, column):
-		self.column = column
+# 	def __init__(self, column):
+# 		self.column = column
 
-	def run(cls, termColumn):
-            pass
+# def run(cls, termColumn):
+
 # class GRADE_ITEM_CATEGORY:
 # 	warnings = list()
 # 	errors = list()
