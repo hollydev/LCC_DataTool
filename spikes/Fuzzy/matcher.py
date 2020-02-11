@@ -1,4 +1,5 @@
 import pandas as pd
+
 import numpy as np
 from pprint import pprint
 
@@ -27,7 +28,7 @@ def read_column():
 def clean(pdColumn):
 	#Get lexicon
 	uniqueWords = set()
-	for word in data: uniqueWords.add(word)
+	for word in pdColumn: uniqueWords.add(word)
 	
 	#Nearest Distance
 	minimumEdit = 20
@@ -37,14 +38,17 @@ def clean(pdColumn):
 	#Iterate over the lexicon, finding words that fit within the edit distance threshold
 	for item in pdColumn:
 		for word in uniqueWords:
+			if(abs(len(item) - len(word)) > threshold):
+				continue
+			
 			distance = editdistance.eval(item, word)
 			if word != item and distance < threshold:
 				viableEdits.append(word)
 				
-			print("Matching [%s] to [%s]: Edit distance %s" % (item, word, distance))
-				
-		editList[item] = viableEdits
-		viableEdits = list()
+				#print("Matching [%s] to [%s]: Edit distance %s" % (item, word, distance))
+			
+			editList[item] = viableEdits
+			viableEdits = list()
 	pprint(editList)
 	
 	#Print summary of uncleaned data
@@ -52,6 +56,6 @@ def clean(pdColumn):
 	
 
 if __name__ == "__main__":
-	data = read_column()
-	
-	clean(data)
+	#data = read_column()
+	pass
+	#clean(data)
