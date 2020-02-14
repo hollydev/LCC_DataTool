@@ -12,6 +12,9 @@
 
 import os
 import pandas as pd
+import tkinter as tk
+from tkinter import filedialog
+
 
 #Progress Bar
 from tqdm import tqdm
@@ -25,6 +28,17 @@ def check_file(fileName):
     
     return ret
 
+# returns True if the file is in an acceptable directory.
+def check_file_name(filename):
+    ret = True
+    # list of the directories that the user does NOT want read
+    bad_dirs = ['A&S', 'Gradebook Downloads', 'HHS', 'Archived']
+    # if one the the directories is in the file name, function returns false
+    for dir in bad_dirs:
+        if dir in filename:
+            ret = False
+    return ret
+
 # returns a list of all 'good' csv files
 def get_files(myPath):
 
@@ -35,8 +49,10 @@ def get_files(myPath):
             if '.csv' in file:
                 fileName = os.path.join(root, file)
                 
-                if check_file(fileName) == True:
-                    files.append(fileName)
+                if check_file_name(fileName):
+                
+                    if check_file(fileName) == True:
+                        files.append(fileName)
 
     print("Found %i files!" % len(files))     
                     
@@ -72,7 +88,6 @@ def concat_data_frames(frames):
     #For each deleted frame, concat to the new frame.
     for delFrame in tqdm(frames1, total=len(frames1)/2):
         recursive_concat(frames1)
-        #concatFrame = pd.concat([concatFrame, delFrame], sort=False)
     
     concatFrames2 = pd.concat(frames2, sort = False)
     
@@ -92,12 +107,15 @@ def concat_data_frames(frames):
     
 
 if __name__ == '__main__':
-    path = r'./D2L Data'
+    root = tk.Tk()
+    root.withdraw()    
+
+    path = filedialog.askdirectory()
     files = get_files(path)
     
-    readFiles = get_data_frames(files)
-    
-    data = concat_data_frames(readFiles)
+    if len(files) > 0:
+        readFiles = get_data_frames(files)
+        data = concat_data_frames(readFiles)
     
     
     
