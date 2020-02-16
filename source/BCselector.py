@@ -4,7 +4,7 @@
 	Date Created: 01/02/2020
 	Last Update: created file
 	Description: This file contains functions for retrieving the base columns of a
-     dataframe that is created from a csv file"""
+     dataframe and validating their contents"""
 
 import pandas as pd 
 import glob as gb 
@@ -17,91 +17,121 @@ from source.validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID
 # pd.set_option('display.max_colwidth', -1)
 
 
-#this method accepts a string that is then used to compare against the enum values
-def get_base_column(dataframe, theColumn):
+
+def get_base_column(dataframe, column):
 
     
-    # #using glob to find all files in the subdirectory 'GBinfo' that have the .csv extension
-    # for file in gb.glob("source/GBinfo/*.csv"):
-
-    #     #grab the base columns from the csv file
-    #     df = pd.read_csv(file, usecols = list(range(0,18)), sep = ',')
-
-    #     #send the dataframe to split_and_reorganize so it can be modified
-    #     df = split_and_reorganize(df)
+    #convert column headers to lowercases
+    dataframe.columns = map(str.lower, dataframe.columns)
 
     #Re-order and split the data.
     orderedData = split_and_reorganize(dataframe)
-    
-    #convert column headers to lowercases
-    orderedData.columns = map(str.lower, orderedData.columns)
 
-
-    #Get only the base columns from the data frame
-    df = orderedData.loc[ : , "username":"gradelastmodified"]
+    #grab user specified column
+    if(column == "all"):
+        df = orderedData.iloc[ : , :20]
+    else:
+        df = orderedData[[column.lower()]]
     
-   
-    for theColumn in df:
-        columnSeries = df[theColumn]
+  
     #Determine the name of the column and call appropriate validators
-        if(theColumn.lower() == "username"):
+    for oneColumn in df:
+        columnSeries = df[oneColumn]
+        if(oneColumn.lower() == "username"):
+            print("username: ")
             validateMixed(columnSeries.values)
-        elif(theColumn.lower() == "firstname"):
+            print("\n")
+        elif(oneColumn.lower() == "firstname"):
+            print("firtname: ")
             validatePlain(columnSeries.values)
-        elif(theColumn.lower() == "lastname"):
+            print("\n")
+        elif(oneColumn.lower() == "lastname"):
+            print("lastname: ")
             validatePlain(columnSeries.values)
-        elif(theColumn.lower() == "roleid"):
+            print("\n")
+        elif(oneColumn.lower() == "roleid"):
+            print("roleid: ")
             validateNum(columnSeries.values, 3)
-        elif(theColumn.lower() == "rolename"):
+            print("\n")
+        elif(oneColumn.lower() == "rolename"):
+            print("rolename: ")
             validatePlain(columnSeries.values)
-        elif(theColumn.lower() == "courseofferingid"):
+            print("\n")
+        elif(oneColumn.lower() == "courseofferingid"):
+            print("courseofferingid: ")
             validateNum(columnSeries.values, 6)
-        elif(theColumn.lower() == "courseofferingcode"):
+            print("\n")
+        elif(oneColumn.lower() == "courseofferingcode"):
+            print("courseofferingcode: ")
             validateMixed(columnSeries.values)
-        elif(theColumn.lower() == "courseofferingname"):
+            print("\n")
+        elif(oneColumn.lower() == "courseofferingname"):
+            print("courseofferingname: ")
             validateMixed(columnSeries.values)
-        elif(theColumn.lower() == "name"):
+            print("\n")
+        elif(oneColumn.lower() == "name"):
+            print("name: ")
             validateMixed(columnSeries.values)
-        elif(theColumn.lower() == "number"):
+            print("\n")
+        elif(oneColumn.lower() == "number"):
+            print("number: ")
             validateNum(columnSeries, 5)
-        elif(theColumn.lower() == "term"):
+            print("\n")
+        elif(oneColumn.lower() == "term"):
+            print("term: ")
             validateNum(columnSeries, 6)
-        elif(theColumn.lower() == "gradeitemcategoryid"):
+            print("\n")
+        elif(oneColumn.lower() == "gradeitemcategoryid"):
+            print("gradeitemcategoryid: ")
             validateNum(columnSeries, 7)
-        elif(theColumn.lower() == "gradeitemcategoryname"):
+            print("\n")
+        elif(oneColumn.lower() == "gradeitemcategoryname"):
+            print("gradeitemcategoryname: ")
             validateMixed(columnSeries.values)
-        elif(theColumn.lower() == "gradeitemid"):
+            print("\n")
+        elif(oneColumn.lower() == "gradeitemid"):
+            print("gradeitemid: ")
             validateNum(columnSeries.values, 7)
-        elif(theColumn.lower() == "gradeitemname"):
-            print("no validator for %s", theColumn)
-        elif(theColumn.lower() == "gradeitemweight"):
-            print("no validator for %s", theColumn)
-        elif(theColumn.lower() == "pointsnumerator"):
-            print("no validator for %s", theColumn)
-        elif(theColumn.lower() == "pointsdenominator"):
-            print("no validator for %s", theColumn)
-        elif(theColumn.lower() == "gradevalue"):
-            print("no validator for %s", theColumn)
-        elif(theColumn.lower() == "gradelastmodified"):
+            print("\n")
+        elif(oneColumn.lower() == "gradeitemname"):
+            print("gradeitemname: ")
+            print("no validator for %s", oneColumn)
+            print("\n")
+        elif(oneColumn.lower() == "gradeitemweight"):
+            print("gradeitemweight: ")
+            print("no validator for %s", oneColumn)
+            print("\n")
+        elif(oneColumn.lower() == "pointsnumerator"):
+            print("pointsnumerator: ")
+            print("no validator for %s", oneColumn)
+            print("\n")
+        elif(oneColumn.lower() == "pointsdenominator"):
+            print("pointsdenominator: ")
+            print("no validator for %s", oneColumn)
+            print("\n")
+        elif(oneColumn.lower() == "gradevalue"):
+            print("gradevalue: ")
+            print("no validator for %s", oneColumn)
+            print("\n")
+        elif(oneColumn.lower() == "gradelastmodified"):
+            print("gradelastmodified: ")
             validateDate(columnSeries.values)
-
-
-    
-    
-
+            print("\n")
+    return df
 
 #splits CourseOfferingCode into three columns and replaces it with the new columns
 def split_and_reorganize(theDataFrame):
 
-    #df1 takes all the columns up to CourseOfferingCode
-    df1 = pd.DataFrame(theDataFrame.iloc[:, :9])
+    #df1 takes all the columns up to CourseSectionCode
+    index = theDataFrame.columns.get_loc('coursesectioncode')
+    df1 = pd.DataFrame(theDataFrame.iloc[:, :index+1])
 
-    #CourseOfferingCode is split, new columns are appended and CourseOfferingCode is dropped
-    df1[['name', 'number', 'term']] = theDataFrame.CourseSectionCode.str.split("-", expand = True)
-    df1 = df1.drop(['CourseSectionCode'], axis = 1)
+    #CourseOfferingCode is split, new columns are appended and CourseSectionCode is dropped
+    df1[['name', 'number', 'term']] = theDataFrame.coursesectioncode.str.split("-", expand = True)
+    df1 = df1.drop(['coursesectioncode'], axis = 1)
 
-    #df2 takes all the columns after CourseOfferingCode
-    df2 = pd.DataFrame(theDataFrame.iloc[:, 9:])
+    #df2 takes all the columns after CourseSectionCode
+    df2 = pd.DataFrame(theDataFrame.iloc[:, index+1:])
 
     #df1 and df2 are concatenated and returned
     frames = [df1, df2]
@@ -117,7 +147,6 @@ def validateMixed(df):
 
     print(info)
    
-
 def validatePlain(df):
     validatePlainText = PLAIN_TEXT(df)
     validatePlainText.run()
@@ -127,7 +156,6 @@ def validatePlain(df):
 
     print(info)
 
-
 def validateNum(df, length):
     validateNumeric = NUMERIC_ID(df)
     validateNumeric.run(length)
@@ -136,7 +164,6 @@ def validateNum(df, length):
     errors = validateNumeric.get_errors()
 
     print(info)
-
 
 def validateDate(df):
     validateDate = DATE(df)
