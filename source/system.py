@@ -80,7 +80,7 @@ def main():
 			readPath = readPath.replace("\"", "")
 
 	#Calling the Base Column Selector to handle cleaning and validation.
-	base_selector.get_base_column(data, "none") #Handle data validation.
+	data = base_selector.get_base_column(data, "none") #Handle data validation.
 
 	#Handle data cleaning.
 

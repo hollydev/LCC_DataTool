@@ -17,3 +17,6 @@ class CLEANERS:
 		
 	#Cleaners - Numeric ID
 	changedNumeric = "Removed non-numeric character in %s. Changed to %i"
+
+	#Fuzzy Matching
+	matchResult = "Matched '{}' to [{}];\tConfidence {}"

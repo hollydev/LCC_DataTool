@@ -9,6 +9,7 @@
 import pandas as pd 
 import glob as gb 
 from source.validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID
+from source.cleaners import FUZZY_MATCHING
 #from cleaners import GRADE_ITEM_NAME
 
 #setting for the displayed output (For testing)
@@ -73,7 +74,12 @@ def get_base_column(dataframe, theColumn):
         elif(theColumn.lower() == "gradeitemid"):
             validateNum(columnSeries.values, 7)
         elif(theColumn.lower() == "gradeitemname"):
-            print("no validator for %s", theColumn)
+            validateMixed(columnSeries.values)
+
+            cleaned = cleanFuzzyMatching(columnSeries.values)
+
+            newName = columnSeries.name + "_cleaned"
+            df[newName] = cleaned #Save the new column with a suffix
         elif(theColumn.lower() == "gradeitemweight"):
             print("no validator for %s", theColumn)
         elif(theColumn.lower() == "pointsnumerator"):
@@ -84,10 +90,8 @@ def get_base_column(dataframe, theColumn):
             print("no validator for %s", theColumn)
         elif(theColumn.lower() == "gradelastmodified"):
             validateDate(columnSeries.values)
-
-
     
-    
+    return df #Return the processed data frame.
 
 
 #splits CourseOfferingCode into three columns and replaces it with the new columns
@@ -137,7 +141,6 @@ def validateNum(df, length):
 
     print(info)
 
-
 def validateDate(df):
     validateDate = DATE(df)
     validateDate.run()
@@ -148,5 +151,15 @@ def validateDate(df):
     print(info)
 
 
+def cleanFuzzyMatching(df):
+    cleanFuzzyMatching = FUZZY_MATCHING(df)
+    cleanedColumn = cleanFuzzyMatching.run(threshold=2)
+    print(cleanedColumn)
 
+    info = cleanFuzzyMatching.statistics()
+    warnings = cleanFuzzyMatching.get_warnings()
+    errors = cleanFuzzyMatching.get_errors()
 
+    print(info)
+    
+    return cleanedColumn
