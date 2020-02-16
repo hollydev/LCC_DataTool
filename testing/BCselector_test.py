@@ -24,29 +24,55 @@ class TestBCselector(unittest.TestCase):
 
     def test_get_base_column(self):
 
-        #testing for username with mixedID validator
-        x = get_base_column("uSerName")
-        print(x, '\n')
-       
-        assert len(x) != 0, "the list is empty"
+         for file in gb.glob("testing/mock_data/*.csv"):
+            #grab the base columns from the csv file
+            df = pd.read_csv(file, usecols = list(range(0,18)), sep = ',')
 
-        #testing for firstname with plainText validator
-        x = get_base_column("fIRStnamE")
-        print(x, '\n')
+            print(file)
+            #testing split_and_reorganize with mis-ordered columns
+            theData = get_base_column(df, "all")
+            #print(x, '\n')
+            allColumns = ["username", "firstname", "lastname", "roleid", "rolename", 
+                            "courseofferingid", "courseofferingcode", "courseofferingname",
+                            "name", "number", "term", "gradeitemcategoryid", "gradeitemcategoryname",
+                            "gradeitemid", "gradeitemname", "gradeitemweight", "pointsnumerator", "pointsdenominator",
+                            "gradevalue", "gradelastmodified"]
+
+            assert theData.empty == False, "the dataframe is empty" #make sure the dataframe is not empty
+
+            assert len(theData.columns) == 20, "not all columns were recovered" #check that the correct number of columns are returned
+      
+            #check for each of the base column headers by checking against/removing from allColumns array
+            for oneColumn in theData:
+                wholeColumn = theData[oneColumn]
+                try:
+                    allColumns.remove(wholeColumn.name)
+                except:
+                    self.fail('redundant column headers')
+
+            #testing for username with mixedID validator
+            x = get_base_column(df, "uSerName")
+            print(x, '\n')
         
-        assert len(x) != 0, "the list is empty"
+            assert x.empty == False, "the dataframe is empty"
+
+            #testing for firstname with plainText validator
+            x = get_base_column(df, "fIRStnamE")
+            print(x, '\n')
+            
+            assert x.empty == False, "the dataframe is empty"
+            
+            #testing for gradeitemcategoryID with Numeric validator
+            x = get_base_column(df, "graDeitemcategoryId")
+            print(x,'\n')
+            
+            assert x.empty == False, "the dataframe is empty"
         
-        #testing for gradeitemcategoryID with Numeric validator
-        x = get_base_column("graDeitemcategoryId")
-        print(x,'\n')
-        
-        assert len(x) != 0, "the list is empty"
-       
-       #testing for gradeLastmodified with Date validator
-        x = get_base_column("gradeLastModifIed")
-        print(x, '\n')
-        
-        assert len(x) != 0, "the list is empty"
+            #testing for gradeLastmodified with Date validator
+            x = get_base_column(df, "gradeLastModifIed")
+            print(x, '\n')
+            
+            assert x.empty == False, "the dataframe is empty"
         
     
 if __name__  == "__main__":
