@@ -8,89 +8,77 @@
 	Built to work with the rest of the data tool, cleaners are created as classes.
 
 """
-from messages.cleaners import cleaners
+import pandas as pd
+import numpy as np
 
-# """Remove all non-numeric values."""
-# class NUMERIC_ID:
-# 	messages = list()
-# 	errors = list()
+from tqdm import tqdm
+from fuzzywuzzy import fuzz, process
 
-# 	def __init__(self, column):
-# 		self.column = column
+from messages.cleaners import CLEANERS
+from messages.system import SYSTEM, LOG
 
-# 	def run():
-
-# class MIXED_ID:
-# 	messages = list()
-# 	errors = list()
-
-# 	def __init__(self, column):
-# 		self.column = column
-
-# 	def run():
-
-# class PLAIN_TEXT:
-# 	messages = list()
-# 	errors = list()
-
-# 	def __init__(self, column):
-# 		self.column = column
-
-# 	def run():
-
-# class MIXED_TEXT:
-# 	messages = list()
-# 	errors = list()
-
-# 	def __init__(self, column):
-# 		self.column = column
-
-# 	def run():
-
-# class SECTION_CODE:
-# 	messages = list()
-# 	errors = list()
-
-# 	def __init__(self, column):
-# 		self.column = column
-
-# 	def run():
-
-# class GRADE_ITEM_CATEGORY:
-# 	messages = list()
-# 	errors = list()
-
-# 	def __init__(self, column):
-# 		self.column = column
-
-# 	def run():
-
-class GRADE_ITEM_NAME:
-	messages = list()
-	errors = list()
-
+class FUZZY_MATCHING:
 	def __init__(self, column):
-		self.column = column
-		self.values = column.values
+		self.values = column
+
+		self.messages = list()
+		self.errors = list()
+		self.items = 0
+
 
 	def run(self, threshold):
-		#Get lexicon
-		uniqueWords = set()
-		for word in self.values: uniqueWords.add(word)
+
+		#Get a unique list of existing names
+		choices = set()
+		for word in self.values: choices.add(word)
 		
-		#Nearest Distance
-		viableEdits = list()
-		editList = dict()
+		#Simple process command
+		values = self.values
 		
-		#Iterate over the lexicon, finding words that fit within the edit distance threshold
-		for item in self.values:
-			for word in uniqueWords:
-				distance = editdistance.eval(item, word)
-				if word != item and distance < threshold:
-					viableEdits.append(word)
-					
-			editList[item] = viableEdits
-			viableEdits = list()
+		matches = self.get_choice_matches(choices)
+		
+		for val in values:
+			match = matches[val]
+			self.messages.append(CLEANERS.matchResult.format(val, match[0], match[1]))
+		
+		#Return matches past a threshold
+		for i, val in enumerate(self.values):
+			match, confidence = matches[val]
+
+			if(confidence >= threshold):
+				self.values[i] = match
+				self.items += 1 #Count items cleaned
+			else:
+				continue
+
+		return self.values
+
+	def get_choice_matches(self, choices):
+		matches = dict()
+	
+		progBar = tqdm(total = len(choices))
+		
+		for value in choices:
+			otherChoices = set(choices)
+			otherChoices.remove(value)
+			progBar.update(1)
+			progBar.display()
+			
+			chosen = process.extractOne(value, otherChoices, scorer=fuzz.token_sort_ratio)
+			
+			matches.update({value:chosen})
+			 
+		progBar.close()
+		return matches
+
+	def statistics(self):
+		return SYSTEM.cleanerStats.format("Fuzzy Matching", self.items, len(self.messages), len(self.errors))
+
+	def get_warnings(self):
+		return(self.messages)
+
+	def get_errors(self):
+		return(self.errors)
 
 
 # class GRADE_VALUE:

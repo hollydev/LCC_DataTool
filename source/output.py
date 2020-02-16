@@ -38,13 +38,24 @@ class FILE_WRITER():
 		@Raises:
 			FileNotFoundError - Indicates the given path does not point to a valid file or directory.
 		"""
-		self.outName = "combined_gradebook"
+		if outName == None:
+			self.outName = "combined_gradebook"
+		else:
+			self.outName = outName
 
 		#Validate the path on initialization.
 		if outPath == None:
+			#Get the current path as output path
 			self.path = os.getcwd()
 		elif self.validate_path(outPath):
+			#Check to make sure that the path includes a '/' or '\'
+			if(outPath.endswith("\\") == False or outPath.endswith("/") == False):
+				outPath = outPath + "\\" #Assign the windows slash to paths that need it.
+
+			#Use the defined path given a passing validation.
 			self.outPath = outPath
+
+
 		else:
 			raise FileNotFoundError(SYSTEM.FileNotFoundException.format(outPath)) #{} pathValue
 		
@@ -113,6 +124,10 @@ class FILE_WRITER():
 			return True
 
 		if(cls.validate_path(newPath)):
+			#Check to make sure that the path includes a '/' or '\'
+			if(outPath.endswith("\\") == False or outPath.endswith("\/") == False):
+				outPath = outPath + "\\" #Assign the windows slash to paths that need it.
+
 			cls.outPath = newPath
 			return True
 		else:
@@ -194,7 +209,7 @@ class FILE_WRITER():
 
 		#Save Pandas DF using Pandas
 		if(isinstance(file, pd.DataFrame)):
-			pd.to_csv(file, cls.outPath, index=False, sort=False)
+			file.to_csv(cls.outPath + cls.outName + ".csv", index=False)
 		
 		#Save dict object using CSV
 		elif (isinstance(file, dict)):

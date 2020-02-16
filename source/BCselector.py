@@ -9,6 +9,7 @@
 import pandas as pd 
 import glob as gb 
 from source.validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID
+from source.cleaners import FUZZY_MATCHING
 #from cleaners import GRADE_ITEM_NAME
 
 #setting for the displayed output (For testing)
@@ -92,32 +93,26 @@ def get_base_column(dataframe, column):
         elif(oneColumn.lower() == "gradeitemid"):
             print("gradeitemid: ")
             validateNum(columnSeries.values, 7)
-            print("\n")
-        elif(oneColumn.lower() == "gradeitemname"):
-            print("gradeitemname: ")
-            print("no validator for %s", oneColumn)
-            print("\n")
-        elif(oneColumn.lower() == "gradeitemweight"):
-            print("gradeitemweight: ")
-            print("no validator for %s", oneColumn)
-            print("\n")
-        elif(oneColumn.lower() == "pointsnumerator"):
-            print("pointsnumerator: ")
-            print("no validator for %s", oneColumn)
-            print("\n")
-        elif(oneColumn.lower() == "pointsdenominator"):
-            print("pointsdenominator: ")
-            print("no validator for %s", oneColumn)
-            print("\n")
-        elif(oneColumn.lower() == "gradevalue"):
-            print("gradevalue: ")
-            print("no validator for %s", oneColumn)
-            print("\n")
-        elif(oneColumn.lower() == "gradelastmodified"):
-            print("gradelastmodified: ")
+        elif(theColumn.lower() == "gradeitemname"):
+            validateMixed(columnSeries.values)
+
+            cleaned = cleanFuzzyMatching(columnSeries.values)
+
+            newName = columnSeries.name + "_cleaned"
+            df[newName] = cleaned #Save the new column with a suffix
+        elif(theColumn.lower() == "gradeitemweight"):
+            print("no validator for %s", theColumn)
+        elif(theColumn.lower() == "pointsnumerator"):
+            print("no validator for %s", theColumn)
+        elif(theColumn.lower() == "pointsdenominator"):
+            print("no validator for %s", theColumn)
+        elif(theColumn.lower() == "gradevalue"):
+            print("no validator for %s", theColumn)
+        elif(theColumn.lower() == "gradelastmodified"):
             validateDate(columnSeries.values)
-            print("\n")
-    return df
+    
+    return df #Return the processed data frame.
+
 
 #splits CourseOfferingCode into three columns and replaces it with the new columns
 def split_and_reorganize(theDataFrame):
@@ -175,5 +170,15 @@ def validateDate(df):
     print(info)
 
 
+def cleanFuzzyMatching(df):
+    cleanFuzzyMatching = FUZZY_MATCHING(df)
+    cleanedColumn = cleanFuzzyMatching.run(threshold=2)
+    print(cleanedColumn)
 
+    info = cleanFuzzyMatching.statistics()
+    warnings = cleanFuzzyMatching.get_warnings()
+    errors = cleanFuzzyMatching.get_errors()
 
+    print(info)
+    
+    return cleanedColumn
