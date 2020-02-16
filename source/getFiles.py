@@ -43,6 +43,7 @@ def check_file_name(filename):
 def get_files(myPath):
 
     files = []
+    skippedFiles = 0
 
     for root, dirs, f in os.walk(myPath):
         for file in f:
@@ -53,8 +54,12 @@ def get_files(myPath):
                 
                     if check_file(fileName) == True:
                         files.append(fileName)
+                    else:
+                        skippedFiles += 1
+                else:
+                    skippedFiles += 1
 
-    print("Found %i files!" % len(files))     
+    print("Found {} files. ({} skipped)".format(len(files), skippedFiles))
                     
     return files
 
@@ -76,6 +81,8 @@ def recursive_concat(frames):
 #concatenates all dataframes into one single dataframe to be used
 def concat_data_frames(frames):
     size = len(frames)
+    progressBar = tqdm(total=3)
+
     firstThird = round(size/3)
     secondThird = round(2*size/3)
     frames1 = frames[:firstThird]
@@ -86,23 +93,29 @@ def concat_data_frames(frames):
     
     
     #For each deleted frame, concat to the new frame.
-    for delFrame in tqdm(frames1, total=len(frames1)/2):
+    for delFrame in frames1:
         recursive_concat(frames1)
+    progressBar.update(1)
+    progressBar.display()
     
     concatFrames2 = pd.concat(frames2, sort = False)
     
-    for delFrame in tqdm(frames2, total=len(frames2)/2):
+    for delFrame in frames2:
         recursive_concat(frames2)
-    
+    progressBar.update(1)
+    progressBar.display()
+
     concatFrames3 = pd.concat(frames3, sort = False)
     
-    for delFrame in tqdm(frames3, total=len(frames3)/2):
+    for delFrame in frames3:
         recursive_concat(frames3)
-        
+    progressBar.update(1)
+    progressBar.display()
+
     allFrames = [concatFrames1, concatFrames2, concatFrames3]
     finalFrame = pd.concat(allFrames, sort = False)
-    
-    
+    progressBar.close()
+
     return finalFrame
     
 

@@ -84,7 +84,18 @@ def main():
 
 	#Handle data cleaning.
 
-	
+	#Save files to directory
+	writePath = input("Path: ").lower()
+	writePath = writePath.replace("\"", "")
+
+	if(validate_path(writePath) == True):
+		#Create a file writer
+		fileWriter = outputs.FILE_WRITER(outPath= writePath, outName= "TestingFile")
+
+		#Write a CSV to the output path.
+		fileWriter.write_csv(data)
+
+		#TODO Implement Oracle writer
 
 
 
