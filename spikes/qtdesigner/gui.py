@@ -1,13 +1,14 @@
-from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication
+from PyQt5 import QtWidgets
+from gradebook_tool import Ui_MainWindow
+import sys
 
-Form, Window = uic.loadUiType("spikes\qtdesigner\gradebook_tool.ui")
+class mywindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(mywindow, self).__init__()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
 
-print(Window)
-print(Form)
-app = QApplication([])
-window = Window()
-form = Form()
-form.setupUi(window)
-window.show()
-app.exec_()
+app = QtWidgets.QApplication([])
+application = mywindow()
+application.show()
+sys.exit(app.exec())        
