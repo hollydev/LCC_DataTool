@@ -29,10 +29,10 @@ def check_file(fileName):
     return ret
 
 # returns True if the file is in an acceptable directory.
-def check_file_name(filename):
+def check_dirs(filename):
     ret = True
     # list of the directories that the user does NOT want read
-    bad_dirs = ['A&S', 'Gradebook Downloads', 'HHS', 'Archived']
+    bad_dirs = ['A&S', 'Gradebook Downloads', 'HHS', 'TC\Archived']
     # if one the the directories is in the file name, function returns false
     for dir in bad_dirs:
         if dir in filename:
@@ -50,7 +50,7 @@ def get_files(myPath):
             if '.csv' in file:
                 fileName = os.path.join(root, file)
                 
-                if check_file_name(fileName):
+                if check_dirs(fileName):
                 
                     if check_file(fileName) == True:
                         files.append(fileName)
