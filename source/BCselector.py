@@ -19,20 +19,27 @@ from source.cleaners import FUZZY_MATCHING
 
 
 
-def get_base_column(dataframe, column):
+def get_base_column(dataframe, selectedColumns):
 
     
-    #convert column headers to lowercases
+    #convert column headers in dataframe and selectedColumns to lowercase 
     dataframe.columns = map(str.lower, dataframe.columns)
+    count = 0
+    for x in selectedColumns:
+        selectedColumns[count] = x.lower()
+        count += 1
 
     #Re-order and split the data.
     orderedData = split_and_reorganize(dataframe)
-
+    
     #grab user specified column
-    if(column == "all"):
+    if(len(selectedColumns) == 18):
         df = orderedData.iloc[ : , :20]
     else:
-        df = orderedData[[column.lower()]]
+        #TODO fix this so that custom selection of columns can be found
+        df = orderedData.loc[selectedColumns]
+
+    
     
   
     #Determine the name of the column and call appropriate validators
@@ -74,8 +81,8 @@ def get_base_column(dataframe, column):
             print("name: ")
             validateMixed(columnSeries.values)
             print("\n")
-        elif(oneColumn.lower() == "number"):
-            print("number: ")
+        elif(oneColumn.lower() == "CRN"):
+            print("CRN: ")
             validateNum(columnSeries, 5)
             print("\n")
         elif(oneColumn.lower() == "term"):
@@ -120,7 +127,7 @@ def split_and_reorganize(theDataFrame):
     df1 = pd.DataFrame(theDataFrame.iloc[:, :index+1])
 
     #CourseOfferingCode is split, new columns are appended and CourseSectionCode is dropped
-    df1[['name', 'number', 'term']] = theDataFrame.coursesectioncode.str.split("-", expand = True)
+    df1[['name', 'CRN', 'term']] = theDataFrame.coursesectioncode.str.split("-", expand = True)
     df1 = df1.drop(['coursesectioncode'], axis = 1)
 
     #df2 takes all the columns after CourseSectionCode
