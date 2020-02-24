@@ -37,7 +37,7 @@ def get_base_column(dataframe, selectedColumns):
         df = orderedData.iloc[ : , :20]
     else:
         #TODO fix this so that custom selection of columns can be found
-        df = orderedData.loc[selectedColumns]
+        df = orderedData.loc[ :,selectedColumns]
 
     
     
