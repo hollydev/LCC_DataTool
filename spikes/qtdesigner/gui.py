@@ -13,14 +13,18 @@ class mywindow(QtWidgets.QMainWindow):
 
         #Code for handling widgets on "column configuration" window
         self.ui.listWidget_3.itemClicked.connect(self.item_3_click)
+        self.ui.listWidget_4.itemClicked.connect(self.item_4_click)
         self.ui.pushButton_3.clicked.connect(self.all_columns_button)
         self.ui.pushButton_2.clicked.connect(self.continue_button)
 
     def item_3_click(self, item):
         index = self.ui.listWidget_3.row(item)
         self.ui.listWidget_4.addItem(self.ui.listWidget_3.takeItem(index))
-       
 
+    def item_4_click(self, item):
+        index = self.ui.listWidget_4.row(item)
+        self.ui.listWidget_3.addItem(self.ui.listWidget_4.takeItem(index))
+       
     def all_columns_button(self):
         x  = self.ui.listWidget_3.count()
         while(x >= 0):
@@ -50,8 +54,7 @@ class Worker(QRunnable):
     def run(self):
         
         self.fn(self.theColumns)
-        
-         
+                
 if __name__ == "__main__":       
     app = QtWidgets.QApplication([])
     application = mywindow()
