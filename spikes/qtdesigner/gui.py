@@ -48,13 +48,10 @@ class Worker(QRunnable):
         self.theColumns = selectedColumns
 
     def run(self):
-        '''
-        Initialise the runner function with passed args, kwargs.
-        '''
+        
         self.fn(self.theColumns)
         
-        
-           
+         
 if __name__ == "__main__":       
     app = QtWidgets.QApplication([])
     application = mywindow()
