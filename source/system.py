@@ -49,7 +49,7 @@ def validate_path(checkPath):
 		return True
 
 
-def main():
+def main(selectedColumns):
 	""" 
 		Serves as a controller for the system as a whole. Manages the messages of
 		different components, and handles data calls to the GUI.
@@ -80,7 +80,7 @@ def main():
 			readPath = readPath.replace("\"", "")
 
 	#Calling the Base Column Selector to handle cleaning and validation.
-	base_selector.get_base_column(data, "all") #Handle data validation.
+	base_selector.get_base_column(data, selectedColumns) #Handle data validation.
 
 	#Handle data cleaning.
 
@@ -99,5 +99,5 @@ def main():
 
 
 
-if __name__ == '__main__':
-	main()
+# if __name__ == '__main__':
+# 	main(selectedColumns)
