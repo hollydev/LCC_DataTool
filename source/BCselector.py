@@ -102,7 +102,8 @@ def get_base_column(dataframe, selectedColumns):
             validateNum(columnSeries.values, 7)
         elif(oneColumn.lower() == "gradeitemname"):
             validateMixed(columnSeries.values)
-            cleaned = cleanFuzzyMatching(columnSeries.values)
+			
+            cleaned = cleanFuzzyMatching(columnSeries)
             newName = columnSeries.name + "_cleaned"
             df[newName] = cleaned #Save the new column with a suffix
         elif(oneColumn.lower() == "gradeitemweight"):
@@ -177,7 +178,7 @@ def validateDate(df):
 
 def cleanFuzzyMatching(df):
     cleanFuzzyMatching = FUZZY_MATCHING(df)
-    cleanedColumn = cleanFuzzyMatching.run(threshold=2)
+    cleanedColumn = cleanFuzzyMatching.run(threshold=80, master_n=2000)
     print(cleanedColumn)
 
     info = cleanFuzzyMatching.statistics()
