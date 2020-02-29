@@ -242,7 +242,6 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         self.path = QFileDialog.getExistingDirectory(None, 'Open File')
         self.lineEdit.setText(_translate("MainWindow", self.path))
-        print(self.path)
         return self.path
 
     def retranslateUi(self, MainWindow):
