@@ -32,7 +32,7 @@ def check_file(fileName):
 def check_file_name(filename):
     ret = True
     # list of the directories that the user does NOT want read
-    bad_dirs = ['A&S', 'Gradebook Downloads', 'HHS', 'Archived']
+    bad_dirs = ['A&S', 'Gradebook Downloads', 'HHS', 'TC\Archived']
     # if one the the directories is in the file name, function returns false
     for dir in bad_dirs:
         if dir in filename:
