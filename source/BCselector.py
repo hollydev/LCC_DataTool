@@ -25,99 +25,108 @@ def get_base_column(dataframe, selectedColumns):
     #convert column headers in dataframe and selectedColumns to lowercase 
     dataframe.columns = map(str.lower, dataframe.columns)
     count = 0
-    for x in selectedColumns:
-        selectedColumns[count] = x.lower()
-        count += 1
-
     #Re-order and split the data.
     orderedData = split_and_reorganize(dataframe)
-    
-    #grab user specified column
-    if(len(selectedColumns) == 18):
-        df = orderedData.iloc[ : , :20]
-    else:
-        #TODO fix this so that custom selection of columns can be found
-        df = orderedData.loc[ :,selectedColumns]
 
-    
-    
-  
-    #Determine the name of the column and call appropriate validators
-    for oneColumn in df:
-        columnSeries = df[oneColumn]
-        if(oneColumn.lower() == "username"):
-            print("username: ")
-            validateMixed(columnSeries.values)
-            print("\n")
-        elif(oneColumn.lower() == "firstname"):
-            print("firtname: ")
-            validatePlain(columnSeries.values)
-            print("\n")
-        elif(oneColumn.lower() == "lastname"):
-            print("lastname: ")
-            validatePlain(columnSeries.values)
-            print("\n")
-        elif(oneColumn.lower() == "roleid"):
-            print("roleid: ")
-            validateNum(columnSeries.values, 3)
-            print("\n")
-        elif(oneColumn.lower() == "rolename"):
-            print("rolename: ")
-            validatePlain(columnSeries.values)
-            print("\n")
-        elif(oneColumn.lower() == "courseofferingid"):
-            print("courseofferingid: ")
-            validateNum(columnSeries.values, 6)
-            print("\n")
-        elif(oneColumn.lower() == "courseofferingcode"):
-            print("courseofferingcode: ")
-            validateMixed(columnSeries.values)
-            print("\n")
-        elif(oneColumn.lower() == "courseofferingname"):
-            print("courseofferingname: ")
-            validateMixed(columnSeries.values)
-            print("\n")
-        elif(oneColumn.lower() == "name"):
-            print("name: ")
-            validateMixed(columnSeries.values)
-            print("\n")
-        elif(oneColumn.lower() == "CRN"):
-            print("CRN: ")
-            validateNum(columnSeries, 5)
-            print("\n")
-        elif(oneColumn.lower() == "term"):
-            print("term: ")
-            validateNum(columnSeries, 6)
-            print("\n")
-        elif(oneColumn.lower() == "gradeitemcategoryid"):
-            print("gradeitemcategoryid: ")
-            validateNum(columnSeries, 7)
-            print("\n")
-        elif(oneColumn.lower() == "gradeitemcategoryname"):
-            print("gradeitemcategoryname: ")
-            validateMixed(columnSeries.values)
-            print("\n")
-        elif(oneColumn.lower() == "gradeitemid"):
-            print("gradeitemid: ")
-            validateNum(columnSeries.values, 7)
-        elif(oneColumn.lower() == "gradeitemname"):
-            validateMixed(columnSeries.values)
-			
-            cleaned = cleanFuzzyMatching(columnSeries)
-            newName = columnSeries.name + "_cleaned"
-            df[newName] = cleaned #Save the new column with a suffix
-        elif(oneColumn.lower() == "gradeitemweight"):
-            print("no validator for %s", oneColumn)
-        elif(oneColumn.lower() == "pointsnumerator"):
-            print("no validator for %s", oneColumn)
-        elif(oneColumn.lower() == "pointsdenominator"):
-            print("no validator for %s", oneColumn)
-        elif(oneColumn.lower() == "gradevalue"):
-            print("no validator for %s", oneColumn)
-        elif(oneColumn.lower() == "gradelastmodified"):
-            validateDate(columnSeries.values)
-    
+    if isinstance(selectedColumns, list):
+        for x in selectedColumns:
+            selectedColumns[count] = x.lower()
+            count += 1
+        #grab user specified column
+        if(count == 18):
+            df = orderedData.iloc[ : , :20]
+        else:
+            df = orderedData.loc[ :,selectedColumns]
+        #Determine the name of the column and call appropriate validators
+        for oneColumn in df:
+            columnSeries = df[oneColumn]
+            callValidators(oneColumn, columnSeries, df)
+
+    else:
+        selectedColumns = selectedColumns.lower()
+        df = orderedData.loc[ :,selectedColumns]
+        # columnSeries = df[selectedColumns]
+        callValidators(selectedColumns, df, df)
+        
+
     return df #Return the processed data frame.
+    
+
+
+def callValidators(oneColumn, columnSeries, df):
+
+    if(oneColumn.lower() == "username"):
+        print("username: ")
+        validateMixed(columnSeries.values)
+        print("\n")
+    elif(oneColumn.lower() == "firstname"):
+        print("firtname: ")
+        validatePlain(columnSeries.values)
+        print("\n")
+    elif(oneColumn.lower() == "lastname"):
+        print("lastname: ")
+        validatePlain(columnSeries.values)
+        print("\n")
+    elif(oneColumn.lower() == "roleid"):
+        print("roleid: ")
+        validateNum(columnSeries.values, 3)
+        print("\n")
+    elif(oneColumn.lower() == "rolename"):
+        print("rolename: ")
+        validatePlain(columnSeries.values)
+        print("\n")
+    elif(oneColumn.lower() == "courseofferingid"):
+        print("courseofferingid: ")
+        validateNum(columnSeries.values, 6)
+        print("\n")
+    elif(oneColumn.lower() == "courseofferingcode"):
+        print("courseofferingcode: ")
+        validateMixed(columnSeries.values)
+        print("\n")
+    elif(oneColumn.lower() == "courseofferingname"):
+        print("courseofferingname: ")
+        validateMixed(columnSeries.values)
+        print("\n")
+    elif(oneColumn.lower() == "name"):
+        print("name: ")
+        validateMixed(columnSeries.values)
+        print("\n")
+    elif(oneColumn.lower() == "CRN"):
+        print("CRN: ")
+        validateNum(columnSeries, 5)
+        print("\n")
+    elif(oneColumn.lower() == "term"):
+        print("term: ")
+        validateNum(columnSeries, 6)
+        print("\n")
+    elif(oneColumn.lower() == "gradeitemcategoryid"):
+        print("gradeitemcategoryid: ")
+        validateNum(columnSeries, 7)
+        print("\n")
+    elif(oneColumn.lower() == "gradeitemcategoryname"):
+        print("gradeitemcategoryname: ")
+        validateMixed(columnSeries.values)
+        print("\n")
+    elif(oneColumn.lower() == "gradeitemid"):
+        print("gradeitemid: ")
+        validateNum(columnSeries.values, 7)
+    elif(oneColumn.lower() == "gradeitemname"):
+        validateMixed(columnSeries.values)
+        
+        cleaned = cleanFuzzyMatching(columnSeries)
+        newName = columnSeries.name + "_cleaned"
+        df[newName] = cleaned #Save the new column with a suffix
+    elif(oneColumn.lower() == "gradeitemweight"):
+        print("no validator for %s", oneColumn)
+    elif(oneColumn.lower() == "pointsnumerator"):
+        print("no validator for %s", oneColumn)
+    elif(oneColumn.lower() == "pointsdenominator"):
+        print("no validator for %s", oneColumn)
+    elif(oneColumn.lower() == "gradevalue"):
+        print("no validator for %s", oneColumn)
+    elif(oneColumn.lower() == "gradelastmodified"):
+        validateDate(columnSeries.values)
+
 
 
 #splits CourseOfferingCode into three columns and replaces it with the new columns
