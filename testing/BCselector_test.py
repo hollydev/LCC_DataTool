@@ -30,19 +30,19 @@ class TestBCselector(unittest.TestCase):
 
             print(file)
             #testing split_and_reorganize with mis-ordered columns
-            theData = get_base_column(df, "all")
-            #print(x, '\n')
+            
             allColumns = ["username", "firstname", "lastname", "roleid", "rolename", 
                             "courseofferingid", "courseofferingcode", "courseofferingname",
-                            "name", "number", "term", "gradeitemcategoryid", "gradeitemcategoryname",
+                            "name", "CRN", "term", "gradeitemcategoryid", "gradeitemcategoryname",
                             "gradeitemid", "gradeitemname", "gradeitemweight", "pointsnumerator", "pointsdenominator",
                             "gradevalue", "gradelastmodified"]
+            theData = get_base_column(df, allColumns)
 
             assert theData.empty == False, "the dataframe is empty" #make sure the dataframe is not empty
-
-            assert len(theData.columns) == 20, "not all columns were recovered" #check that the correct number of columns are returned
+            assert len(theData.columns) == 21, "not all columns were recovered" #check that the correct number of columns are returned
       
             #check for each of the base column headers by checking against/removing from allColumns array
+            allColumns.append("gradeitemname_cleaned")
             for oneColumn in theData:
                 wholeColumn = theData[oneColumn]
                 try:
