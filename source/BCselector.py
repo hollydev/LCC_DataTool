@@ -8,15 +8,9 @@
 
 import pandas as pd 
 import glob as gb 
-from source.validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID
+from source.validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID, CRN
 from source.cleaners import FUZZY_MATCHING
 #from cleaners import GRADE_ITEM_NAME
-
-#setting for the displayed output (For testing)
-# pd.set_option('display.max_columns', 5)
-# pd.set_option('display.width', None)
-# pd.set_option('display.max_colwidth', -1)
-
 
 
 def get_base_column(dataframe, selectedColumns):
@@ -27,33 +21,31 @@ def get_base_column(dataframe, selectedColumns):
     count = 0
     #Re-order and split the data.
     orderedData = split_and_reorganize(dataframe)
-
-    if isinstance(selectedColumns, list):
+    termCodes = orderedData[["term"]] #preserve the term codes from the dataframe for use in validating CRNs
+    
+    #check if the user wants to validate multiple columns
+    if isinstance(selectedColumns, list): 
         for x in selectedColumns:
             selectedColumns[count] = x.lower()
             count += 1
-        #grab user specified column
         if(count == 18):
             df = orderedData.iloc[ : , :20]
         else:
             df = orderedData.loc[ :,selectedColumns]
-        #Determine the name of the column and call appropriate validators
+        
         for oneColumn in df:
             columnSeries = df[oneColumn]
-            callValidators(oneColumn, columnSeries, df)
+            callValidators(oneColumn, columnSeries, df, termCodes)
 
-    else:
+    else: #user only wants to validate one column
         selectedColumns = selectedColumns.lower()
         df = orderedData.loc[ :,selectedColumns]
-        # columnSeries = df[selectedColumns]
-        callValidators(selectedColumns, df, df)
+        callValidators(selectedColumns, df, df, termCodes) #df is also passed in for columnseries since only one column was selected(a series)
         
 
     return df #Return the processed data frame.
     
-
-
-def callValidators(oneColumn, columnSeries, df):
+def callValidators(oneColumn, columnSeries, df, termCodes):
 
     if(oneColumn.lower() == "username"):
         print("username: ")
@@ -91,9 +83,9 @@ def callValidators(oneColumn, columnSeries, df):
         print("name: ")
         validateMixed(columnSeries.values)
         print("\n")
-    elif(oneColumn.lower() == "CRN"):
+    elif(oneColumn.lower() == "crn"):
         print("CRN: ")
-        validateNum(columnSeries, 5)
+        validateCRN(columnSeries, termCodes)
         print("\n")
     elif(oneColumn.lower() == "term"):
         print("term: ")
@@ -112,7 +104,6 @@ def callValidators(oneColumn, columnSeries, df):
         validateNum(columnSeries.values, 7)
     elif(oneColumn.lower() == "gradeitemname"):
         validateMixed(columnSeries.values)
-        
         cleaned = cleanFuzzyMatching(columnSeries)
         newName = columnSeries.name + "_cleaned"
         df[newName] = cleaned #Save the new column with a suffix
@@ -137,7 +128,7 @@ def split_and_reorganize(theDataFrame):
     df1 = pd.DataFrame(theDataFrame.iloc[:, :index+1])
 
     #CourseOfferingCode is split, new columns are appended and CourseSectionCode is dropped
-    df1[['name', 'CRN', 'term']] = theDataFrame.coursesectioncode.str.split("-", expand = True)
+    df1[['name', 'crn', 'term']] = theDataFrame.coursesectioncode.str.split("-", expand = True)
     df1 = df1.drop(['coursesectioncode'], axis = 1)
 
     #df2 takes all the columns after CourseSectionCode
@@ -183,6 +174,10 @@ def validateDate(df):
     errors = validateDate.get_errors()
 
     print(info)
+
+def validateCRN(df, termCodes):
+    validateCRN = CRN(df, termCodes)
+    validateCRN.run()
 
 
 def cleanFuzzyMatching(df):
