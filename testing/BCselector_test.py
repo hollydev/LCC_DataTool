@@ -73,6 +73,9 @@ class TestBCselector(unittest.TestCase):
             print(x, '\n')
             
             assert x.empty == False, "the dataframe is empty"
+
+            x = get_base_column(df, "CRN")
+            
         
     
 if __name__  == "__main__":
