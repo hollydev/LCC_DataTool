@@ -32,21 +32,29 @@ class FUZZY_MATCHING:
 		master = self.get_master_list(self.column, master_n)
 		matches = self.get_choice_matches(self.values, master.keys(), threshold)
 		
+		matchedList = list()
 		for val in self.values:
 			match = matches[val]
+
+			if(match != None):
+				matchedList.append(match[0])
+			else:
+				matchedList.append(val)
+
 			self.messages.append(CLEANERS.matchResult.format(val, match[0], match[1]))
 			
 		#Return matches past a threshold
-		for i, val in enumerate(self.values):
-			match, confidence = matches[val]
+		# for i, val in enumerate(self.values):
+		# 	match, confidence = matches[val]
 
-			if(confidence >= threshold):
-				self.values[i] = match
-				self.items += 1 #Count items cleaned
-			else:
-				continue
+		# 	if(confidence >= threshold):
+		# 		self.values[i] = match
+		# 		self.items += 1 #Count items cleaned
+		# 	else:
+		# 		continue
 
-		return self.values
+
+		return matchedList
 
 
 	def get_choice_matches(self, column, master, threshold=95):

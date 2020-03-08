@@ -183,12 +183,9 @@ def validateCRN(df, termCodes):
 def cleanFuzzyMatching(df):
     cleanFuzzyMatching = FUZZY_MATCHING(df)
     cleanedColumn = cleanFuzzyMatching.run(threshold=80, master_n=2000)
-    print(cleanedColumn)
 
     info = cleanFuzzyMatching.statistics()
     warnings = cleanFuzzyMatching.get_warnings()
     errors = cleanFuzzyMatching.get_errors()
-
-    print(info)
     
     return cleanedColumn
