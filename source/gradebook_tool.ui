@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>537</width>
+    <height>364</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="tabPosition">
+       <enum>QTabWidget::North</enum>
+      </property>
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>16</width>
+        <height>16</height>
+       </size>
+      </property>
+      <property name="tabsClosable">
+       <bool>false</bool>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Gradebook Data</string>
+       </attribute>
+       <attribute name="toolTip">
+        <string>Select gradebook information</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="6" column="0" colspan="4">
+         <widget class="QProgressBar" name="progressBar">
+          <property name="value">
+           <number>82</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3" alignment="Qt::AlignRight">
+         <widget class="QPushButton" name="pushButton">
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>80</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Browse...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1" alignment="Qt::AlignRight">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>230 Files Found</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>138 Selected</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="3" alignment="Qt::AlignLeft">
+         <widget class="QLineEdit" name="lineEdit">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>400</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>C:\Users\razzi\Desktop\D2L Data</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2" colspan="2">
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="minimumSize">
+           <size>
+            <width>61</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Statistics</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Instructors (5):</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QListWidget" name="listWidget">
+             <item>
+              <property name="text">
+               <string>Bell, Aniseh</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>James, Clark</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Jessica, Joel</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Elias, Terry</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Brown, Cherie</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Term Range (6):</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QListWidget" name="listWidget_2">
+             <item>
+              <property name="text">
+               <string>201810 - Fall 2017</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>201820 - Spring 2018</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>201830 - Summer 2018</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>201910 - Fall 2019</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>201920 - Spring 2019</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>201930 - Summer 2019</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="0" rowspan="3" colspan="2">
+         <widget class="QTreeWidget" name="treeWidget">
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustIgnored</enum>
+          </property>
+          <property name="showDropIndicator" stdset="0">
+           <bool>true</bool>
+          </property>
+          <property name="dragEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::MultiSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectItems</enum>
+          </property>
+          <property name="autoExpandDelay">
+           <number>-1</number>
+          </property>
+          <property name="uniformRowHeights">
+           <bool>false</bool>
+          </property>
+          <property name="wordWrap">
+           <bool>false</bool>
+          </property>
+          <property name="headerHidden">
+           <bool>false</bool>
+          </property>
+          <column>
+           <property name="text">
+            <string>Gradebook Data</string>
+           </property>
+          </column>
+          <item>
+           <property name="text">
+            <string>D2L Data</string>
+           </property>
+           <property name="font">
+            <font>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="checkState">
+            <enum>PartiallyChecked</enum>
+           </property>
+           <item>
+            <property name="text">
+             <string>A&amp;S</string>
+            </property>
+            <property name="checkState">
+             <enum>PartiallyChecked</enum>
+            </property>
+            <item>
+             <property name="text">
+              <string>AAST</string>
+             </property>
+             <property name="checkState">
+              <enum>PartiallyChecked</enum>
+             </property>
+             <item>
+              <property name="text">
+               <string>Archived</string>
+              </property>
+              <property name="checkState">
+               <enum>PartiallyChecked</enum>
+              </property>
+              <item>
+               <property name="text">
+                <string>Fall 17</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Fall 18</string>
+               </property>
+               <property name="background">
+                <brush brushstyle="NoBrush">
+                 <color alpha="255">
+                  <red>231</red>
+                  <green>231</green>
+                  <blue>231</blue>
+                 </color>
+                </brush>
+               </property>
+               <property name="checkState">
+                <enum>PartiallyChecked</enum>
+               </property>
+               <property name="flags">
+                <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Spring 18</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Summer 17</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Summer 18</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+             </item>
+             <item>
+              <property name="text">
+               <string>Spring 19</string>
+              </property>
+              <property name="checkState">
+               <enum>PartiallyChecked</enum>
+              </property>
+              <item>
+               <property name="text">
+                <string>AllGradesWithWithdrawnStudents_20190509_182623_LEAD111-50699-201920.csv</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>AllGradesWithWithdrawnStudents_20190509_182623_LEAD123-28394-201920.csv</string>
+               </property>
+               <property name="checkState">
+                <enum>PartiallyChecked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>AllGradesWithWithdrawnStudents_20190509_182623_MILS231-28239-201920.csv</string>
+               </property>
+               <property name="checkState">
+                <enum>PartiallyChecked</enum>
+               </property>
+              </item>
+             </item>
+             <item>
+              <property name="text">
+               <string>Summer 19</string>
+              </property>
+              <property name="checkState">
+               <enum>Checked</enum>
+              </property>
+             </item>
+            </item>
+            <item>
+             <property name="text">
+              <string>BCA</string>
+             </property>
+             <property name="checkState">
+              <enum>PartiallyChecked</enum>
+             </property>
+             <item>
+              <property name="text">
+               <string>Archived</string>
+              </property>
+              <property name="checkState">
+               <enum>PartiallyChecked</enum>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Spring 19</string>
+              </property>
+              <property name="checkState">
+               <enum>PartiallyChecked</enum>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Summer 19</string>
+              </property>
+              <property name="checkState">
+               <enum>Checked</enum>
+              </property>
+             </item>
+            </item>
+            <item>
+             <property name="text">
+              <string>CTL</string>
+             </property>
+             <property name="checkState">
+              <enum>Unchecked</enum>
+             </property>
+             <item>
+              <property name="text">
+               <string>Archived</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Spring 2019</string>
+              </property>
+             </item>
+            </item>
+           </item>
+           <item>
+            <property name="text">
+             <string>HHS</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>TC</string>
+            </property>
+           </item>
+          </item>
+         </widget>
+        </item>
+        <item row="7" column="0" colspan="4">
+         <widget class="QDialogButtonBox" name="buttonBox">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="standardButtons">
+           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="Column">
+       <attribute name="title">
+        <string>Column Configuration</string>
+       </attribute>
+       <attribute name="toolTip">
+        <string>Configure column settings</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Select the columns you want or click all columns</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="pushButton_3">
+          <property name="text">
+           <string>All columns</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Selected Columns:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" rowspan="3" colspan="2">
+         <widget class="QListWidget" name="listWidget_3">
+          <item>
+           <property name="text">
+            <string>Username</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>FirstName</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>LastName</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RoleId</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RoleName</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CourseOfferingId</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CourseOfferingCode</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CourseOfferingName</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CourseSectionCode</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>GradeItemCategoryId</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>GradeItemCategoryName</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>GradeItemId</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>GradeItemName</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>GradeItemWeight</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>PointsNumerator</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>PointsDenominator</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>GradeValue</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>GradeLastModified</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QListWidget" name="listWidget_4"/>
+        </item>
+        <item row="2" column="2">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Processing Method</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QCheckBox" name="checkBox_2">
+             <property name="text">
+              <string>Validate</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox">
+             <property name="text">
+              <string>Clean</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="text">
+           <string>Continue</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
