@@ -64,14 +64,8 @@ def main(selectedColumns):
 	while(readPath != "exit" and readPath != "quit"):
 		if(validate_path(readPath) == True):
 			#Get the list of valid CSV files to read.
-			files = inputs.get_files(readPath)
-
-			if(len(files) == 0):
-				print(SYSTEM.noFilesFound)
-				break
-
-			frames = inputs.get_data_frames(files)
-			data = inputs.concat_data_frames(frames)
+			
+			data = inputs.execute(readPath)
 			
 
 			break

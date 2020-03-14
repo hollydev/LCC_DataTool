@@ -9,7 +9,7 @@
 
 """
 
-
+from messages.system import SYSTEM
 import os
 import pandas as pd
 import tkinter as tk
@@ -117,18 +117,21 @@ def concat_data_frames(frames):
     progressBar.close()
 
     return finalFrame
-    
 
-if __name__ == '__main__':
-    root = tk.Tk()
-    root.withdraw()    
-
-    path = filedialog.askdirectory()
+def execute(path):
+    ret = 'N/A'
     files = get_files(path)
     
-    if len(files) > 0:
+    if(len(files) == 0):
+        print(SYSTEM.noFilesFound)
+        
+    else:
         readFiles = get_data_frames(files)
-        data = concat_data_frames(readFiles)
+        ret = concat_data_frames(readFiles)
+        
+    return ret
+    
+
     
     
     
