@@ -33,9 +33,14 @@ def check_file_name(filename):
     ret = True
     # list of the directories that the user does NOT want read
     bad_dirs = ['A&S', 'Gradebook Downloads', 'HHS', 'Archived']
+    # list of bad files
+    bad_files = ['D2L Data\TC\Spring 19\AllGradesWithWithdrawnStudents_20190509_160411_ELTE272-52355-201920.csv','D2L Data\TC\Spring 19\AllGradesWithWithdrawnStudents_20190509_160411_CITN230_caregiver.csv']
     # if one the the directories is in the file name, function returns false
     for dir in bad_dirs:
         if dir in filename:
+            ret = False
+    for file in bad_files:
+        if file in filename:
             ret = False
     return ret
 
@@ -130,6 +135,26 @@ def execute(path):
         ret = concat_data_frames(readFiles)
         
     return ret
+
+def get_instructors(data):
+    ret_list = []
+    names = data['GraderFirstName'] + ' ' + data['GraderLastName']
+    
+    for name in names:   
+        if type(name) == str:
+            ret_list.append(name)
+              
+    return ret_list
+
+if __name__  == "__main__":
+    
+    data = execute(r'../../D2L Data')
+    pd.set_option('display.max_rows', None)
+    r = get_instructors(data)
+    
+   
+    
+    
     
 
     
