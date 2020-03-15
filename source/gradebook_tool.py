@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QFileDialog
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -236,11 +237,19 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        
+    def getPath(self):
+        _translate = QtCore.QCoreApplication.translate
+        self.path = QFileDialog.getExistingDirectory(None, 'Open File')
+        self.lineEdit.setText(_translate("MainWindow", self.path))
+      
+        return self.path
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton.setText(_translate("MainWindow", "Browse..."))
+        self.pushButton.clicked.connect(self.getPath)
         self.label_3.setText(_translate("MainWindow", "230 Files Found"))
         self.label_4.setText(_translate("MainWindow", "138 Selected"))
         self.lineEdit.setText(_translate("MainWindow", "C:\\Users\\razzi\\Desktop\\D2L Data"))
