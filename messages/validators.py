@@ -33,3 +33,6 @@ class VALIDATORS:
 
 		#Date
 		self.unexpectedFormat = "%s is not in the correct format"
+
+		#CRN
+		self.wrongCRN = "%s is not the correct CRN/term for section %s, at %i"
