@@ -21,8 +21,10 @@ def get_base_column(dataframe, selectedColumns):
     count = 0
     #Re-order and split the data.
     orderedData = split_and_reorganize(dataframe)
-    termCodes = orderedData[["term"]] #preserve the term codes from the dataframe for use in validating CRNs
-    
+
+    #preserve the sections and termcodes from the dataframe for use in validating CRNs
+    allSections = orderedData[["section", "crn","term"]].apply(lambda x: '-'.join(x), axis = 1) 
+
     #check if the user wants to validate multiple columns
     if isinstance(selectedColumns, list): 
         for x in selectedColumns:
@@ -35,75 +37,78 @@ def get_base_column(dataframe, selectedColumns):
         
         for oneColumn in df:
             columnSeries = df[oneColumn]
-            callValidators(oneColumn, columnSeries, df, termCodes)
+            callValidators(oneColumn, columnSeries, df, allSections)
 
     else: #user only wants to validate one column
         selectedColumns = selectedColumns.lower()
         df = orderedData.loc[ :,selectedColumns]
-        callValidators(selectedColumns, df, df, termCodes) #df is also passed in for columnseries since only one column was selected(a series)
+        callValidators(selectedColumns, df, df, allSections) #df is also passed in for columnseries since only one column was selected(a series)
         
 
     return df #Return the processed data frame.
     
-def callValidators(oneColumn, columnSeries, df, termCodes):
+def callValidators(oneColumn, columnSeries, df, allSections):
 
     if(oneColumn.lower() == "username"):
-        print("username: ")
+        print("--username--")
         validateMixed(columnSeries.values)
         print("\n")
     elif(oneColumn.lower() == "firstname"):
-        print("firtname: ")
+        print("--firtname--")
         validatePlain(columnSeries.values)
         print("\n")
     elif(oneColumn.lower() == "lastname"):
-        print("lastname: ")
+        print("--lastname--")
         validatePlain(columnSeries.values)
         print("\n")
     elif(oneColumn.lower() == "roleid"):
-        print("roleid: ")
+        print("--roleid--")
         validateNum(columnSeries.values, 3)
         print("\n")
     elif(oneColumn.lower() == "rolename"):
-        print("rolename: ")
+        print("--rolename--")
         validatePlain(columnSeries.values)
         print("\n")
     elif(oneColumn.lower() == "courseofferingid"):
-        print("courseofferingid: ")
+        print("--courseofferingid--")
         validateNum(columnSeries.values, 6)
         print("\n")
     elif(oneColumn.lower() == "courseofferingcode"):
-        print("courseofferingcode: ")
+        print("--courseofferingcode--")
         validateMixed(columnSeries.values)
         print("\n")
     elif(oneColumn.lower() == "courseofferingname"):
-        print("courseofferingname: ")
+        print("--courseofferingname--")
         validateMixed(columnSeries.values)
         print("\n")
-    elif(oneColumn.lower() == "name"):
-        print("name: ")
+    elif(oneColumn.lower() == "section"):
+        print("--section--")
         validateMixed(columnSeries.values)
         print("\n")
     elif(oneColumn.lower() == "crn"):
-        print("CRN: ")
-        validateCRN(columnSeries, termCodes)
+        print("--CRN--")
+        validateCRN(columnSeries,allSections)
         print("\n")
     elif(oneColumn.lower() == "term"):
-        print("term: ")
+        print("--term--")
         validateNum(columnSeries, 6)
         print("\n")
     elif(oneColumn.lower() == "gradeitemcategoryid"):
-        print("gradeitemcategoryid: ")
+        print("--gradeitemcategoryid--")
         validateNum(columnSeries, 7)
         print("\n")
     elif(oneColumn.lower() == "gradeitemcategoryname"):
-        print("gradeitemcategoryname: ")
+        print("--gradeitemcategoryname--")
         validateMixed(columnSeries.values)
         print("\n")
     elif(oneColumn.lower() == "gradeitemid"):
-        print("gradeitemid: ")
+        print("--gradeitemid--")
         validateNum(columnSeries.values, 7)
+        print("\n")
     elif(oneColumn.lower() == "gradeitemname"):
+        print("--gradeitemname--")
         validateMixed(columnSeries.values)
+        print("\n")
         cleaned = cleanFuzzyMatching(columnSeries)
         newName = columnSeries.name + "_cleaned"
         df[newName] = cleaned #Save the new column with a suffix
@@ -116,7 +121,9 @@ def callValidators(oneColumn, columnSeries, df, termCodes):
     elif(oneColumn.lower() == "gradevalue"):
         print("no validator for %s", oneColumn)
     elif(oneColumn.lower() == "gradelastmodified"):
+        print("--gradelastmodified--")
         validateDate(columnSeries.values)
+        print("\n")
 
 
 
@@ -128,7 +135,7 @@ def split_and_reorganize(theDataFrame):
     df1 = pd.DataFrame(theDataFrame.iloc[:, :index+1])
 
     #CourseOfferingCode is split, new columns are appended and CourseSectionCode is dropped
-    df1[['name', 'crn', 'term']] = theDataFrame.coursesectioncode.str.split("-", expand = True)
+    df1[['section', 'crn', 'term']] = theDataFrame.coursesectioncode.str.split("-", expand = True)
     df1 = df1.drop(['coursesectioncode'], axis = 1)
 
     #df2 takes all the columns after CourseSectionCode
@@ -175,9 +182,16 @@ def validateDate(df):
 
     print(info)
 
-def validateCRN(df, termCodes):
-    validateCRN = CRN(df, termCodes)
+def validateCRN(df, allSections):
+    validateCRN = CRN(df, allSections)
     validateCRN.run()
+
+    info = validateCRN.statistics()
+    warnings = validateCRN.get_warnings()
+    errors = validateCRN.get_errors()
+
+    print(info)
+    print(warnings)
 
 
 def cleanFuzzyMatching(df):
