@@ -143,7 +143,7 @@ class DATE:
 		self.warnings = list()
 		self.errors = list()
 		self.values = column
-		self.r = re.compile('\d{4,4}-\d{2,2}-\d{2,2}T\d{2,2}:\d{2,2}:\d{2,2}.\d{3,3}')
+		self.r = re.compile(r'\d{4,4}-\d{2,2}-\d{2,2}T\d{2,2}:\d{2,2}:\d{2,2}.\d{3,3}')
 		self.items = 0
 
 	def run(self):
@@ -161,6 +161,39 @@ class DATE:
 
 	def get_errors(self):
 		return(self.errors)
+
+
+class CRN:
+	def __init__(self, column, allSections):
+		self.validate = VALIDATORS()
+		self.validated = SYSTEM()
+		self.warnings = list()
+		self.errors = list()
+		self.values = column
+		self.items = 0
+
+	def run(self):
+
+		print("validate CRN")
+		
+		
+		
+
+
+		
+    	
+
+	def statistics(self):
+		return(self.validated.validatorStats % ("CRN", self.items, len(self.warnings), len(self.errors)))
+
+	def get_warnings(self):
+		return(self.warnings)
+
+	def get_errors(self):
+		return(self.errors)
+
+
+		
 
 
 # class SECTION_CODE:
@@ -185,7 +218,7 @@ class DATE:
 # 	warnings = list()
 # 	errors = list()
 
-# 	def __init__(self, column)::
+# 	def __init__(self, column):
 
 # 	def run():
 		
