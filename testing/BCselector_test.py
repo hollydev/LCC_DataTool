@@ -50,31 +50,32 @@ class TestBCselector(unittest.TestCase):
                 except:
                     self.fail('redundant column headers')
 
+            print('\n\n')
+            print("Testing of the validators:\n")
             #testing for username with mixedID validator
+            print("Test for mixedID:\n")
             x = get_base_column(df, "uSerName")
-            print(x, '\n')
-        
             assert x.empty == False, "the dataframe is empty"
 
             #testing for firstname with plainText validator
+            print("test for plainText:\n")
             x = get_base_column(df, "fIRStnamE")
-            print(x, '\n')
-            
             assert x.empty == False, "the dataframe is empty"
             
             #testing for gradeitemcategoryID with Numeric validator
+            print("test for NumericID:\n")
             x = get_base_column(df, "graDeitemcategoryId")
-            print(x,'\n')
-            
             assert x.empty == False, "the dataframe is empty"
         
             #testing for gradeLastmodified with Date validator
+            print("test for Date:\n")
             x = get_base_column(df, "gradeLastModifIed")
-            print(x, '\n')
-            
             assert x.empty == False, "the dataframe is empty"
 
+
+            print("test for CRN:\n")
             x = get_base_column(df, "CRN")
+            assert x.empty == False, "the datafrme is empty"
             
         
     
