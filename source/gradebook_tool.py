@@ -8,6 +8,11 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
+import os
+from PyQt5.QtWidgets import QTreeWidgetItem,  QFileSystemModel, QTreeView
+
+
+ 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -109,46 +114,46 @@ class Ui_MainWindow(object):
         item_0.setCheckState(0, QtCore.Qt.PartiallyChecked)
         item_1 = QtWidgets.QTreeWidgetItem(item_0)
         item_1.setCheckState(0, QtCore.Qt.PartiallyChecked)
-        item_2 = QtWidgets.QTreeWidgetItem(item_1)
-        item_2.setCheckState(0, QtCore.Qt.PartiallyChecked)
-        item_3 = QtWidgets.QTreeWidgetItem(item_2)
-        item_3.setCheckState(0, QtCore.Qt.PartiallyChecked)
-        item_4 = QtWidgets.QTreeWidgetItem(item_3)
-        item_4.setCheckState(0, QtCore.Qt.Checked)
-        item_4 = QtWidgets.QTreeWidgetItem(item_3)
+        #item_2 = QtWidgets.QTreeWidgetItem(item_1)
+        #item_2.setCheckState(0, QtCore.Qt.PartiallyChecked)
+        #item_3 = QtWidgets.QTreeWidgetItem(item_2)
+        #item_3.setCheckState(0, QtCore.Qt.PartiallyChecked)
+        #item_4 = QtWidgets.QTreeWidgetItem(item_3)
+        #item_4.setCheckState(0, QtCore.Qt.Checked)
+        #item_4 = QtWidgets.QTreeWidgetItem(item_3)
         brush = QtGui.QBrush(QtGui.QColor(231, 231, 231))
         brush.setStyle(QtCore.Qt.NoBrush)
-        item_4.setBackground(0, brush)
-        item_4.setCheckState(0, QtCore.Qt.PartiallyChecked)
-        item_4.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
-        item_4 = QtWidgets.QTreeWidgetItem(item_3)
-        item_4.setCheckState(0, QtCore.Qt.Checked)
-        item_4 = QtWidgets.QTreeWidgetItem(item_3)
-        item_4.setCheckState(0, QtCore.Qt.Checked)
-        item_4 = QtWidgets.QTreeWidgetItem(item_3)
-        item_4.setCheckState(0, QtCore.Qt.Checked)
-        item_3 = QtWidgets.QTreeWidgetItem(item_2)
-        item_3.setCheckState(0, QtCore.Qt.PartiallyChecked)
-        item_4 = QtWidgets.QTreeWidgetItem(item_3)
-        item_4.setCheckState(0, QtCore.Qt.Checked)
-        item_4 = QtWidgets.QTreeWidgetItem(item_3)
-        item_4.setCheckState(0, QtCore.Qt.PartiallyChecked)
-        item_4 = QtWidgets.QTreeWidgetItem(item_3)
-        item_4.setCheckState(0, QtCore.Qt.PartiallyChecked)
-        item_3 = QtWidgets.QTreeWidgetItem(item_2)
-        item_3.setCheckState(0, QtCore.Qt.Checked)
-        item_2 = QtWidgets.QTreeWidgetItem(item_1)
-        item_2.setCheckState(0, QtCore.Qt.PartiallyChecked)
-        item_3 = QtWidgets.QTreeWidgetItem(item_2)
-        item_3.setCheckState(0, QtCore.Qt.PartiallyChecked)
-        item_3 = QtWidgets.QTreeWidgetItem(item_2)
-        item_3.setCheckState(0, QtCore.Qt.PartiallyChecked)
-        item_3 = QtWidgets.QTreeWidgetItem(item_2)
-        item_3.setCheckState(0, QtCore.Qt.Checked)
-        item_2 = QtWidgets.QTreeWidgetItem(item_1)
-        item_2.setCheckState(0, QtCore.Qt.Unchecked)
-        item_3 = QtWidgets.QTreeWidgetItem(item_2)
-        item_3 = QtWidgets.QTreeWidgetItem(item_2)
+        #item_4.setBackground(0, brush)
+        #item_4.setCheckState(0, QtCore.Qt.PartiallyChecked)
+        #item_4.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+        #item_4 = QtWidgets.QTreeWidgetItem(item_3)
+        #item_4.setCheckState(0, QtCore.Qt.Checked)
+        #item_4 = QtWidgets.QTreeWidgetItem(item_3)
+        #item_4.setCheckState(0, QtCore.Qt.Checked)
+        #item_4 = QtWidgets.QTreeWidgetItem(item_3)
+        #item_4.setCheckState(0, QtCore.Qt.Checked)
+        #item_3 = QtWidgets.QTreeWidgetItem(item_2)
+        #item_3.setCheckState(0, QtCore.Qt.PartiallyChecked)
+        #item_4 = QtWidgets.QTreeWidgetItem(item_3)
+        #item_4.setCheckState(0, QtCore.Qt.Checked)
+        #item_4 = QtWidgets.QTreeWidgetItem(item_3)
+        #item_4.setCheckState(0, QtCore.Qt.PartiallyChecked)
+        #item_4 = QtWidgets.QTreeWidgetItem(item_3)
+        #item_4.setCheckState(0, QtCore.Qt.PartiallyChecked)
+        #item_3 = QtWidgets.QTreeWidgetItem(item_2)
+        #item_3.setCheckState(0, QtCore.Qt.Checked)
+        #item_2 = QtWidgets.QTreeWidgetItem(item_1)
+        #item_2.setCheckState(0, QtCore.Qt.PartiallyChecked)
+        #item_3 = QtWidgets.QTreeWidgetItem(item_2)
+        #item_3.setCheckState(0, QtCore.Qt.PartiallyChecked)
+        #item_3 = QtWidgets.QTreeWidgetItem(item_2)
+        #item_3.setCheckState(0, QtCore.Qt.PartiallyChecked)
+        #item_3 = QtWidgets.QTreeWidgetItem(item_2)
+        #item_3.setCheckState(0, QtCore.Qt.Checked)
+        #item_2 = QtWidgets.QTreeWidgetItem(item_1)
+        #item_2.setCheckState(0, QtCore.Qt.Unchecked)
+        #item_3 = QtWidgets.QTreeWidgetItem(item_2)
+        #item_3 = QtWidgets.QTreeWidgetItem(item_2)
         item_1 = QtWidgets.QTreeWidgetItem(item_0)
         item_1 = QtWidgets.QTreeWidgetItem(item_0)
         self.gridLayout_2.addWidget(self.treeWidget, 2, 0, 3, 2)
@@ -238,18 +243,54 @@ class Ui_MainWindow(object):
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
-    def getPath(self):
+        
+    def build_tree(self):
         _translate = QtCore.QCoreApplication.translate
-        self.path = QFileDialog.getExistingDirectory(None, 'Open File')
-        self.lineEdit.setText(_translate("MainWindow", self.path))
-      
+        
+        item = QtWidgets.QTreeWidgetItem(self.treeWidget)
+        item.setText(0, _translate("MainWindow", os.path.basename(self.path)))
+        
+        self.recurr(self.path, item) 
+                     
+    def recurr(self,path, parent):
+        _translate = QtCore.QCoreApplication.translate
+        for folder in os.listdir(path):
+        
+            child = QtWidgets.QTreeWidgetItem(parent)
+            child.setText(0, _translate("MainWindow", folder))
+            if '.csv' in folder:
+               continue
+            else:
+                p = os.path.join(path, folder)
+                self.recurr(p, child)
+        
+        
+    def getPath(self):
+        
+        try:
+            _translate = QtCore.QCoreApplication.translate
+        
+            self.path = QFileDialog.getExistingDirectory(None, 'Open File')
+            self.lineEdit.setText(_translate("MainWindow", self.path))
+        
+            self.build_tree()
+                
+        except FileNotFoundError:
+            print('FileNotFound') #CHANGE TO LOG FILE?
+            
         return self.path
+    
+    
+
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton.setText(_translate("MainWindow", "Browse..."))
-        self.pushButton.clicked.connect(self.getPath)
+        
+        self.path = self.pushButton.clicked.connect(self.getPath)
+        
         self.label_3.setText(_translate("MainWindow", "230 Files Found"))
         self.label_4.setText(_translate("MainWindow", "138 Selected"))
         self.lineEdit.setText(_translate("MainWindow", "C:\\Users\\razzi\\Desktop\\D2L Data"))
@@ -285,32 +326,34 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "201930 - Summer 2019"))
         self.listWidget_2.setSortingEnabled(__sortingEnabled)
         self.treeWidget.headerItem().setText(0, _translate("MainWindow", "Gradebook Data"))
-        __sortingEnabled = self.treeWidget.isSortingEnabled()
-        self.treeWidget.setSortingEnabled(False)
+        #__sortingEnabled = self.treeWidget.isSortingEnabled()
+        #self.treeWidget.setSortingEnabled(False)
+        
+        
         self.treeWidget.topLevelItem(0).setText(0, _translate("MainWindow", "D2L Data"))
-        self.treeWidget.topLevelItem(0).child(0).setText(0, _translate("MainWindow", "A&S"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).setText(0, _translate("MainWindow", "AAST"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).child(0).setText(0, _translate("MainWindow", "Archived"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).child(0).child(0).setText(0, _translate("MainWindow", "Fall 17"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).child(0).child(1).setText(0, _translate("MainWindow", "Fall 18"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).child(0).child(2).setText(0, _translate("MainWindow", "Spring 18"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).child(0).child(3).setText(0, _translate("MainWindow", "Summer 17"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).child(0).child(4).setText(0, _translate("MainWindow", "Summer 18"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).child(1).setText(0, _translate("MainWindow", "Spring 19"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).child(1).child(0).setText(0, _translate("MainWindow", "AllGradesWithWithdrawnStudents_20190509_182623_LEAD111-50699-201920.csv"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).child(1).child(1).setText(0, _translate("MainWindow", "AllGradesWithWithdrawnStudents_20190509_182623_LEAD123-28394-201920.csv"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).child(1).child(2).setText(0, _translate("MainWindow", "AllGradesWithWithdrawnStudents_20190509_182623_MILS231-28239-201920.csv"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).child(2).setText(0, _translate("MainWindow", "Summer 19"))
-        self.treeWidget.topLevelItem(0).child(0).child(1).setText(0, _translate("MainWindow", "BCA"))
-        self.treeWidget.topLevelItem(0).child(0).child(1).child(0).setText(0, _translate("MainWindow", "Archived"))
-        self.treeWidget.topLevelItem(0).child(0).child(1).child(1).setText(0, _translate("MainWindow", "Spring 19"))
-        self.treeWidget.topLevelItem(0).child(0).child(1).child(2).setText(0, _translate("MainWindow", "Summer 19"))
-        self.treeWidget.topLevelItem(0).child(0).child(2).setText(0, _translate("MainWindow", "CTL"))
-        self.treeWidget.topLevelItem(0).child(0).child(2).child(0).setText(0, _translate("MainWindow", "Archived"))
-        self.treeWidget.topLevelItem(0).child(0).child(2).child(1).setText(0, _translate("MainWindow", "Spring 2019"))
-        self.treeWidget.topLevelItem(0).child(1).setText(0, _translate("MainWindow", "HHS"))
-        self.treeWidget.topLevelItem(0).child(2).setText(0, _translate("MainWindow", "TC"))
-        self.treeWidget.setSortingEnabled(__sortingEnabled)
+   #     self.treeWidget.topLevelItem(0).child(0).setText(0, _translate("MainWindow", "A&S"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(0).setText(0, _translate("MainWindow", "AAST"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(0).child(0).setText(0, _translate("MainWindow", "Archived"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(0).child(0).child(0).setText(0, _translate("MainWindow", "Fall 17"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(0).child(0).child(1).setText(0, _translate("MainWindow", "Fall 18"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(0).child(0).child(2).setText(0, _translate("MainWindow", "Spring 18"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(0).child(0).child(3).setText(0, _translate("MainWindow", "Summer 17"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(0).child(0).child(4).setText(0, _translate("MainWindow", "Summer 18"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(0).child(1).setText(0, _translate("MainWindow", "Spring 19"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(0).child(1).child(0).setText(0, _translate("MainWindow", "AllGradesWithWithdrawnStudents_20190509_182623_LEAD111-50699-201920.csv"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(0).child(1).child(1).setText(0, _translate("MainWindow", "AllGradesWithWithdrawnStudents_20190509_182623_LEAD123-28394-201920.csv"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(0).child(1).child(2).setText(0, _translate("MainWindow", "AllGradesWithWithdrawnStudents_20190509_182623_MILS231-28239-201920.csv"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(0).child(2).setText(0, _translate("MainWindow", "Summer 19"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(1).setText(0, _translate("MainWindow", "BCA"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(1).child(0).setText(0, _translate("MainWindow", "Archived"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(1).child(1).setText(0, _translate("MainWindow", "Spring 19"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(1).child(2).setText(0, _translate("MainWindow", "Summer 19"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(2).setText(0, _translate("MainWindow", "CTL"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(2).child(0).setText(0, _translate("MainWindow", "Archived"))
+   #     self.treeWidget.topLevelItem(0).child(0).child(2).child(1).setText(0, _translate("MainWindow", "Spring 2019"))
+   #     self.treeWidget.topLevelItem(0).child(1).setText(0, _translate("MainWindow", "HHS"))
+   #     self.treeWidget.topLevelItem(0).child(2).setText(0, _translate("MainWindow", "TC"))
+   #     self.treeWidget.setSortingEnabled(__sortingEnabled)
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Gradebook Data"))
         self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Select gradebook information"))
         self.label_5.setText(_translate("MainWindow", "Select the columns you want or click all columns"))
