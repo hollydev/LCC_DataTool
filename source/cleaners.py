@@ -17,6 +17,7 @@ from fuzzywuzzy import fuzz, process
 from messages.cleaners import CLEANERS
 from messages.system import SYSTEM, LOG
 
+
 class FUZZY_MATCHING:
 	def __init__(self, column):
 		self.column = column
@@ -127,11 +128,62 @@ class FUZZY_MATCHING:
 
 # 	def run():
 
-# class DATE:
-# 	messages = list()
-# 	errors = list()
+class DATE:
+    messages = list()
+    errors = list()
 
-# 	def __init__(self, column):
-# 		self.column = column
+    def __init__(self, column):
+        self.column = column
 
-# 	def run():
+    def run(self,gradeItemName):
+        self.read_gradeItemName(gradeItemName)
+         
+#removes date from GradeItemName and returns (date, GradeItemName)
+# param - gradeItemName (from 'gradeItemName' column in dataframe)
+# return - (date, GradeItemName) 
+#       returned GradeItemName does NOT have date in it
+    def read_gradeItemName(self,gradeItemName):
+        gradeItemName = gradeItemName.strip()
+    
+        spot = len(gradeItemName)-8
+        date = 'N/A'
+        end = gradeItemName[spot:]
+    
+        if end.isdigit() and len(end) > 4:
+            date = end
+            gradeItemName = gradeItemName[:spot]
+        else:
+            spot = len(gradeItemName)-6
+            end = gradeItemName[spot:]
+        
+            if end.isdigit() and len(end) > 4:
+                date = end
+                gradeItemName = gradeItemName[:spot]
+            
+        gradeItemName = gradeItemName.strip()
+        return date, gradeItemName
+
+    def create_date_column(self,dataFrame, list_of_dates):
+        dataFrame['Date'] = list_of_dates
+        return dataFrame
+    
+
+#remove date from grade item name and appends it in a new column titled 'Date'
+#   param - pandas dataframe
+#   return - pandas dataframe (with Date column)
+    def clean_gradeItemName(self,data):
+        list_of_dates = []
+        for index, row in data.iterrows():
+            grade_name = row['GradeItemName']
+            date = self.read_gradeItemName(grade_name)[0]
+            list_of_dates.append(date)
+        
+            data.replace(to_replace = grade_name, value = self.read_gradeItemName(grade_name)[1])
+    
+        data = self.create_date_column(data, list_of_dates)
+            
+    
+        return data
+   
+         
+    
