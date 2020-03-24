@@ -15,7 +15,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.listWidget_3.itemClicked.connect(self.item_3_click)
         self.ui.listWidget_4.itemClicked.connect(self.item_4_click)
         self.ui.pushButton_3.clicked.connect(self.all_columns_button)
-        self.ui.pushButton_2.clicked.connect(self.continue_button)
+        self.ui.pushButton_4.clicked.connect(self.continue_button)
 
     def item_3_click(self, item):
         index = self.ui.listWidget_3.row(item)
