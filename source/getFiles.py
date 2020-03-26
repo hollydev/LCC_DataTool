@@ -12,8 +12,6 @@
 from messages.system import SYSTEM
 import os
 import pandas as pd
-import tkinter as tk
-from tkinter import filedialog
 
 
 #Progress Bar
@@ -28,24 +26,22 @@ def check_file(fileName):
     
     return ret
 
+def add_unwanted_path(unwanted, path):
+    unwanted.append(path)
+    
+
 # returns True if the file is in an acceptable directory.
-def check_file_name(filename):
+def check_file_name(filename, unwanted):
     ret = True
-    # list of the directories that the user does NOT want read
-    bad_dirs = ['A&S', 'Gradebook Downloads', 'HHS', 'Archived']
-    # list of bad files
-    bad_files = ['D2L Data\TC\Spring 19\AllGradesWithWithdrawnStudents_20190509_160411_ELTE272-52355-201920.csv','D2L Data\TC\Spring 19\AllGradesWithWithdrawnStudents_20190509_160411_CITN230_caregiver.csv']
-    # if one the the directories is in the file name, function returns false
-    for dir in bad_dirs:
+    # loops through unwanted paths and skips over file in dir in apart of file name
+    for dir in unwanted:
         if dir in filename:
             ret = False
-    for file in bad_files:
-        if file in filename:
-            ret = False
+    
     return ret
 
 # returns a list of all 'good' csv files
-def get_files(myPath):
+def get_files(myPath, unwanted):
 
     files = []
     skippedFiles = 0
@@ -55,7 +51,7 @@ def get_files(myPath):
             if '.csv' in file:
                 fileName = os.path.join(root, file)
                 
-                if check_file_name(fileName):
+                if check_file_name(fileName, unwanted):
                 
                     if check_file(fileName) == True:
                         files.append(fileName)
@@ -124,9 +120,10 @@ def concat_data_frames(frames):
 
     return finalFrame
 
-def execute(path):
-    ret = 'N/A'
-    files = get_files(path)
+# unwanted is a list of all unchecked dirs and files from GUI
+def execute(path, unwanted):
+    ret = pd.DataFrame()
+    files = get_files(path, unwanted)
     
     if(len(files) == 0):
         print(SYSTEM.noFilesFound)
@@ -137,21 +134,6 @@ def execute(path):
         
     return ret
 
-def get_instructors(data):
-    ret_list = []
-    names = data['GraderFirstName'] + ' ' + data['GraderLastName']
-    
-    for name in names:   
-        if type(name) == str:
-            ret_list.append(name)
-              
-    return ret_list
-
-if __name__  == "__main__":
-    
-    data = execute(r'../../D2L Data')
-    pd.set_option('display.max_rows', None)
-    r = get_instructors(data)
     
    
     

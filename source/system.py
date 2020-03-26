@@ -9,6 +9,50 @@ import numpy
 import tqdm
 import os
 
+def get_instructors(data):
+    ret_list = []
+    names = data['GraderFirstName'] + ' ' + data['GraderLastName']
+    
+    for name in names:   
+        if type(name) == str:
+            duplicate = False
+    
+            if name in ret_list:
+                duplicate = True
+                    
+            if duplicate == False:
+                ret_list.append(name)
+              
+    return ret_list
+
+def get_termcodes(data):
+    ret_list = []
+    dates = data['CourseSectionCode']
+    
+    for date in dates:
+        if type(date) == str:
+            duplicate = False
+            date = date[14:]
+            
+            if date[-2:] == '10':
+                term = 'Fall'
+            elif date[-2:] == '20':
+                term = 'Spring'
+            else:
+                term = 'Summer'
+            
+            date = date + ' - ' + term + ' ' + date[:4] 
+                
+            
+            if date in ret_list:
+                duplicate = True
+            if duplicate == False:
+                ret_list.append(date)
+            
+    return ret_list
+    
+   
+
 
 def validate_path(checkPath):
 		""" Check if the given path is valid. Checks emptp paths and path.exists() errors.
