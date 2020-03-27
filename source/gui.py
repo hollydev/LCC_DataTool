@@ -6,7 +6,8 @@ from source.system import main
 import sys,os
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5 import QtCore
-import getFiles, system
+from source import getFiles
+from  source import system
 
 class mywindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -47,7 +48,7 @@ class mywindow(QtWidgets.QMainWindow):
             theColumns.append(self.ui.listWidget_4.item(x).text())
             x -= 1
 
-        worker = Worker(main, theColumns)
+        worker = Worker(main, theColumns, self.df)
         worker.signals.returnVal.connect(self.displayFeedBack)
         self.threadpool.start(worker)
         
@@ -171,7 +172,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.tabWidget.addTab(self.ui.tab_2, "feedback")
         self.ui.tableWidget = QtWidgets.QTableWidget(self.ui.tab_2)
         self.ui.tableWidget.setObjectName("tableWidget")
-        self.ui.tableWidget.setMinimumSize(505, 195)
+        self.ui.tableWidget.setMinimumSize(495, 175)
         self.ui.tableWidget.setColumnCount(1)
         self.ui.tableWidget.setRowCount(2)
         self.ui.tableWidget.move(130, 20)
@@ -183,10 +184,6 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_5.setObjectName("pushButton_5")
         self.ui.pushButton_5.setText("Continue")
         self.ui.pushButton_5.move(520, 230)
-        # self.ui.pushButton_6 = QtWidgets.QPushButton(self.ui.tab_2)
-        # self.ui.pushButton_6.setObjectName("pushButton_6")
-        # self.ui.pushButton_6.setText("Exceptions")
-        # self.ui.pushButton_6.move(320, 230)
        
         #create strings from the validator info returned from main 
         self.x = 0
@@ -201,6 +198,9 @@ class mywindow(QtWidgets.QMainWindow):
         stats.append(str(theInfo[self.x]).split('>')[3])
         warnings.append(str(theInfo[self.x]).split('>')[5])
 
+        self.ui.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
+        
+
         #Construct the table using the values
         self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(validator[self.x])))
         self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(stats[self.x])))
@@ -212,28 +212,32 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.tableWidget.setHorizontalHeaderLabels(header)
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
        
+        #connect continue button to function that cycles through the validated columns
         self.ui.pushButton_5.clicked.connect(lambda: self.getNextColumn(self.x, theInfo, validator, stats, warnings, errors))
         
         
 
 
 class WorkerSignals(QObject):
-
+    #
     returnVal = pyqtSignal(object)
 
                
 class Worker(QRunnable):
 
-    def __init__(self, fn, selectedColumns):
+    def __init__(self, fn, selectedColumns, df):
         super(Worker, self).__init__()
         self.fn = fn
         self.theColumns = selectedColumns
         self.signals = WorkerSignals()
+        self.theData = df
 
     @pyqtSlot()
     def run(self):
 
-        theInfo = self.fn(self.theColumns)
+        theInfo = self.fn(self.theColumns, self.theData)
+        
+        #send the info returned from validators back to the GUI from worker thread
         self.signals.returnVal.emit(theInfo)
         
 
