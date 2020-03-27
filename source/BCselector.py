@@ -122,7 +122,7 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo):
         print("no validator for %s", oneColumn)
     elif(oneColumn.lower() == "gradelastmodified"):
         print("--gradelastmodified--")
-        validateDate(columnSeries.values)
+        vInfo.append(validateDate(columnSeries))
         print("\n")
     
     
@@ -148,6 +148,8 @@ def split_and_reorganize(theDataFrame):
     frames = [df1, df2]
     theDataFrame = pd.concat(frames, sort = False, axis = 1)
     return theDataFrame
+
+
 
 def validateMixed(df):
     validateMixedID = MIXED_TEXT(df)
