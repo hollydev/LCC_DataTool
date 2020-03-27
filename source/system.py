@@ -66,16 +66,16 @@ def main(selectedColumns):
 			#Get the list of valid CSV files to read.
 			
 			data = inputs.execute(readPath)
+			readPath = "exit"
 			
-
-			break
 		else:
 			readPath = input("Path: ").lower()
 			readPath = readPath.replace("\"", "")
 
-	#Calling the Base Column Selector to handle cleaning and validation.
-	base_selector.get_base_column(data, selectedColumns) #Handle data validation.
+	#Calling the Base Column Selector to handle validation.
+	theInfo = base_selector.get_base_column(data, selectedColumns) #Handle data validation.
 
+	
 	#Handle data cleaning.
 
 	#Save files to directory
@@ -90,6 +90,7 @@ def main(selectedColumns):
 		fileWriter.write_csv(data)
 
 		#TODO Implement Oracle writer
+	return theInfo
 
 
 
