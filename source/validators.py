@@ -23,6 +23,7 @@ class NUMERIC_ID:
 		self.warnings = list()
 		self.errors = list()
 		self.values = column
+		self.name = column.name
 		self.length = len(self.values)
 		self.items  = 0
 
@@ -30,7 +31,8 @@ class NUMERIC_ID:
 		#Check unique values using pandas
 		#if self.unique == True and not self.column.nunique() == len(self.column):
 			#findUnique = True
-					
+		self.warnings.append(">")
+		self.errors.append(">")		
 		for value in self.values:
 			#Count Items
 			self.items += 1
@@ -54,8 +56,11 @@ class NUMERIC_ID:
 			if len(str(value)) != length:
 				self.warnings.append(self.validate.length % (value, len(str(value)), length))
 
+		self.warnings.append(">")
+		self.errors.append(">")
+
 	def statistics(self):
-		return(self.validated.validatorStats % ("Numeric ID", self.items, len(self.warnings), len(self.errors)))
+		return(self.validated.validatorStats % (self.name, "Numeric ID", self.items, len(self.warnings), len(self.errors)))
 
 	def get_warnings(self):
 		return(self.warnings)
@@ -72,10 +77,13 @@ class MIXED_TEXT:
 		self.warnings = list()
 		self.errors = list()
 		self.values = column
+		self.name = column.name
 		self.items = 0
 
 	def run(self):
 
+		self.warnings.append(">")
+		self.errors.append(">")
 		for value in self.values:
 			
 			self.items += 1
@@ -83,10 +91,11 @@ class MIXED_TEXT:
 			#Check that the cell is not empty
 			if value != value:
 				self.warnings.append(self.validate.expectedNonEmpty % value)
-				
+		self.warnings.append(">")
+		self.errors.append(">")
 
 	def statistics(self):
-		return(self.validated.validatorStats % ("Mixed ID", self.items, len(self.warnings), len(self.errors)))
+		return(self.validated.validatorStats % (self.name, "Mixed ID", self.items, len(self.warnings), len(self.errors)))
 	
 	def get_warnings(self):
 		return(self.warnings)
@@ -103,11 +112,14 @@ class PLAIN_TEXT:
 
 		self.warnings = list()
 		self.errors = list()
-		self.values = column
+		self.values = column.values
+		self.name = column.name
 		self.items = 0
 
 	def run(self):
 
+		self.warnings.append(">")
+		self.errors.append(">")
 		for value in self.values:
 
 			self.items += 1
@@ -123,9 +135,11 @@ class PLAIN_TEXT:
 			#check that it contains no symbols
 			if(bool(re.search(r'[@_!#$%^&*()<>?/\|}{~:\"]', str(value)[1:-1])) == True):
 				self.warnings.append(self.validate.expectedNoSymbols % value)
+		self.warnings.append(">")
+		self.errors.append(">")
 
 	def statistics(self):
-		return(self.validated.validatorStats % ("PlainText", self.items, len(self.warnings), len(self.errors)))
+		return(self.validated.validatorStats % (self.name, "PlainText", self.items, len(self.warnings), len(self.errors)))
 
 	def get_warnings(self):
 		return(self.warnings)
@@ -143,6 +157,7 @@ class DATE:
 		self.warnings = list()
 		self.errors = list()
 		self.values = column
+		self.name = column.name
 		self.r = re.compile(r'\d{4,4}-\d{2,2}-\d{2,2}T\d{2,2}:\d{2,2}:\d{2,2}.\d{3,3}')
 		self.items = 0
 
@@ -154,7 +169,7 @@ class DATE:
 				self.warnings.append(self.validate.unexpectedFormat % value)
 
 	def statistics(self):
-		return(self.validated.validatorStats % ("Date", self.items, len(self.warnings), len(self.errors)))
+		return(self.validated.validatorStats % (self.name, "Date", self.items, len(self.warnings), len(self.errors)))
 
 	def get_warnings(self):
 		return(self.warnings)
@@ -170,21 +185,15 @@ class CRN:
 		self.warnings = list()
 		self.errors = list()
 		self.values = column
+		self.name = column.name
 		self.items = 0
 
 	def run(self):
 
-		print("validate CRN")
-		
-		
-		
-
-
-		
-    	
+		print("validate CRN")	
 
 	def statistics(self):
-		return(self.validated.validatorStats % ("CRN", self.items, len(self.warnings), len(self.errors)))
+		return(self.validated.validatorStats % (self.name, "CRN", self.items, len(self.warnings), len(self.errors)))
 
 	def get_warnings(self):
 		return(self.warnings)

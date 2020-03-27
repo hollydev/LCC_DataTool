@@ -23,10 +23,11 @@ def get_base_column(dataframe, selectedColumns):
     orderedData = split_and_reorganize(dataframe)
 
     #preserve the sections and termcodes from the dataframe for use in validating CRNs
-    allSections = orderedData[["section", "crn","term"]].apply(lambda x: '-'.join(x), axis = 1) 
+    allSections = orderedData[["section", "crn","term"]]
 
     #check if the user wants to validate multiple columns
     if isinstance(selectedColumns, list): 
+        vInfo = []
         for x in selectedColumns:
             selectedColumns[count] = x.lower()
             count += 1
@@ -34,80 +35,79 @@ def get_base_column(dataframe, selectedColumns):
             df = orderedData.iloc[ : , :20]
         else:
             df = orderedData.loc[ :,selectedColumns]
-        
         for oneColumn in df:
             columnSeries = df[oneColumn]
-            callValidators(oneColumn, columnSeries, df, allSections)
+            callValidators(oneColumn, columnSeries, df, allSections, vInfo)
 
     else: #user only wants to validate one column
         selectedColumns = selectedColumns.lower()
         df = orderedData.loc[ :,selectedColumns]
-        callValidators(selectedColumns, df, df, allSections) #df is also passed in for columnseries since only one column was selected(a series)
+        callValidators(selectedColumns, df, df, allSections, vInfo) #df is also passed in for columnseries since only one column was selected(a series)
         
-
-    return df #Return the processed data frame.
+    return vInfo #Return the processed data frame.
     
-def callValidators(oneColumn, columnSeries, df, allSections):
+def callValidators(oneColumn, columnSeries, df, allSections, vInfo):
 
+    
     if(oneColumn.lower() == "username"):
         print("--username--")
-        validateMixed(columnSeries.values)
+        vInfo.append(validateMixed(columnSeries))
         print("\n")
     elif(oneColumn.lower() == "firstname"):
         print("--firtname--")
-        validatePlain(columnSeries.values)
+        vInfo.append(validatePlain(columnSeries))
         print("\n")
     elif(oneColumn.lower() == "lastname"):
         print("--lastname--")
-        validatePlain(columnSeries.values)
+        vInfo.append(validatePlain(columnSeries))
         print("\n")
     elif(oneColumn.lower() == "roleid"):
         print("--roleid--")
-        validateNum(columnSeries.values, 3)
+        vInfo.append(validateNum(columnSeries, 3))
         print("\n")
     elif(oneColumn.lower() == "rolename"):
         print("--rolename--")
-        validatePlain(columnSeries.values)
+        vInfo.append(validatePlain(columnSeries))
         print("\n")
     elif(oneColumn.lower() == "courseofferingid"):
         print("--courseofferingid--")
-        validateNum(columnSeries.values, 6)
+        vInfo.append(validateNum(columnSeries, 6))
         print("\n")
     elif(oneColumn.lower() == "courseofferingcode"):
         print("--courseofferingcode--")
-        validateMixed(columnSeries.values)
+        vInfo.append(validateMixed(columnSeries))
         print("\n")
     elif(oneColumn.lower() == "courseofferingname"):
         print("--courseofferingname--")
-        validateMixed(columnSeries.values)
+        vInfo.append(validateMixed(columnSeries))
         print("\n")
     elif(oneColumn.lower() == "section"):
         print("--section--")
-        validateMixed(columnSeries.values)
+        vInfo.append(validateMixed(columnSeries))
         print("\n")
     elif(oneColumn.lower() == "crn"):
         print("--CRN--")
-        validateCRN(columnSeries,allSections)
+        vInfo.append(validateCRN(columnSeries,allSections))
         print("\n")
     elif(oneColumn.lower() == "term"):
         print("--term--")
-        validateNum(columnSeries, 6)
+        vInfo.append(validateNum(columnSeries, 6))
         print("\n")
     elif(oneColumn.lower() == "gradeitemcategoryid"):
         print("--gradeitemcategoryid--")
-        validateNum(columnSeries, 7)
+        vInfo.append(validateNum(columnSeries, 7))
         print("\n")
     elif(oneColumn.lower() == "gradeitemcategoryname"):
         print("--gradeitemcategoryname--")
-        validateMixed(columnSeries.values)
+        vInfo.append(validateMixed(columnSeries))
         print("\n")
     elif(oneColumn.lower() == "gradeitemid"):
         print("--gradeitemid--")
-        validateNum(columnSeries.values, 7)
+        vInfo.append(validateNum(columnSeries, 7))
         print("\n")
     elif(oneColumn.lower() == "gradeitemname"):
         print("--gradeitemname--")
-        validateMixed(columnSeries.values)
+        vInfo.append(validateMixed(columnSeries))
         print("\n")
         cleaned = cleanFuzzyMatching(columnSeries)
         newName = columnSeries.name + "_cleaned"
@@ -124,6 +124,9 @@ def callValidators(oneColumn, columnSeries, df, allSections):
         print("--gradelastmodified--")
         validateDate(columnSeries.values)
         print("\n")
+    
+    
+    return(vInfo)
 
 
 
@@ -153,7 +156,7 @@ def validateMixed(df):
     warnings = validateMixedID.get_warnings()
     errors = validateMixedID.get_errors()
 
-    print(info)
+    return(info, warnings, errors)
    
 def validatePlain(df):
     validatePlainText = PLAIN_TEXT(df)
@@ -162,7 +165,7 @@ def validatePlain(df):
     warnings = validatePlainText.get_warnings()
     errors = validatePlainText.get_errors()
 
-    print(info)
+    return(info, warnings, errors)
 
 def validateNum(df, length):
     validateNumeric = NUMERIC_ID(df)
@@ -171,7 +174,7 @@ def validateNum(df, length):
     warnings = validateNumeric.get_warnings()
     errors = validateNumeric.get_errors()
 
-    print(info)
+    return(info, warnings, errors)
 
 def validateDate(df):
     validateDate = DATE(df)
@@ -180,7 +183,7 @@ def validateDate(df):
     warnings = validateDate.get_warnings()
     errors = validateDate.get_errors()
 
-    print(info)
+    return(info, warnings, errors)
 
 def validateCRN(df, allSections):
     validateCRN = CRN(df, allSections)
@@ -192,6 +195,7 @@ def validateCRN(df, allSections):
 
     print(info)
     print(warnings)
+    return(info, warnings, errors)
 
 
 def cleanFuzzyMatching(df):
