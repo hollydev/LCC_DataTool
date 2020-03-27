@@ -17,7 +17,7 @@ class SYSTEM:
 		pass
 
 	#System Statistics Messages
-	validatorStats = "Validator [%s]: Items Validated [%i]\t Warnings: [%i]\t Errors: [%i]"
+	validatorStats = ">Column [%s]>Validated with [%s]>Items Validated: [%i] Warnings: [%i] Errors: [%i]>"
 	cleanerStats = "Cleaner [{}]: Items cleaned [{}]\t Messages: [{}]\t Errors: [{}]"
 	 
 	#System Output Messages
