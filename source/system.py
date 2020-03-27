@@ -93,34 +93,15 @@ def validate_path(checkPath):
 		return True
 
 
-def main(selectedColumns):
+def main(selectedColumns, data):
 	""" 
 		Serves as a controller for the system as a whole. Manages the messages of
 		different components, and handles data calls to the GUI.
 	"""
 
-	#Getting the data
-	#####
-	## TODO: Add GUI call to windows explorer to get the reading path
-	#####
-	readPath = input("Path: ").lower()
-	readPath = readPath.replace("\"", "")
-	while(readPath != "exit" and readPath != "quit"):
-		if(validate_path(readPath) == True):
-			#Get the list of valid CSV files to read.
-			
-			data = inputs.execute(readPath)
-			readPath = "exit"
-			
-		else:
-			readPath = input("Path: ").lower()
-			readPath = readPath.replace("\"", "")
-
 	#Calling the Base Column Selector to handle validation.
 	theInfo = base_selector.get_base_column(data, selectedColumns) #Handle data validation.
 
-	
-	#Handle data cleaning.
 
 	#Save files to directory
 	writePath = input("Path: ").lower()
@@ -137,6 +118,3 @@ def main(selectedColumns):
 	return theInfo
 
 
-
-# if __name__ == '__main__':
-# 	main(selectedColumns)
