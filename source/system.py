@@ -1,15 +1,17 @@
 from messages.system import SYSTEM, LOG
-
-import source.getFiles as inputs
 import source.BCselector as base_selector
 import source.output as outputs
-
-import pandas
-import numpy
-import tqdm
-import os, math
+import os
 
 def remove_duplicates(lst):
+    '''
+    Removes duplicates from given list
+    @Params:
+        lst - a list
+    
+    @Returns:
+        re_list - a list of strings without duplicates
+    '''
     ret_list = list(set(lst))
     for element in ret_list:
         if type(element) != str:
@@ -17,12 +19,30 @@ def remove_duplicates(lst):
     return ret_list
 
 def get_instructors(data):
+    '''
+    Takes a data frame and retruns a list of unique instructor names
+    @Params:
+        data - the pandas data frame
+        
+    @Returns:
+        ret_list - a list of all unique instructor names
+    '''
     ret_list = []
     names = data['GraderFirstName'] + ' ' + data['GraderLastName']
     ret_list = remove_duplicates(names)   
     return ret_list
 
 def get_termcodes(data):
+    '''
+    Takes a pandas data frame and returns a list of unique termcodes
+    
+    @Params:
+        data - The pandas data frame
+        
+    @Returns:
+        ret_list - a list of all unique termcodes with 
+        (Spring/Fall/Summer) + year appended to each termcode
+    '''
     ret_list = []
     dates = data['CourseSectionCode']
     
@@ -41,13 +61,8 @@ def get_termcodes(data):
             ret_list.append(date)    
 
     ret_list = remove_duplicates(ret_list)  
-    
-    
     return ret_list
     
-   
-
-
 def validate_path(checkPath):
 		""" Check if the given path is valid. Checks emptp paths and path.exists() errors.
 
