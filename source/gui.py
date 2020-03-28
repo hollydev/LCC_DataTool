@@ -93,7 +93,7 @@ class mywindow(QtWidgets.QMainWindow):
             item = QtWidgets.QListWidgetItem()
             self.ui.listWidget.addItem(item)
             item = self.ui.listWidget.item(index)
-            item.setText(_translate("MainWindow", instructor))
+            item.setText(_translate("MainWindow", str(instructor)))
             index = index + 1
             
     def print_termcodes(self):
@@ -103,7 +103,7 @@ class mywindow(QtWidgets.QMainWindow):
             item = QtWidgets.QListWidgetItem()
             self.ui.listWidget_2.addItem(item)
             item = self.ui.listWidget_2.item(index)
-            item.setText(_translate("MainWindow", term))
+            item.setText(_translate("MainWindow", str(term)))
             index = index + 1
             
             

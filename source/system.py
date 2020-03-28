@@ -7,22 +7,19 @@ import source.output as outputs
 import pandas
 import numpy
 import tqdm
-import os
+import os, math
+
+def remove_duplicates(lst):
+    ret_list = list(set(lst))
+    for element in ret_list:
+        if type(element) != str:
+            ret_list.remove(element)
+    return ret_list
 
 def get_instructors(data):
     ret_list = []
     names = data['GraderFirstName'] + ' ' + data['GraderLastName']
-    
-    for name in names:   
-        if type(name) == str:
-            duplicate = False
-    
-            if name in ret_list:
-                duplicate = True
-                    
-            if duplicate == False:
-                ret_list.append(name)
-              
+    ret_list = remove_duplicates(names)   
     return ret_list
 
 def get_termcodes(data):
@@ -31,8 +28,7 @@ def get_termcodes(data):
     
     for date in dates:
         if type(date) == str:
-            duplicate = False
-            date = date[14:]
+            date = date[-6:]
             
             if date[-2:] == '10':
                 term = 'Fall'
@@ -42,13 +38,11 @@ def get_termcodes(data):
                 term = 'Summer'
             
             date = date + ' - ' + term + ' ' + date[:4] 
-                
-            
-            if date in ret_list:
-                duplicate = True
-            if duplicate == False:
-                ret_list.append(date)
-            
+            ret_list.append(date)    
+
+    ret_list = remove_duplicates(ret_list)  
+    
+    
     return ret_list
     
    
