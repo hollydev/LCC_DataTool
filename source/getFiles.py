@@ -134,18 +134,6 @@ def execute(path, unwanted):
         
     return ret
 
-
-if __name__ == "__main__": 
-    path = r'../../D2L data'
-    unwanted = ['A&S', 'Gradebook Downloads', 'HHS', 'Archived']
-    pd = execute(path, unwanted)
-    l = pd['GradeValue']
-    index = 0
-    for i in l:
-        
-        print(i, ' -- ', pd['CourseOfferingCode'][index])
-            
-        index = index + 1
     
    
     
