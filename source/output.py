@@ -14,7 +14,7 @@ import numpy as np
 import csv
 import pickle
 import os
-import cx_Oracle
+#import cx_Oracle
 
 from messages.system import SYSTEM, LOG
 
