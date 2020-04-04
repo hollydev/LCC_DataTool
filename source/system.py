@@ -29,7 +29,10 @@ def get_instructors(data):
     '''
     ret_list = []
     names = data['GraderFirstName'] + ' ' + data['GraderLastName']
+    
     ret_list = remove_duplicates(names)   
+    ret_list.sort()
+    
     return ret_list
 
 def get_termcodes(data):
@@ -61,6 +64,8 @@ def get_termcodes(data):
             ret_list.append(date)    
 
     ret_list = remove_duplicates(ret_list)  
+    ret_list.sort()
+    
     return ret_list
     
 def validate_path(checkPath):
@@ -101,6 +106,12 @@ def validate_path(checkPath):
 
 		return True
 
+def output(data):
+    #Create an output object
+    out = outputs.FILE_WRITER()
+    configs = out.get_db_config()
+    
+    return configs
 
 def main(selectedColumns, data):
 	""" 
@@ -111,7 +122,9 @@ def main(selectedColumns, data):
 	#Calling the Base Column Selector to handle validation.
 	theInfo = base_selector.get_base_column(data, selectedColumns) #Handle data validation.
 
-
+    
+	return theInfo
+"""
 	#Save files to directory
 	writePath = input("Path: ").lower()
 	writePath = writePath.replace("\"", "")
@@ -124,6 +137,4 @@ def main(selectedColumns, data):
 		fileWriter.write_csv(data)
 
 		#TODO Implement Oracle writer
-	return theInfo
-
-
+    """

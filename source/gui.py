@@ -7,7 +7,8 @@ import sys,os
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5 import QtCore
 from source import getFiles
-from  source import system
+from source import system
+from source import output
 
 class mywindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -15,15 +16,19 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-
+        #Modify any starting UI parameters
+        self.start_up()
+        
         #Code for handling widgets on "column configuration" window
         self.ui.listWidget_3.itemClicked.connect(self.item_3_click)
         self.ui.listWidget_4.itemClicked.connect(self.item_4_click)
         self.ui.pushButton_3.clicked.connect(self.all_columns_button)
         self.ui.pushButton_4.clicked.connect(self.validate_button)
+        self.ui.pushButton_4.clicked.connect(self.setup_output)
 
         self.ui.pushButton.clicked.connect(self.getPath)
         self.ui.buttonBox.clicked.connect(self.apply_button)
+        
     def item_3_click(self, item):
         index = self.ui.listWidget_3.row(item)
         self.ui.listWidget_4.addItem(self.ui.listWidget_3.takeItem(index))
@@ -39,7 +44,12 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.listWidget_4.addItem(oneItem)
             x -= 1
         
-
+    def start_up(self):
+        self.ui.tabWidget.setTabEnabled(1, False)
+        self.ui.tabWidget.setTabEnabled(2, False)
+        self.ui.tabWidget.setTabEnabled(3, False)
+        self.ui.buttonBox.setEnabled(False)
+    
     def validate_button(self):
         self.threadpool = QThreadPool()
         theColumns = []
@@ -52,6 +62,11 @@ class mywindow(QtWidgets.QMainWindow):
         worker.signals.returnVal.connect(self.displayFeedBack)
         self.threadpool.start(worker)
         
+    def update_selected_text(self):
+        selectedCount = len(self.ui.treeWidget.selectedItems())
+        print(selectedCount)
+        self.ui.label_4.setText("{} selected".format(selectedCount))
+        
     def getPath(self):
         self.tree_dict = {}
         self.ui.item = QtWidgets.QTreeWidgetItem(self.ui.treeWidget)
@@ -63,7 +78,11 @@ class mywindow(QtWidgets.QMainWindow):
             self.countFiles = 0
             self.numFiles = self.build_tree()
             self.ui.label_3.setText(_translate("MainWindow",('Files Found: '+str(self.countFiles))))
-                 
+            
+            self.ui.treeWidget.itemSelectionChanged.connect(self.update_selected_text)
+            
+            self.ui.buttonBox.setEnabled(True)
+            
         except FileNotFoundError:
             print('FileNotFound') #CHANGE TO LOG FILE?
             
@@ -84,28 +103,46 @@ class mywindow(QtWidgets.QMainWindow):
             self.print_instructors()
             self.print_termcodes()
             
+            self.ui.tabWidget.setTabEnabled(1, True)
             
             
     def print_instructors(self):
         _translate = QtCore.QCoreApplication.translate
         index = 0
-        for instructor in system.get_instructors(self.df):
+        
+        self.ui.listWidget.clear()
+        instructorList = system.get_instructors(self.df)
+        
+        if(instructorList == None):
+            instructorList = []
+            
+        for instructor in instructorList:
             item = QtWidgets.QListWidgetItem()
             self.ui.listWidget.addItem(item)
             item = self.ui.listWidget.item(index)
             item.setText(_translate("MainWindow", str(instructor)))
             index = index + 1
-            
+           
+        self.ui.label.setText("Instructors ({})".format(len(instructorList)))
+        
     def print_termcodes(self):
         _translate = QtCore.QCoreApplication.translate
         index = 0
-        for term in system.get_termcodes(self.df):
+        
+        self.ui.listWidget_2.clear()
+        termList = system.get_termcodes(self.df)
+        
+        if(termList == None):
+            termList = []
+            
+        for term in termList:
             item = QtWidgets.QListWidgetItem()
             self.ui.listWidget_2.addItem(item)
             item = self.ui.listWidget_2.item(index)
             item.setText(_translate("MainWindow", str(term)))
             index = index + 1
             
+        self.ui.label_2.setText("Terms ({})".format(len(termList)))
             
     def build_tree(self):
         _translate = QtCore.QCoreApplication.translate
@@ -163,13 +200,11 @@ class mywindow(QtWidgets.QMainWindow):
             validator.clear()
             stats.clear()
             warnings.clear()
-            
-
 
     def displayFeedBack(self, theInfo):
-
+    
         #Create the feedback tab with a table widget
-        self.ui.tabWidget.addTab(self.ui.tab_2, "feedback")
+        self.ui.tabWidget.insertTab(2, self.ui.tab_2, "Feedback")
         self.ui.tableWidget = QtWidgets.QTableWidget(self.ui.tab_2)
         self.ui.tableWidget.setObjectName("tableWidget")
         self.ui.tableWidget.setMinimumSize(495, 175)
@@ -212,15 +247,42 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.tableWidget.setHorizontalHeaderLabels(header)
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
        
+        #Enable this, and the output tab for the user
+        self.ui.tabWidget.setTabEnabled(2, True)
+        self.ui.tabWidget.setTabEnabled(3, True)
+        
+        #Force the view to the feedback screen
+        self.ui.tabWidget.setCurrentIndex(2)
+        
         #connect continue button to function that cycles through the validated columns
         self.ui.pushButton_5.clicked.connect(lambda: self.getNextColumn(self.x, theInfo, validator, stats, warnings, errors))
         
+    def setup_output(self, configs):
+        #Get a file writer object
+        self.output = output.FILE_WRITER()
+                
+        #Get the found configurations
+        configs = self.output.get_db_config()
         
-
+        if(configs != None):
+            #Display the found configurations
+            self.ui.usernameLabel.setText("Username: {}".format(configs["user"]))
+            self.ui.TNSLabel.setText("TNS Name: {}".format(configs["tns"]))
+            #Fallback configuration
+            self.ui.serviceLabel.setText("Service: {}".format(configs["service"]))
+            self.ui.hostnameLabel.setText("Hostname: {}".format(configs["hostname"]))
+            self.ui.portLabel.setText("Port: {}".format(configs["port"]))
+            
+        
+        #DB Status Message
+        self.ui.DBConnectionStatusLabel.setText("Status: {}".format(self.output.dbStatus))
 
 class WorkerSignals(QObject):
     #
     returnVal = pyqtSignal(object)
+    
+    
+    # dbConfigs = pyqtSignal(object)
 
                
 class Worker(QRunnable):
@@ -239,15 +301,16 @@ class Worker(QRunnable):
         
         #send the info returned from validators back to the GUI from worker thread
         self.signals.returnVal.emit(theInfo)
-        
 
-        
-
-
+    # @pyqtSlot()
+    # def save(self):
     
-
+        # configs = self.fn(self.theData)
         
-                
+        # Send the connection configurations read to the GUI
+        # self.signals.dbConfigs.emit(configs)
+        
+    
 if __name__ == "__main__":       
     app = QtWidgets.QApplication([])
     application = mywindow()

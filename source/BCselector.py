@@ -202,7 +202,7 @@ def validateCRN(df, allSections):
 
 def cleanFuzzyMatching(df):
     cleanFuzzyMatching = FUZZY_MATCHING(df)
-    cleanedColumn = cleanFuzzyMatching.run(threshold=80, master_n=2000)
+    cleanedColumn = cleanFuzzyMatching.run(threshold=80, master_n=20)
 
     info = cleanFuzzyMatching.statistics()
     warnings = cleanFuzzyMatching.get_warnings()
