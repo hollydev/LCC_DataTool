@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget, QHeaderView
+from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget, QHeaderView, QVBoxLayout
 from PyQt5.QtCore import QRunnable, QThreadPool, QObject, pyqtSignal, pyqtSlot
 from .gradebook_tool import Ui_MainWindow
 from source.system import main
@@ -207,7 +207,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.tabWidget.insertTab(2, self.ui.tab_2, "Feedback")
         self.ui.tableWidget = QtWidgets.QTableWidget(self.ui.tab_2)
         self.ui.tableWidget.setObjectName("tableWidget")
-        self.ui.tableWidget.setMinimumSize(495, 175)
+        self.ui.tableWidget.setMinimumSize(500, 195)
         self.ui.tableWidget.setColumnCount(1)
         self.ui.tableWidget.setRowCount(2)
         self.ui.tableWidget.move(130, 20)
@@ -227,6 +227,7 @@ class mywindow(QtWidgets.QMainWindow):
         stats = list()
         warnings = list()
         errors = list()
+        vBox = QVBoxLayout()
 
         header.append(str(theInfo[self.x]).split('>')[1])
         validator.append(str(theInfo[self.x]).split('>')[2])
@@ -239,13 +240,15 @@ class mywindow(QtWidgets.QMainWindow):
         #Construct the table using the values
         self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(validator[self.x])))
         self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(stats[self.x])))
+        vBox.addWidget(self.ui.tableWidget)
         self.ui.tableWidget.resizeRowsToContents()
         self.ui.tableWidget.resizeColumnsToContents()
         
 
         self.ui.tableWidget.setVerticalHeaderLabels(['Validator:', 'Info:'])
         self.ui.tableWidget.setHorizontalHeaderLabels(header)
-        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+         
        
         #Enable this, and the output tab for the user
         self.ui.tabWidget.setTabEnabled(2, True)
