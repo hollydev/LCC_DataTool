@@ -163,10 +163,14 @@ class DATE:
 
 	def run(self):
 
+		self.warnings.append(">")
+		self.errors.append(">")
 		for value in self.values:
 			self.items += 1
 			if(self.r.match(str(value)) == None):
 				self.warnings.append(self.validate.unexpectedFormat % value)
+		self.warnings.append(">")
+		self.errors.append(">")
 
 	def statistics(self):
 		return(self.validated.validatorStats % (self.name, "Date", self.items, len(self.warnings), len(self.errors)))
