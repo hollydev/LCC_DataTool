@@ -35,12 +35,12 @@ class NUMERIC_ID:
 			
 			#Validate Numeric (convert to string and remove brackets)
 			if not numpy.char.isnumeric(str(value)[1:-1]):
-				self.warnings.append(self.validate.notNumeric % value)
+				self.warnings.append(self.validate.notNumeric % (value, self.items))
 				
 
 			#Validate Length (convert value to string and remove the brackets)
 			if len(str(value)) != length:
-				self.warnings.append(self.validate.length % (value, len(str(value)), length))
+				self.warnings.append(self.validate.length % (value, len(str(value)), length, self.items))
 
 	def statistics(self):
 		return(self.validated.validatorStats % (self.name, "Numeric ID", self.items, len(self.warnings), len(self.errors)))
@@ -71,7 +71,7 @@ class MIXED_TEXT:
 
 			#Check that the cell is not empty
 			if value != value:
-				self.warnings.append(self.validate.expectedNonEmpty % value)
+				self.warnings.append(self.validate.expectedNonEmpty % (value, self.items))
 
 	def statistics(self):
 		return(self.validated.validatorStats % (self.name, "Mixed ID", self.items, len(self.warnings), len(self.errors)))
@@ -104,15 +104,15 @@ class PLAIN_TEXT:
 
 			#check that the cell is not empty
 			if(value != value):
-				self.warnings.append(self.validate.expectedNonEmpty % str(value)[1:-1])
+				self.warnings.append(self.validate.expectedNonEmpty % (str(value)[1:-1], self.items))
 
 			#check that it contains no digits
 			if(bool(re.search(r'\d', str(value))) == True):
-				self.warnings.append(self.validate.expectedTextOnly % value)
+				self.warnings.append(self.validate.expectedTextOnly % (value, self.items))
 
 			#check that it contains no symbols
 			if(bool(re.search(r'[@_!#$%^&*()<>?/\|}{~:\"]', str(value)[1:-1])) == True):
-				self.warnings.append(self.validate.expectedNoSymbols % value)
+				self.warnings.append(self.validate.expectedNoSymbols % (value, self.items))
 
 	def statistics(self):
 		return(self.validated.validatorStats % (self.name, "PlainText", self.items, len(self.warnings), len(self.errors)))
@@ -143,8 +143,9 @@ class DATE:
 		for value in self.values:
 			self.items += 1
 			if(self.r.match(str(value)) == None):
-				self.warnings.append(self.validate.unexpectedFormat % value)
-		
+				self.warnings.append(self.validate.unexpectedFormat % (value, self.items))
+
+	
 	def statistics(self):
 		return(self.validated.validatorStats % (self.name, "Date", self.items, len(self.warnings), len(self.errors)))
 
