@@ -12,13 +12,21 @@
 from messages.system import SYSTEM
 import os
 import pandas as pd
-
-
 #Progress Bar
 from tqdm import tqdm
 
-
-# returns True if the file is not a duplicate or empty.
+'''
+    check_file takes a fileName and checks if the file contains "test" in the 
+    name and if the file has a size >460
+    
+    @Params:
+        fileName - the file wanted to be checked
+        
+    @Returns:
+        ret - Boolean
+            True - if file does not contain "test" and if it's >460
+            False - if file contains test or is <460
+'''
 def check_file(fileName):
     ret = False
     if ('test' not in fileName.lower()) and (os.path.getsize(fileName) > 460):
@@ -26,11 +34,27 @@ def check_file(fileName):
     
     return ret
 
+'''
+    adds the path to the list of unwanted paths
+    
+    @Params:
+        unwanted - a list of unwanted paths (user selects in GUI)
+        path - a path to be added to the list of unwanted
+'''
 def add_unwanted_path(unwanted, path):
     unwanted.append(path)
     
-
-# returns True if the file is in an acceptable directory.
+'''
+    checks if the file is in the list of unwanted
+    
+    @Params:
+        filename - the name of the file to be checked
+        unwanted - list of directories and files wanted to be skipped
+    @Returns:
+        ret - A boolean
+            True - if file is not in unwanted
+            False - if file is in unwanted
+'''
 def check_file_name(filename, unwanted):
     ret = True
     # loops through unwanted paths and skips over file in dir in apart of file name
@@ -40,7 +64,15 @@ def check_file_name(filename, unwanted):
     
     return ret
 
-# returns a list of all 'good' csv files
+'''
+    returns a list of all valid csv files
+    
+    @Params:
+        myPath - the path to the directory
+        unwanted - a list from the user of all unwanted files or directories
+    @Returns:
+        
+'''
 def get_files(myPath, unwanted):
 
     files = []
@@ -61,11 +93,16 @@ def get_files(myPath, unwanted):
                     skippedFiles += 1
 
     print("Found {} files. ({} skipped)".format(len(files), skippedFiles))
-                    
     return files
 
-
- #individually reads the csv files and creates a list(files) of all dataframes
+'''
+    individually reads the csv files, turns them into pandas dataframes and
+    returns them in a list
+    @Params:
+        files - a list of all files to be read
+    @Returns:
+        readFiles - a list of all newly created pandas dataframes
+'''
 def get_data_frames(files):
     readFiles = []
     #Iterate using tqdm to show a progress bar.
@@ -74,13 +111,27 @@ def get_data_frames(files):
     
     return readFiles
 
-#Seperate looping function to return removed items as it iterates.
+'''
+    Seperate looping function to return removed items as it iterates.
+    
+    @Params:
+        frames - a list of dataframes
+    @Returns:
+        the removed dataframe
+'''
 def recursive_concat(frames):
     for frame in frames:
         frames.remove(frame)
         return(frame)
-
-#concatenates all dataframes into one single dataframe to be used
+        
+'''
+    concatenates all dataframes into one single dataframe to be used
+    
+    @Params:
+        frames - a list of all dataframes
+    @Returns:
+        finalFrame - one dataframe made up of all the dataframes in frames
+'''
 def concat_data_frames(frames):
     size = len(frames)
     progressBar = tqdm(total=3)
@@ -120,7 +171,20 @@ def concat_data_frames(frames):
 
     return finalFrame
 
-# unwanted is a list of all unchecked dirs and files from GUI
+'''
+    Accepts a path and a list of directories and files that are unwanted and
+    calls get_files, get_data_frames and concat_data_frames to read the files,
+    turn them into pandas data frames and then concat all the frames into one
+    data frame
+    
+    @Params:
+        path - a path to the directory with csv files
+        unwanted - a list of directories or files that the user does NOT want
+                    to be read
+    @Returns:
+        ret - the combined data frame of all the files
+                (if directory is empty, returns empty data frame)
+'''
 def execute(path, unwanted):
     ret = pd.DataFrame()
     files = get_files(path, unwanted)

@@ -27,8 +27,8 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_4.clicked.connect(self.setup_output)
 
         self.ui.pushButton.clicked.connect(self.start_up) #Reset the program flow when data is re-selected.
-        self.ui.pushButton.clicked.connect(self.getPath)
-        self.ui.buttonBox.clicked.connect(self.apply_button)
+        self.ui.pushButton.clicked.connect(self.getPath) #Browse button
+        self.ui.buttonBox.clicked.connect(self.apply_discard_buttons) #Apply/discard button
         
         #Configuring the "output" window buttons
         self.ui.pushButton_2.clicked.connect(self.db_connect)
@@ -104,18 +104,27 @@ class mywindow(QtWidgets.QMainWindow):
         for path in self.tree_dict:
             if self.tree_dict[path].checkState(0) == 0:
                 getFiles.add_unwanted_path(self.unwanted, path)
-                
-    
-    def apply_button(self): 
-        if self.path != None:
-            self.check_state()
-            self.df = getFiles.execute(self.path, self.unwanted)
-            
-            self.print_instructors()
-            self.print_termcodes()
-            
-            self.ui.tabWidget.setTabEnabled(1, True)
-            
+                    
+    def apply_discard_buttons(self, button): 
+        try:
+            sb = self.ui.buttonBox.standardButton(button)
+            _translate = QtCore.QCoreApplication.translate
+            if sb == QtWidgets.QDialogButtonBox.Apply: #APPLY CLICKED
+                self.check_state()
+                self.df = getFiles.execute(self.path, self.unwanted)
+                self.print_instructors()
+                self.print_termcodes()    
+                self.ui.tabWidget.setTabEnabled(1, True)
+            elif sb == QtWidgets.QDialogButtonBox.Discard: #DISCARD CLICKED
+                self.ui.lineEdit.clear()
+                self.ui.listWidget.clear()
+                self.ui.listWidget_2.clear()
+                self.ui.treeWidget.clear()
+                self.ui.label.setText("Instructors:")
+                self.ui.label_2.setText("Terms:")
+                self.ui.label_3.setText(_translate("MainWindow",('Files Found:    ')))
+        except AttributeError:
+            return
             
     def print_instructors(self):
         _translate = QtCore.QCoreApplication.translate
