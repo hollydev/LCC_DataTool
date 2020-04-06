@@ -317,11 +317,7 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.tableWidget.setHorizontalHeaderLabels(header)
             self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(theInfo[self.x]).split('>')[2]))
             self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(theInfo[self.x]).split('>')[3]))
-<<<<<<< HEAD
-               
-=======
             
->>>>>>> c5d6d0e01554ed7262aade7de99eebc74a480441
         else:
             self.ui.pushButton_5.setEnabled(False)
         
