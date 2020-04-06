@@ -229,7 +229,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.exceptionsList = QtWidgets.QListWidget(self.ui.tab_2)
         self.ui.exceptionsList.setObjectName("exceptionsList")
         self.ui.exceptionsList.move(150, 330)
-        self.ui.exceptionsList.setMinimumSize(350, 150)
+        self.ui.exceptionsList.setMinimumSize(550, 150)
        
         header.append(str(theInfo[0]).split('>')[1])
         
@@ -256,12 +256,10 @@ class mywindow(QtWidgets.QMainWindow):
         #Force the view to the feedback screen
         self.ui.tabWidget.setCurrentIndex(2)
         
-        #connect continue button to function that cycles through the validated columns
+        #connect the buttons to their functions
         self.ui.pushButton_5.clicked.connect(lambda: self.getNextColumn(self.x, theInfo))
         self.ui.pushButton_6.clicked.connect(lambda: self.seeExceptions(theInfo[self.x], 0))
         self.ui.pushButton_7.clicked.connect(lambda: self.seeExceptions(theInfo[self.x], 1))
-
-
 
 
     def seeExceptions(self, columnInfo, buttonId):
@@ -295,9 +293,7 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.tableWidget.setHorizontalHeaderLabels(header)
             self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(theInfo[self.x]).split('>')[2]))
             self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(theInfo[self.x]).split('>')[3]))
-            
-
-            
+               
         else:
             self.ui.pushButton_5.setEnabled(False)
           
