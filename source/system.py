@@ -18,9 +18,13 @@ def remove_duplicates(lst):
             ret_list.remove(element)
     return ret_list
 
+def get_last(element):
+    names = element.split()
+    return names[-1]
+
 def get_instructors(data):
     '''
-    Takes a data frame and retruns a list of unique instructor names
+    Takes a data frame and returns a list of unique instructor names
     @Params:
         data - the pandas data frame
         
@@ -31,8 +35,7 @@ def get_instructors(data):
     names = data['GraderFirstName'] + ' ' + data['GraderLastName']
     
     ret_list = remove_duplicates(names)   
-    ret_list.sort()
-    
+    ret_list.sort(key=get_last)
     return ret_list
 
 def get_termcodes(data):

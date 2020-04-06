@@ -26,8 +26,15 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_4.clicked.connect(self.validate_button)
         self.ui.pushButton_4.clicked.connect(self.setup_output)
 
-        self.ui.pushButton.clicked.connect(self.getPath)
-        self.ui.buttonBox.clicked.connect(self.apply_button)
+        self.ui.pushButton.clicked.connect(self.start_up) #Reset the program flow when data is re-selected.
+        self.ui.pushButton.clicked.connect(self.get_path) #Browse button
+        self.ui.buttonBox.clicked.connect(self.apply_discard_buttons) #Apply/discard button
+        
+        #Configuring the "output" window buttons
+        self.ui.pushButton_2.clicked.connect(self.db_connect)
+        self.ui.DBLoadButton.clicked.connect(self.db_load)
+        
+        self.ui.outputBrowseButton.clicked.connect(self.get_out_path)
         
     def item_3_click(self, item):
         index = self.ui.listWidget_3.row(item)
@@ -49,6 +56,10 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.tabWidget.setTabEnabled(2, False)
         self.ui.tabWidget.setTabEnabled(3, False)
         self.ui.buttonBox.setEnabled(False)
+        
+        self.df = None
+        self.output = None
+        self.outPath = None
     
     def validate_button(self):
         self.threadpool = QThreadPool()
@@ -65,9 +76,9 @@ class mywindow(QtWidgets.QMainWindow):
     def update_selected_text(self):
         selectedCount = len(self.ui.treeWidget.selectedItems())
         print(selectedCount)
-        self.ui.label_4.setText("{} selected".format(selectedCount))
+        self.ui.label_4.setText("{} Checked".format(selectedCount))
         
-    def getPath(self):
+    def get_path(self):
         self.tree_dict = {}
         self.ui.item = QtWidgets.QTreeWidgetItem(self.ui.treeWidget)
         try:
@@ -80,9 +91,8 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.label_3.setText(_translate("MainWindow",('Files Found: '+str(self.countFiles))))
             
             self.ui.treeWidget.itemSelectionChanged.connect(self.update_selected_text)
-            
+        
             self.ui.buttonBox.setEnabled(True)
-            
         except FileNotFoundError:
             print('FileNotFound') #CHANGE TO LOG FILE?
             
@@ -93,18 +103,28 @@ class mywindow(QtWidgets.QMainWindow):
         for path in self.tree_dict:
             if self.tree_dict[path].checkState(0) == 0:
                 getFiles.add_unwanted_path(self.unwanted, path)
-                
-    
-    def apply_button(self): 
-        if self.path != None:
-            self.check_state()
-            self.df = getFiles.execute(self.path, self.unwanted)
-            
-            self.print_instructors()
-            self.print_termcodes()
-            
-            self.ui.tabWidget.setTabEnabled(1, True)
-            
+                    
+    def apply_discard_buttons(self, button): 
+        try:
+            sb = self.ui.buttonBox.standardButton(button)
+            _translate = QtCore.QCoreApplication.translate
+            if sb == QtWidgets.QDialogButtonBox.Apply: #APPLY CLICKED
+                self.check_state()
+                self.df = getFiles.execute(self.path, self.unwanted)
+                self.print_instructors()
+                self.print_termcodes()    
+                self.ui.tabWidget.setTabEnabled(1, True)
+            elif sb == QtWidgets.QDialogButtonBox.Discard: #DISCARD CLICKED
+                self.ui.lineEdit.clear()
+                self.ui.listWidget.clear()
+                self.ui.listWidget_2.clear()
+                self.ui.treeWidget.clear()
+                self.ui.label.setText("Instructors:")
+                self.ui.label_2.setText("Terms:")
+                self.ui.label_3.setText(_translate("MainWindow",('Files Found:    ')))
+                self.ui.buttonBox.setEnabled(False)
+        except AttributeError:
+            return
             
     def print_instructors(self):
         _translate = QtCore.QCoreApplication.translate
@@ -148,6 +168,7 @@ class mywindow(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.ui.item.setText(0, _translate("MainWindow", os.path.basename(self.path)))
         self.ui.item.setCheckState(0, QtCore.Qt.Checked)
+        self.ui.item.setFlags(self.ui.item.flags() | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
     
         self.tree_dict[self.path] = self.ui.item
         self.recurr(self.path, self.ui.item)
@@ -162,6 +183,7 @@ class mywindow(QtWidgets.QMainWindow):
                         child = QtWidgets.QTreeWidgetItem(parent)
                         child.setText(0, _translate("MainWindow", folder))
                         child.setCheckState(0, QtCore.Qt.Checked)
+                        child.setFlags(child.flags() | QtCore.Qt.ItemIsUserCheckable)
                         self.countFiles = self.countFiles + 1
                         self.tree_dict[os.path.join(path, folder)] = child
                     continue
@@ -169,6 +191,8 @@ class mywindow(QtWidgets.QMainWindow):
                 child = QtWidgets.QTreeWidgetItem(parent)
                 child.setText(0, _translate("MainWindow", folder))
                 child.setCheckState(0, QtCore.Qt.Checked)
+                child.setFlags(child.flags() | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
+    
                 self.tree_dict[os.path.join(path, folder)] = child
                 p = os.path.join(path, folder)
                 self.recurr(p, child)
@@ -293,19 +317,68 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.tableWidget.setHorizontalHeaderLabels(header)
             self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(theInfo[self.x]).split('>')[2]))
             self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(theInfo[self.x]).split('>')[3]))
+<<<<<<< HEAD
                
+=======
+            
+>>>>>>> c5d6d0e01554ed7262aade7de99eebc74a480441
         else:
             self.ui.pushButton_5.setEnabled(False)
-          
-
-
-
+        
+    def setup_output(self):
+        #Get a file writer object
+        self.output = output.FILE_WRITER()
+                
+        #Get the found configurations
+        configs = self.output.get_db_config()
+        
+        
+        if(configs != None):
+            #Display the found configurations
+            self.ui.usernameLabel.setText("Username: {}".format(configs["user"]))
+            self.ui.TNSLabel.setText("TNS Name: {}".format(configs["tns"]))
+            #Fallback configuration
+            self.ui.serviceLabel.setText("Service: {}".format(configs["service"]))
+            self.ui.hostnameLabel.setText("Hostname: {}".format(configs["hostname"]))
+            self.ui.portLabel.setText("Port: {}".format(configs["port"]))
+            
+        
+        #DB Status Message
+        self.ui.DBConnectionStatusLabel.setText("Status: {}".format(self.output.dbStatus))
+        
+    def db_connect(self):
+        #Read DB configurations
+        configs = self.output.get_db_config()
+        
+        if(configs != None):
+            self.db_connection = self.output.connect(configs)
+        
+        #DB Status Message
+        self.ui.DBConnectionStatusLabel.setText("Status: {}".format(self.output.dbStatus))
+    
+    def db_load(self):
+        #Check connection status
+        if(self.output.dbStatus == "Connected!"):
+            #Do the DB Load
+            pass
+            
+    def get_out_path(self):        
+        try:
+            _translate = QtCore.QCoreApplication.translate
+            
+            self.outPath = QFileDialog.getSaveFileName(self, self.output.outName, '', 'CSV(*.csv)')[0] #Save only the output path
+            self.ui.outputBrowseBox.setText(_translate("MainWindow", self.outPath))
+            
+            self.output.set_path(self.outPath)
+            self.output.write_csv(self.df)
+        
+        except FileNotFoundError:
+            print('FileNotFound') #CHANGE TO LOG FILE?
+        
 class WorkerSignals(QObject):
     #
     returnVal = pyqtSignal(object)
     
-    
-    # dbConfigs = pyqtSignal(object)
 
                
 class Worker(QRunnable):
@@ -324,14 +397,6 @@ class Worker(QRunnable):
         
         #send the info returned from validators back to the GUI from worker thread
         self.signals.returnVal.emit(theInfo)
-
-    # @pyqtSlot()
-    # def save(self):
-    
-        # configs = self.fn(self.theData)
-        
-        # Send the connection configurations read to the GUI
-        # self.signals.dbConfigs.emit(configs)
         
     
 if __name__ == "__main__":       
