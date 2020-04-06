@@ -27,7 +27,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_4.clicked.connect(self.setup_output)
 
         self.ui.pushButton.clicked.connect(self.start_up) #Reset the program flow when data is re-selected.
-        self.ui.pushButton.clicked.connect(self.getPath) #Browse button
+        self.ui.pushButton.clicked.connect(self.get_path) #Browse button
         self.ui.buttonBox.clicked.connect(self.apply_discard_buttons) #Apply/discard button
         
         #Configuring the "output" window buttons
@@ -78,7 +78,7 @@ class mywindow(QtWidgets.QMainWindow):
         print(selectedCount)
         self.ui.label_4.setText("{} Checked".format(selectedCount))
         
-    def getPath(self):
+    def get_path(self):
         self.tree_dict = {}
         self.ui.item = QtWidgets.QTreeWidgetItem(self.ui.treeWidget)
         try:
@@ -91,9 +91,8 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.label_3.setText(_translate("MainWindow",('Files Found: '+str(self.countFiles))))
             
             self.ui.treeWidget.itemSelectionChanged.connect(self.update_selected_text)
-            
+        
             self.ui.buttonBox.setEnabled(True)
-            
         except FileNotFoundError:
             print('FileNotFound') #CHANGE TO LOG FILE?
             
@@ -123,6 +122,7 @@ class mywindow(QtWidgets.QMainWindow):
                 self.ui.label.setText("Instructors:")
                 self.ui.label_2.setText("Terms:")
                 self.ui.label_3.setText(_translate("MainWindow",('Files Found:    ')))
+                self.ui.buttonBox.setEnabled(False)
         except AttributeError:
             return
             
