@@ -26,8 +26,15 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_4.clicked.connect(self.validate_button)
         self.ui.pushButton_4.clicked.connect(self.setup_output)
 
+        self.ui.pushButton.clicked.connect(self.start_up) #Reset the program flow when data is re-selected.
         self.ui.pushButton.clicked.connect(self.getPath)
         self.ui.buttonBox.clicked.connect(self.apply_button)
+        
+        #Configuring the "output" window buttons
+        self.ui.pushButton_2.clicked.connect(self.db_connect)
+        self.ui.DBLoadButton.clicked.connect(self.db_load)
+        
+        self.ui.outputBrowseButton.clicked.connect(self.get_out_path)
         
     def item_3_click(self, item):
         index = self.ui.listWidget_3.row(item)
@@ -49,6 +56,10 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.tabWidget.setTabEnabled(2, False)
         self.ui.tabWidget.setTabEnabled(3, False)
         self.ui.buttonBox.setEnabled(False)
+        
+        self.df = None
+        self.output = None
+        self.outPath = None
     
     def validate_button(self):
         self.threadpool = QThreadPool()
@@ -65,7 +76,7 @@ class mywindow(QtWidgets.QMainWindow):
     def update_selected_text(self):
         selectedCount = len(self.ui.treeWidget.selectedItems())
         print(selectedCount)
-        self.ui.label_4.setText("{} selected".format(selectedCount))
+        self.ui.label_4.setText("{} Checked".format(selectedCount))
         
     def getPath(self):
         self.tree_dict = {}
@@ -148,6 +159,7 @@ class mywindow(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.ui.item.setText(0, _translate("MainWindow", os.path.basename(self.path)))
         self.ui.item.setCheckState(0, QtCore.Qt.Checked)
+        self.ui.item.setFlags(self.ui.item.flags() | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
     
         self.tree_dict[self.path] = self.ui.item
         self.recurr(self.path, self.ui.item)
@@ -162,6 +174,7 @@ class mywindow(QtWidgets.QMainWindow):
                         child = QtWidgets.QTreeWidgetItem(parent)
                         child.setText(0, _translate("MainWindow", folder))
                         child.setCheckState(0, QtCore.Qt.Checked)
+                        child.setFlags(child.flags() | QtCore.Qt.ItemIsUserCheckable)
                         self.countFiles = self.countFiles + 1
                         self.tree_dict[os.path.join(path, folder)] = child
                     continue
@@ -169,6 +182,8 @@ class mywindow(QtWidgets.QMainWindow):
                 child = QtWidgets.QTreeWidgetItem(parent)
                 child.setText(0, _translate("MainWindow", folder))
                 child.setCheckState(0, QtCore.Qt.Checked)
+                child.setFlags(child.flags() | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
+    
                 self.tree_dict[os.path.join(path, folder)] = child
                 p = os.path.join(path, folder)
                 self.recurr(p, child)
@@ -260,12 +275,13 @@ class mywindow(QtWidgets.QMainWindow):
         #connect continue button to function that cycles through the validated columns
         self.ui.pushButton_5.clicked.connect(lambda: self.getNextColumn(self.x, theInfo, validator, stats, warnings, errors))
         
-    def setup_output(self, configs):
+    def setup_output(self):
         #Get a file writer object
         self.output = output.FILE_WRITER()
                 
         #Get the found configurations
         configs = self.output.get_db_config()
+        
         
         if(configs != None):
             #Display the found configurations
@@ -279,13 +295,43 @@ class mywindow(QtWidgets.QMainWindow):
         
         #DB Status Message
         self.ui.DBConnectionStatusLabel.setText("Status: {}".format(self.output.dbStatus))
-
+        
+    def db_connect(self):
+        #Read DB configurations
+        configs = self.output.get_db_config()
+        
+        if(configs != None):
+            #DB Status Message
+            self.ui.DBConnectionStatusLabel.setText("Status: Connecting...")
+            self.db_connection = self.output.connect(configs)
+        
+        #DB Status Message
+        self.ui.DBConnectionStatusLabel.setText("Status: {}".format(self.output.dbStatus))
+    
+    def db_load(self):
+        #Check connection status
+        if(self.output.dbStatus == "Connected!"):
+            #Do the DB Load
+            pass
+            
+    def get_out_path(self):        
+        try:
+            _translate = QtCore.QCoreApplication.translate
+            
+            self.outPath = QFileDialog.getSaveFileName(self, self.output.outName, '', 'CSV(*.csv)')[0] #Save only the output path
+            self.ui.outputBrowseBox.setText(_translate("MainWindow", self.outPath))
+            
+            self.output.set_path(self.outPath)
+            self.output.write_csv(self.df)
+        
+        except FileNotFoundError:
+            print('FileNotFound') #CHANGE TO LOG FILE?
+        
+       
 class WorkerSignals(QObject):
     #
     returnVal = pyqtSignal(object)
     
-    
-    # dbConfigs = pyqtSignal(object)
 
                
 class Worker(QRunnable):
@@ -304,14 +350,6 @@ class Worker(QRunnable):
         
         #send the info returned from validators back to the GUI from worker thread
         self.signals.returnVal.emit(theInfo)
-
-    # @pyqtSlot()
-    # def save(self):
-    
-        # configs = self.fn(self.theData)
-        
-        # Send the connection configurations read to the GUI
-        # self.signals.dbConfigs.emit(configs)
         
     
 if __name__ == "__main__":       

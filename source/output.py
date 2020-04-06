@@ -14,7 +14,7 @@ import numpy as np
 import csv
 import pickle
 import os
-#import cx_Oracle
+import cx_Oracle
 
 from messages.system import SYSTEM, LOG
 
@@ -48,7 +48,7 @@ class FILE_WRITER():
         #Validate the path on initialization.
         if outPath == None:
             #Get the current path as output path
-            self.path = os.getcwd()
+            self.outPath = os.getcwd()
         elif self.validate_path(outPath):
             #Check to make sure that the path includes a '/' or '\'
             if(outPath.endswith("\\") == False or outPath.endswith("/") == False):
@@ -127,12 +127,21 @@ class FILE_WRITER():
 
         if(cls.validate_path(newPath)):
             #Check to make sure that the path includes a '/' or '\'
-            if(outPath.endswith("\\") == False or outPath.endswith("\/") == False):
-                outPath = outPath + "\\" #Assign the windows slash to paths that need it.
-
-            cls.outPath = newPath
+            if(newPath.endswith("\\") == False or newPath.endswith("\/") == False):
+                #Check if the path has a file name associated
+                if(newPath.endswith(".csv")):
+                    splitPath = newPath.rsplit("/", 1) #Split on the last slash
+                    cls.outPath = splitPath[0] + "\\" #Assign the windows slash
+                    cls.outName = splitPath[1]
+                else:
+                    cls.outPath = newPath + "\\" #Assign the windows slash to paths that need it.
             return True
-        else:
+        else:        
+            #Check if the path has a file name associated
+            if(newPath.endswith(".csv")):
+                splitPath = newPath.rsplit("/", 1) #Split on the last slash
+                cls.outPath = splitPath[0] + "\\" #Assign the windows slash
+                cls.outName = splitPath[1]
             return False
 
         print("uncaught case")
@@ -223,7 +232,12 @@ class FILE_WRITER():
                            "gradecomments"]
                            
             cleanFile = file[keptColumns]
-            cleanFile.to_csv(cls.outPath + cls.outName + ".csv", index=False)
+            
+            #Check if the filename has an extension
+            if(cls.outName.endswith(".csv")):
+                cleanFile.to_csv(cls.outPath + cls.outName, index=False)
+            else:
+                cleanFile.to_csv(cls.outPath + cls.outName + ".csv", index=False)
         
         #Save dict object using CSV
         elif (isinstance(file, dict)):
@@ -332,5 +346,5 @@ class FILE_WRITER():
                 cls.dbStatus  = "Connected!"
                 return connection
             except cx_Oracle.DatabaseError:
-                cls.dbStatus = "Connection file not found!"
+                cls.dbStatus = "Unable to Connect"
                 return None
