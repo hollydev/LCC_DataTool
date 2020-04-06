@@ -10,6 +10,7 @@ import pandas as pd
 import glob as gb 
 from source.validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID, CRN
 from source.cleaners import FUZZY_MATCHING
+from collections import namedtuple
 #from cleaners import GRADE_ITEM_NAME
 
 
@@ -124,8 +125,7 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo):
         print("--gradelastmodified--")
         vInfo.append(validateDate(columnSeries))
         print("\n")
-    
-    
+     
     return(vInfo)
 
 
@@ -157,8 +157,11 @@ def validateMixed(df):
     info = validateMixedID.statistics()
     warnings = validateMixedID.get_warnings()
     errors = validateMixedID.get_errors()
+    stat = namedtuple('name', 'err warn')
 
-    return(info, warnings, errors)
+    theStats = stat(err = errors, warn = warnings)
+
+    return(info, theStats)
    
 def validatePlain(df):
     validatePlainText = PLAIN_TEXT(df)
@@ -166,8 +169,11 @@ def validatePlain(df):
     info = validatePlainText.statistics()
     warnings = validatePlainText.get_warnings()
     errors = validatePlainText.get_errors()
+    stat = namedtuple('name', 'err warn')
 
-    return(info, warnings, errors)
+    theStats = stat(err = errors, warn = warnings)
+
+    return(info, theStats)
 
 def validateNum(df, length):
     validateNumeric = NUMERIC_ID(df)
@@ -175,8 +181,12 @@ def validateNum(df, length):
     info = validateNumeric.statistics()
     warnings = validateNumeric.get_warnings()
     errors = validateNumeric.get_errors()
+    stat = namedtuple('name', 'err warn')
 
-    return(info, warnings, errors)
+    theStats = stat(err = errors, warn = warnings)
+
+    return(info, theStats)
+
 
 def validateDate(df):
     validateDate = DATE(df)
@@ -184,8 +194,11 @@ def validateDate(df):
     info = validateDate.statistics()
     warnings = validateDate.get_warnings()
     errors = validateDate.get_errors()
+    stat = namedtuple('name', 'err warn')
 
-    return(info, warnings, errors)
+    theStats = stat(err = errors, warn = warnings)
+
+    return(info, theStats)
 
 def validateCRN(df, allSections):
     validateCRN = CRN(df, allSections)
@@ -194,10 +207,13 @@ def validateCRN(df, allSections):
     info = validateCRN.statistics()
     warnings = validateCRN.get_warnings()
     errors = validateCRN.get_errors()
+    stat = namedtuple('name', 'err warn')
+
+    theStats = stat(err = errors, warn = warnings)
 
     print(info)
     print(warnings)
-    return(info, warnings, errors)
+    return(info, theStats)
 
 
 def cleanFuzzyMatching(df):

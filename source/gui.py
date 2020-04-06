@@ -188,37 +188,36 @@ class mywindow(QtWidgets.QMainWindow):
                 p = os.path.join(path, folder)
                 self.recurr(p, child)
 
-    def getNextColumn(self, x, theInfo, validator, stats, warnings, errors):
         
-        if(self.x < len(theInfo)-1):    
-            self.x += 1
-            if(self.ui.checkBox_2.isChecked() == True):
-                self.ui.checkBox_2.toggle()
-                #TODO: add code for preserving info or cleaning column
+    def setup_output(self, configs):
+        #Get a file writer object
+        self.output = output.FILE_WRITER()
+                
+        #Get the found configurations
+        configs = self.output.get_db_config()
+        
+        if(configs != None):
+            #Display the found configurations
+            self.ui.usernameLabel.setText("Username: {}".format(configs["user"]))
+            self.ui.TNSLabel.setText("TNS Name: {}".format(configs["tns"]))
+            #Fallback configuration
+            self.ui.serviceLabel.setText("Service: {}".format(configs["service"]))
+            self.ui.hostnameLabel.setText("Hostname: {}".format(configs["hostname"]))
+            self.ui.portLabel.setText("Port: {}".format(configs["port"]))
             
+        
+        #DB Status Message
+        self.ui.DBConnectionStatusLabel.setText("Status: {}".format(self.output.dbStatus))
 
-            header = list()
-            header.append(str(theInfo[self.x]).split('>')[1])
-            validator.append(str(theInfo[self.x]).split('>')[2])
-            stats.append(str(theInfo[self.x]).split('>')[3])
-            warnings.append(str(theInfo[self.x]).split('>')[5])
-
-            #Construct the table using the values
-            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(validator[self.x])))
-            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(stats[self.x])))
-            
-
-            self.ui.tableWidget.setHorizontalHeaderLabels(header)
-            
-        else:
-            self.x = -1
-            validator.clear()
-            stats.clear()
-            warnings.clear()
 
     def displayFeedBack(self, theInfo):
+
+        #Initialize variables
+        self.x = 0
+        header = list()
+        vBox1 = QVBoxLayout()
     
-        #Create the feedback tab with a table widget
+        #Create the feedback tab with a table widget and list widget
         self.ui.tabWidget.insertTab(2, self.ui.tab_2, "Feedback")
         self.ui.tableWidget = QtWidgets.QTableWidget(self.ui.tab_2)
         self.ui.tableWidget.setObjectName("tableWidget")
@@ -232,30 +231,30 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.checkBox_2.move(130, 230)
         self.ui.pushButton_5 = QtWidgets.QPushButton(self.ui.tab_2)
         self.ui.pushButton_5.setObjectName("pushButton_5")
-        self.ui.pushButton_5.setText("Continue")
+        self.ui.pushButton_5.setText("Next")
         self.ui.pushButton_5.move(520, 230)
+        self.ui.pushButton_6 = QtWidgets.QPushButton(self.ui.tab_2)
+        self.ui.pushButton_6.setObjectName("pushButton_6")
+        self.ui.pushButton_6.setText("Warnings")
+        self.ui.pushButton_6.move(40,350)
+        self.ui.pushButton_7 = QtWidgets.QPushButton(self.ui.tab_2)
+        self.ui.pushButton_7.setObjectName("pushButton_7")
+        self.ui.pushButton_7.setText("Errors")
+        self.ui.pushButton_7.move(40, 390)
+        self.ui.exceptionsList = QtWidgets.QListWidget(self.ui.tab_2)
+        self.ui.exceptionsList.setObjectName("exceptionsList")
+        self.ui.exceptionsList.move(150, 330)
+        self.ui.exceptionsList.setMinimumSize(350, 150)
        
-        #create strings from the validator info returned from main 
-        self.x = 0
-        header = list()
-        validator = list()
-        stats = list()
-        warnings = list()
-        errors = list()
-        vBox = QVBoxLayout()
-
-        header.append(str(theInfo[self.x]).split('>')[1])
-        validator.append(str(theInfo[self.x]).split('>')[2])
-        stats.append(str(theInfo[self.x]).split('>')[3])
-        warnings.append(str(theInfo[self.x]).split('>')[5])
-
+        header.append(str(theInfo[0]).split('>')[1])
+        
         self.ui.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         
 
         #Construct the table using the values
-        self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(validator[self.x])))
-        self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(stats[self.x])))
-        vBox.addWidget(self.ui.tableWidget)
+        self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(theInfo[0]).split('>')[2]))
+        self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(theInfo[0]).split('>')[3]))
+        vBox1.addWidget(self.ui.tableWidget)
         self.ui.tableWidget.resizeRowsToContents()
         self.ui.tableWidget.resizeColumnsToContents()
         
@@ -273,7 +272,47 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.tabWidget.setCurrentIndex(2)
         
         #connect continue button to function that cycles through the validated columns
-        self.ui.pushButton_5.clicked.connect(lambda: self.getNextColumn(self.x, theInfo, validator, stats, warnings, errors))
+        self.ui.pushButton_5.clicked.connect(lambda: self.getNextColumn(self.x, theInfo))
+        self.ui.pushButton_6.clicked.connect(lambda: self.seeExceptions(theInfo[self.x], 0))
+        self.ui.pushButton_7.clicked.connect(lambda: self.seeExceptions(theInfo[self.x], 1))
+
+
+
+
+    def seeExceptions(self, columnInfo, buttonId):
+
+        self.ui.exceptionsList.clear()
+        i = 0
+        if(buttonId == 0):
+            for element in columnInfo[1].warn:
+                self.ui.exceptionsList.insertItem(i, element)
+                i += 1
+        else:
+            for element in columnInfo[1].err:
+                self.ui.exceptionsList.insertItem(i, element)
+                i += 1
+
+
+    def getNextColumn(self, x, theInfo):
+        
+        self.ui.exceptionsList.clear()
+
+        if(self.x < len(theInfo)-1):    
+            self.x += 1
+            if(self.ui.checkBox_2.isChecked() == True):
+                self.ui.checkBox_2.toggle()
+                #TODO: add code for preserving info or cleaning column
+            
+            header = list()
+            header.append(str(theInfo[self.x]).split('>')[1])
+           
+            #Construct the table using the values
+            self.ui.tableWidget.setHorizontalHeaderLabels(header)
+            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(theInfo[self.x]).split('>')[2]))
+            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(theInfo[self.x]).split('>')[3]))
+            
+        else:
+            self.ui.pushButton_5.setEnabled(False)
         
     def setup_output(self):
         #Get a file writer object
@@ -301,8 +340,6 @@ class mywindow(QtWidgets.QMainWindow):
         configs = self.output.get_db_config()
         
         if(configs != None):
-            #DB Status Message
-            self.ui.DBConnectionStatusLabel.setText("Status: Connecting...")
             self.db_connection = self.output.connect(configs)
         
         #DB Status Message
@@ -327,7 +364,6 @@ class mywindow(QtWidgets.QMainWindow):
         except FileNotFoundError:
             print('FileNotFound') #CHANGE TO LOG FILE?
         
-       
 class WorkerSignals(QObject):
     #
     returnVal = pyqtSignal(object)
