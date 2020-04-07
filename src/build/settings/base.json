@@ -1,0 +1,6 @@
+{
+    "app_name": "Assessment Data Tool",
+    "author": "LCC Project Team",
+    "main_module": "src/main/python/lcc_assessment/main.py",
+    "version": "0.0.0"
+}
