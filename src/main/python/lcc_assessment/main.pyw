@@ -21,8 +21,8 @@ class mywindow(QtWidgets.QMainWindow):
         self.start_up()
         
         #Set up any event listeners
-        self.ui.treeWidget.itemSelectionChanged.connect(self.update_tree_width)
-        #self.ui.treeWidget.itemSelectionChanged.connect(self.update_selected_text)
+        #self.ui.treeWidget..connect(self.update_selected_items_treeWidget)
+        self.ui.treeWidget.expanded.connect(self.resize_treeWidget)
         
         #Code for handling widgets on "column configuration" window
         self.ui.listWidget_3.itemClicked.connect(self.item_3_click)
@@ -78,15 +78,40 @@ class mywindow(QtWidgets.QMainWindow):
         worker.signals.returnVal.connect(self.displayFeedBack)
         self.threadpool.start(worker)
         
-    def update_selected_text(self):
+    def update_selected_items_treeWidget(self):
+        selectedItems = self.ui.treeWidget.selectedItems()
+        
+        firstItemState = selectedItems[0].checkState(0)
+        if(firstItemState == 0):
+            for item in selectedItems:
+                item.setCheckState(0, 2)
+        else:
+            for item in selectedItems:
+                item.setCheckState(0, 0)
+        
         selectedCount = len(self.ui.treeWidget.selectedItems())
-        print(selectedCount)
+        
+        for item in selectedItems:
+            print(selectedItems)
+        
         self.ui.label_4.setText("{} Checked".format(selectedCount))
         
-    def update_tree_width(self):
-        self.ui.treeWidget.resizeColumnsToContents(0)
-        self.ui.treeWidget.resizeColumnsToContents(1)
-        print("resized")
+    def count_checked_treeWidget(self):
+        #Get the count of checked items
+        treeItemIterator = QtWidgets.QTreeWidgetItemIterator(self.ui.treeWidget, QtWidgets.QTreeWidgetItemIterator.Checked)
+        
+        checkedItemCount = 0
+        while treeItemIterator.value():
+            checkedItemCount += 1
+            treeItemIterator += 1
+        
+        #Update the label
+        self.ui.label_4.setText("Files Selected: {}".format(checkedItemCount))
+    
+    
+    def resize_treeWidget(self):
+        #Set the column width
+        self.ui.treeWidget.resizeColumnToContents(0)
     
     def get_path(self):
         self.tree_dict = {}
@@ -99,7 +124,8 @@ class mywindow(QtWidgets.QMainWindow):
             self.countFiles = 0
             self.numFiles = self.build_tree()
             self.ui.label_3.setText(_translate("MainWindow",('Files Found: '+str(self.countFiles))))
-            
+            self.ui.label_4.setText("Files Selected: {}".format(str(self.countFiles)))  
+                        
             self.ui.buttonBox.setEnabled(True)
             
         except FileNotFoundError:
@@ -136,6 +162,7 @@ class mywindow(QtWidgets.QMainWindow):
                 self.ui.buttonBox.setEnabled(False)
         except AttributeError:
             return
+            
     def print_instructors(self):
         _translate = QtCore.QCoreApplication.translate
         index = 0
@@ -177,11 +204,14 @@ class mywindow(QtWidgets.QMainWindow):
     def build_tree(self):
         _translate = QtCore.QCoreApplication.translate
         self.ui.item.setText(0, _translate("MainWindow", os.path.basename(self.path)))
-        self.ui.item.setCheckState(0, QtCore.Qt.Checked)
+        #self.ui.item.setCheckState(0, QtCore.Qt.Checked)
         self.ui.item.setFlags(self.ui.item.flags() | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
     
         self.tree_dict[self.path] = self.ui.item
         self.recurr(self.path, self.ui.item)
+        
+        #Set the event listener for further checkbox changes.
+        self.ui.treeWidget.itemClicked.connect(self.count_checked_treeWidget)
        
 
     def recurr(self,path, parent):
@@ -193,7 +223,6 @@ class mywindow(QtWidgets.QMainWindow):
                         child = QtWidgets.QTreeWidgetItem(parent)
                         child.setText(0, _translate("MainWindow", folder))
                         child.setCheckState(0, QtCore.Qt.Checked)
-                        child.setFlags(child.flags() | QtCore.Qt.ItemIsUserCheckable)
                         self.countFiles = self.countFiles + 1
                         self.tree_dict[os.path.join(path, folder)] = child
                     continue
@@ -235,6 +264,35 @@ class mywindow(QtWidgets.QMainWindow):
         self.x = 0
         header = list()
         vBox1 = QVBoxLayout()
+    
+        #Create the feedback tab with a table widget and list widget
+        self.ui.tabWidget.insertTab(2, self.ui.tab_2, "Feedback")
+        self.ui.tableWidget = QtWidgets.QTableWidget(self.ui.tab_2)
+        self.ui.tableWidget.setObjectName("tableWidget")
+        self.ui.tableWidget.setMinimumSize(500, 195)
+        self.ui.tableWidget.setColumnCount(1)
+        self.ui.tableWidget.setRowCount(2)
+        self.ui.tableWidget.move(130, 20)
+        self.ui.checkBox_2 = QtWidgets.QCheckBox(self.ui.tab_2)
+        self.ui.checkBox_2.setObjectName("checkBox_2")
+        self.ui.checkBox_2.setText("Clean")
+        self.ui.checkBox_2.move(130, 230)
+        self.ui.pushButton_5 = QtWidgets.QPushButton(self.ui.tab_2)
+        self.ui.pushButton_5.setObjectName("pushButton_5")
+        self.ui.pushButton_5.setText("Next")
+        self.ui.pushButton_5.move(520, 230)
+        self.ui.pushButton_6 = QtWidgets.QPushButton(self.ui.tab_2)
+        self.ui.pushButton_6.setObjectName("pushButton_6")
+        self.ui.pushButton_6.setText("Warnings")
+        self.ui.pushButton_6.move(40,350)
+        self.ui.pushButton_7 = QtWidgets.QPushButton(self.ui.tab_2)
+        self.ui.pushButton_7.setObjectName("pushButton_7")
+        self.ui.pushButton_7.setText("Errors")
+        self.ui.pushButton_7.move(40, 390)
+        self.ui.exceptionsList = QtWidgets.QListWidget(self.ui.tab_2)
+        self.ui.exceptionsList.setObjectName("exceptionsList")
+        self.ui.exceptionsList.move(150, 330)
+        self.ui.exceptionsList.setMinimumSize(550, 150)
        
         header.append(str(theInfo[0]).split('>')[1])
         
