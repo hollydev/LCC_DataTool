@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget, QHeaderView, QVBoxLayout, QFileDialog, QMainWindow
 from PyQt5.QtCore import QRunnable, QThreadPool, QObject, pyqtSignal, pyqtSlot
 from lcc_assessment.gui import Ui_MainWindow
-from lcc_assessment.system import main
+from lcc_assessment.system import main, cleaned_data
 import sys, os
 import lcc_assessment.getFiles as getFiles
 import lcc_assessment.system as system
@@ -77,6 +77,7 @@ class mywindow(QtWidgets.QMainWindow):
         worker = Worker(main, theColumns, self.df)
         worker.signals.returnVal.connect(self.displayFeedBack)
         self.threadpool.start(worker)
+        
         
     def update_selected_text(self):
         selectedCount = len(self.ui.treeWidget.selectedItems())
@@ -207,28 +208,6 @@ class mywindow(QtWidgets.QMainWindow):
                 p = os.path.join(path, folder)
                 self.recurr(p, child)
 
-        
-    def setup_output(self, configs):
-        #Get a file writer object
-        self.output = output.FILE_WRITER()
-                
-        #Get the found configurations
-        configs = self.output.get_db_config()
-        
-        if(configs != None):
-            #Display the found configurations
-            self.ui.usernameLabel.setText("Username: {}".format(configs["user"]))
-            self.ui.TNSLabel.setText("TNS Name: {}".format(configs["tns"]))
-            #Fallback configuration
-            self.ui.serviceLabel.setText("Service: {}".format(configs["service"]))
-            self.ui.hostnameLabel.setText("Hostname: {}".format(configs["hostname"]))
-            self.ui.portLabel.setText("Port: {}".format(configs["port"]))
-            
-        
-        #DB Status Message
-        self.ui.DBConnectionStatusLabel.setText("Status: {}".format(self.output.dbStatus))
-
-
     def displayFeedBack(self, theInfo):
 
         #Initialize variables
@@ -265,8 +244,6 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_5.clicked.connect(lambda: self.getNextColumn(self.x, theInfo))
         self.ui.pushButton_6.clicked.connect(lambda: self.seeExceptions(theInfo[self.x], 0))
         self.ui.pushButton_7.clicked.connect(lambda: self.seeExceptions(theInfo[self.x], 1))
-
-
 
 
     def seeExceptions(self, columnInfo, buttonId):

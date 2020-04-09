@@ -74,72 +74,70 @@ def get_termcodes(data):
     return ret_list
     
 def validate_path(checkPath):
-		""" Check if the given path is valid. Checks emptp paths and path.exists() errors.
+        """ Check if the given path is valid. Checks emptp paths and path.exists() errors.
 
-		@Params:
-			cls - self object allows access to set path and outName.
-			checkPath - A string indicating the path to check for validity.
-			
+        @Params:
+            cls - self object allows access to set path and outName.
+            checkPath - A string indicating the path to check for validity.
+            
 
-		@Returns:
-			BOOLEAN - Indicates whether new path is valid.
-			
-		@Raises:
-			TypeError - Indicates the given path variable is not a string.
-		"""
-		#Check type
-		if(not isinstance(checkPath, str)):
-			raise TypeError(SYSTEM.TypeException.format(type(str), type(checkPath))) #{} Expected, {} Got
-		
-		#Validate empty path, trim extra spaces and see if the path minimized to empty.
-		if(checkPath.strip() == ''):
-			print(SYSTEM.emptyPath)
-			print(LOG.emptyPath)
-			return False
+        @Returns:
+            BOOLEAN - Indicates whether new path is valid.
+            
+        @Raises:
+            TypeError - Indicates the given path variable is not a string.
+        """
+        #Check type
+        if(not isinstance(checkPath, str)):
+            raise TypeError(SYSTEM.TypeException.format(type(str), type(checkPath))) #{} Expected, {} Got
+        
+        #Validate empty path, trim extra spaces and see if the path minimized to empty.
+        if(checkPath.strip() == ''):
+            print(SYSTEM.emptyPath)
+            print(LOG.emptyPath)
+            return False
 
-		#Check if the path exists
-		if(not os.path.exists(checkPath)):
-			try:
-				os.stat(checkPath)
-			except:
-				print(LOG.notPath_stat.format(checkPath))
-				return False
-		
-			print(SYSTEM.notPath)
-			print(LOG.notPath)
-			return False
+        #Check if the path exists
+        if(not os.path.exists(checkPath)):
+            try:
+                os.stat(checkPath)
+            except:
+                print(LOG.notPath_stat.format(checkPath))
+                return False
+        
+            print(SYSTEM.notPath)
+            print(LOG.notPath)
+            return False
 
-		return True
+        return True
 
-def output(data):
-    #Create an output object
-    out = outputs.FILE_WRITER()
-    configs = out.get_db_config()
-    
-    return configs
-
-def main(selectedColumns, data):
-	""" 
-		Serves as a controller for the system as a whole. Manages the messages of
-		different components, and handles data calls to the GUI.
-	"""
-
-	#Calling the Base Column Selector to handle validation.
-	theInfo = base_selector.get_base_column(data, selectedColumns) #Handle data validation.
-
-    
-	return theInfo
-"""
-	#Save files to directory
-	writePath = input("Path: ").lower()
-	writePath = writePath.replace("\"", "")
-
-	if(validate_path(writePath) == True):
-		#Create a file writer
-		fileWriter = outputs.FILE_WRITER(outPath= writePath, outName= "TestingFile")
-
-		#Write a CSV to the output path.
-		fileWriter.write_csv(data)
-
-		#TODO Implement Oracle writer
+def cleaned_data(df):
     """
+        Get the data frame that has been validated and perform final processing steps, prior to outputting.
+        
+        @Params:
+            df - The dataframe to be cleaned update.
+            
+        @Returns
+            cleaned_df - The processed data frame to be output.
+    """
+    if(df != None):
+        print(df.columns)
+        
+        clean = base_selector.output_processing(df)
+        print(clean.columns)
+        return clean
+    else:
+        return None
+    
+    
+def main(selectedColumns, data):
+    """ 
+        Serves as a controller for the system as a whole. Manages the messages of
+        different components, and handles data calls to the GUI.
+    """
+
+    #Calling the Base Column Selector to handle validation.
+    theInfo = base_selector.get_base_column(data, selectedColumns) #Handle data validation.
+    
+    return theInfo

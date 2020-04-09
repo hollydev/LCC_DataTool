@@ -138,6 +138,11 @@ def recursive_concat(frames):
 '''
 def concat_data_frames(frames):
     size = len(frames)
+    
+    #Return the single frame on one file selected.
+    if size == 1:
+        return frames[0]
+    
     progressBar = tqdm(total=3)
 
     firstThird = round(size/3)

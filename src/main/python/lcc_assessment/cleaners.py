@@ -1,11 +1,11 @@
 """
-	Filename: cleaners.py
-	Programmer: Holly Locke
-	Date Created: 01/02/2020
-	Last Update: File Created
+    Filename: cleaners.py
+    Programmer: Holly Locke
+    Date Created: 01/02/2020
+    Last Update: File Created
 
-	Description: This file contains all cleaning logic that may be applied to the columns. 
-	Built to work with the rest of the data tool, cleaners are created as classes.
+    Description: This file contains all cleaning logic that may be applied to the columns. 
+    Built to work with the rest of the data tool, cleaners are created as classes.
 
 """
 import pandas as pd
@@ -19,114 +19,129 @@ from messages.system import SYSTEM, LOG
 
 
 class FUZZY_MATCHING:
-	def __init__(self, column):
-		self.column = column
-		self.values = column.values
+    def __init__(self, column):
+        #Normalize to string before saving to object
+        column = column.apply(str)
+        
+        #Save data to their respective objects
+        self.column = column
+        self.values = column.values
 
-		self.messages = list()
-		self.errors = list()
-		self.items = 0
-
-
-	def run(self, threshold, master_n=1500):
-		
-		master = self.get_master_list(self.column, master_n)
-		matches = self.get_choice_matches(self.values, master.keys(), threshold)
-		
-		matchedList = list()
-		for val in self.values:
-			match = matches[val]
-
-			if(match != None):
-				matchedList.append(match[0])
-			else:
-				matchedList.append(val)
-
-			self.messages.append(CLEANERS.matchResult.format(val, match[0], match[1]))
-			
-		#Return matches past a threshold
-		# for i, val in enumerate(self.values):
-		# 	match, confidence = matches[val]
-
-		# 	if(confidence >= threshold):
-		# 		self.values[i] = match
-		# 		self.items += 1 #Count items cleaned
-		# 	else:
-		# 		continue
+        self.messages = list()
+        self.errors = list()
+        self.items = 0
 
 
-		return matchedList
+    def run(self, threshold=80, n_match=None):
+        #Set default parameter at 10% of data
+        pct_10 = int(len(self.column)*0.10)
+        if(pct_10 == 0):
+            pct_10 = 1
+        
+        #Set number match list on none specified
+        if(n_match == None):
+            n_match = pct_10
+        
+        master = self.get_master_list(self.column, n_match)
+        matches = self.get_choice_matches(self.values, master.keys(), threshold)
+        
+        matchedList = list()
+        for val in self.values:
+            match = matches[val]
+
+            if(match != None):
+                matchedList.append(match[0])
+            else:
+                matchedList.append(val)
+
+            self.messages.append(CLEANERS.matchResult.format(val, match[0], match[1]))
+            
+        #Return matches past a threshold
+        # for i, val in enumerate(self.values):
+        #     match, confidence = matches[val]
+
+        #     if(confidence >= threshold):
+        #         self.values[i] = match
+        #         self.items += 1 #Count items cleaned
+        #     else:
+        #         continue
 
 
-	def get_choice_matches(self, column, master, threshold=95):
-		#Get a unique list of existing names
-		choices = set()
-		for word in self.column: choices.add(word)
-		
-		#Generate a master list (top n) to match choices to
-		master = set(master)
-		
-		matches = dict()
-		
-		progBar = tqdm(total = len(choices))
-		
-		for value in choices:
-			progBar.update(1)
-			progBar.display()
-			"""
-			#Remove the current matched value if 
-			try:
-				fixedMaster = set(master)
-				fixedMaster.remove(value) #Remove the current value from the search list
-			except KeyError:
-				continue
-			"""
-			
-			chosen = process.extractOne(value, master, scorer=fuzz.token_sort_ratio, score_cutoff = 80)
-			
-			if(chosen == None):
-				matches.update({value:("None", "X")})
-			else:
-				matches.update({value:chosen})
+        return matchedList
 
-			
-		progBar.close()
-		return matches
-	
-	def get_master_list(self, column, n):
-		#Get the count of values over the entire list.
-		master = dict()
-		
-		iterator = 0
-		
-		for key, val in tqdm(self.column.value_counts().items()):
-			master.update({key : val})
-			iterator += 1
-			
-			if(iterator == n):
-				break
-				
-		return master
 
-	
-	def statistics(self):
-		return SYSTEM.cleanerStats.format("Fuzzy Matching", self.items, len(self.messages), len(self.errors))
+    def get_choice_matches(self, column, master, threshold=80):
+        #Get a unique list of existing names
+        choices = set()
+        for word in self.column: choices.add(word)
+        
+        #Generate a master list (top n) to match choices to
+        master = set(master)
+               
+        matches = dict()
+        progBar = tqdm(total = len(choices))
+        
+        for value in choices:
+            progBar.update(1)
+            progBar.display()
+            """
+            #Remove the current matched value if 
+            try:
+                fixedMaster = set(master)
+                fixedMaster.remove(value) #Remove the current value from the search list
+            except KeyError:
+                continue
+            """
+            
+            chosen = process.extractOne(value, master, scorer=fuzz.token_sort_ratio, score_cutoff = threshold)
+            
+            if(chosen == None):
+                matches.update({value:("None", "X")})
+            else:
+                matches.update({value:chosen})
 
-	def get_warnings(self):
-		return(self.messages)
+            
+        progBar.close()
+        return matches
+    
+    def get_master_list(self, column, n_match):
+        #Get the count of values over the entire list.
+        master = dict()
+        
+        #Normalize to reduce duplication chance
+        column = column.str.lower()
+        column = column.str.strip()
+        
+        iterator = 0
+        
+        for key, val in tqdm(column.value_counts().items()):
+            master.update({key : val})
+            iterator += 1
+            
+            if(iterator == n_match):
+                break
+                
+        return master
 
-	def get_errors(self):
-		return(self.errors)
+    
+    def statistics(self):
+        return SYSTEM.cleanerStats.format("Fuzzy Matching", self.items, len(self.messages), len(self.errors))
+
+    def get_warnings(self):
+        return(self.messages)
+
+    def get_errors(self):
+        return(self.errors)
 
 
 # class GRADE_VALUE:
-# 	messages = list()
-# 	errors = list()
+#     messages = list()
+#     errors = list()
 
-# 	def __init__(self, column):
-# 		self.column = column
+#     def __init__(self, column):
+#         self.column = column
 
-# 	def run():
+#     def run():
 
 class DATE:
     messages = list()

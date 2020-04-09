@@ -16,7 +16,6 @@ from collections import namedtuple
 
 def get_base_column(dataframe, selectedColumns):
 
-    
     #convert column headers in dataframe and selectedColumns to lowercase 
     dataframe.columns = map(str.lower, dataframe.columns)
     count = 0
@@ -102,6 +101,9 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo):
         print("--gradeitemcategoryname--")
         vInfo.append(validateMixed(columnSeries))
         print("\n")
+        cleaned = cleanFuzzyMatching(columnSeries, n_match=50)
+        newName = columnSeries.name + "_cleaned"
+        df[newName] = cleaned #Save the new column with a suffix
     elif(oneColumn.lower() == "gradeitemid"):
         print("--gradeitemid--")
         vInfo.append(validateNum(columnSeries, 7))
@@ -110,7 +112,7 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo):
         print("--gradeitemname--")
         vInfo.append(validateMixed(columnSeries))
         print("\n")
-        cleaned = cleanFuzzyMatching(columnSeries)
+        cleaned = cleanFuzzyMatching(columnSeries, n_match=200)
         newName = columnSeries.name + "_cleaned"
         df[newName] = cleaned #Save the new column with a suffix
     elif(oneColumn.lower() == "gradeitemweight"):
@@ -149,7 +151,27 @@ def split_and_reorganize(theDataFrame):
     theDataFrame = pd.concat(frames, sort = False, axis = 1)
     return theDataFrame
 
-
+def output_processing(df):
+    keptColumns = ["username",
+                   "firstname",
+                   "lastname",
+                   "courseofferingname",
+                   "section",
+                   "crn",
+                   "term",
+                   "gradeitemcategoryname",
+                   "gradeitemcategoryname_cleaned",
+                   "gradeitemname",
+                   "gradeitemname_cleaned",
+                   "pointsnumerator",
+                   "pointsdenominator",
+                   "gradecomments"]
+                          
+    processedDf = df.reindex(columns = keptColumns) #Keep only the listed columns, if they don't exist just return a NaN column
+    processedDf["gradevalue"] = processedDf["pointsnumerator"] / processedDf["pointsdenominator"]
+    
+    return processedDf
+    
 
 def validateMixed(df):
     validateMixedID = MIXED_TEXT(df)
@@ -216,9 +238,10 @@ def validateCRN(df, allSections):
     return(info, theStats)
 
 
-def cleanFuzzyMatching(df):
+def cleanFuzzyMatching(df, threshold=80, n_match=None):
+
     cleanFuzzyMatching = FUZZY_MATCHING(df)
-    cleanedColumn = cleanFuzzyMatching.run(threshold=80, master_n=100)
+    cleanedColumn = cleanFuzzyMatching.run(threshold= threshold, n_match = n_match)
 
     info = cleanFuzzyMatching.statistics()
     warnings = cleanFuzzyMatching.get_warnings()
