@@ -118,14 +118,14 @@ def output(data):
     
     return configs
 
-def main(selectedColumns, data):
+def main(selectedColumns, data, signal):
 	""" 
 		Serves as a controller for the system as a whole. Manages the messages of
 		different components, and handles data calls to the GUI.
 	"""
 
 	#Calling the Base Column Selector to handle validation.
-	theInfo = base_selector.get_base_column(data, selectedColumns) #Handle data validation.
+	theInfo = base_selector.get_base_column(data, selectedColumns, signal) #Handle data validation.
 
     
 	return theInfo

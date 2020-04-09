@@ -10,11 +10,12 @@ import pandas as pd
 import glob as gb 
 from lcc_assessment.validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID, CRN
 from lcc_assessment.cleaners import FUZZY_MATCHING
+from lcc_assessment.main import Worker, WorkerSignals
 from collections import namedtuple
 #from cleaners import GRADE_ITEM_NAME
 
 
-def get_base_column(dataframe, selectedColumns):
+def get_base_column(dataframe, selectedColumns, signal):
 
     
     #convert column headers in dataframe and selectedColumns to lowercase 
@@ -22,9 +23,11 @@ def get_base_column(dataframe, selectedColumns):
     count = 0
     #Re-order and split the data.
     orderedData = split_and_reorganize(dataframe)
-
+    signal.progress.emit(10)
     #preserve the sections and termcodes from the dataframe for use in validating CRNs
     allSections = orderedData[["section", "crn","term"]]
+    signal.progress.emit(25)
+    
 
     #check if the user wants to validate multiple columns
     if isinstance(selectedColumns, list): 
@@ -44,11 +47,11 @@ def get_base_column(dataframe, selectedColumns):
         selectedColumns = selectedColumns.lower()
         df = orderedData.loc[ :,selectedColumns]
         callValidators(selectedColumns, df, df, allSections, vInfo) #df is also passed in for columnseries since only one column was selected(a series)
-        
+    
+    signal.progress.emit(100)
     return vInfo #Return the processed data frame.
     
 def callValidators(oneColumn, columnSeries, df, allSections, vInfo):
-
     
     if(oneColumn.lower() == "username"):
         print("--username--")
