@@ -144,39 +144,45 @@ def concat_data_frames(frames):
         return frames[0]
     
     progressBar = tqdm(total=3)
-
-    firstThird = round(size/3)
-    secondThird = round(2*size/3)
-    frames1 = frames[:firstThird]
-    frames2 = frames[firstThird:secondThird]
-    frames3 = frames[secondThird:-1]
     
-    concatFrames1 = pd.concat(frames1, sort = False)
+    if size > 5:
+    
+        firstThird = round(size/3)
+        secondThird = round(2*size/3)
+        frames1 = frames[:firstThird]
+        frames2 = frames[firstThird:secondThird]
+        frames3 = frames[secondThird:-1]
+    
+        concatFrames1 = pd.concat(frames1, sort = False)
     
     
     #For each deleted frame, concat to the new frame.
-    for delFrame in frames1:
-        recursive_concat(frames1)
-    progressBar.update(1)
-    progressBar.display()
+        for delFrame in frames1:
+            recursive_concat(frames1)
+        progressBar.update(1)
+        progressBar.display()
     
-    concatFrames2 = pd.concat(frames2, sort = False)
+        concatFrames2 = pd.concat(frames2, sort = False)
     
-    for delFrame in frames2:
-        recursive_concat(frames2)
-    progressBar.update(1)
-    progressBar.display()
+        for delFrame in frames2:
+            recursive_concat(frames2)
+        progressBar.update(1)
+        progressBar.display()
 
-    concatFrames3 = pd.concat(frames3, sort = False)
+        concatFrames3 = pd.concat(frames3, sort = False)
     
-    for delFrame in frames3:
-        recursive_concat(frames3)
-    progressBar.update(1)
-    progressBar.display()
+        for delFrame in frames3:
+            recursive_concat(frames3)
+        progressBar.update(1)
+        progressBar.display()
 
-    allFrames = [concatFrames1, concatFrames2, concatFrames3]
-    finalFrame = pd.concat(allFrames, sort = False)
-    progressBar.close()
+        allFrames = [concatFrames1, concatFrames2, concatFrames3]
+        finalFrame = pd.concat(allFrames, sort = False)
+        progressBar.close()
+    else:
+        finalFrame = pd.concat(frames, sort = False)
+        for delFrame in frames:
+            recursive_concat(frames)
 
     return finalFrame
 

@@ -8,7 +8,7 @@ import lcc_assessment.getFiles as getFiles
 import lcc_assessment.system as system
 import lcc_assessment.output as output
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
-
+from messages.system import SYSTEM
 import sys
 
 class mywindow(QtWidgets.QMainWindow):
@@ -104,7 +104,7 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.buttonBox.setEnabled(True)
             
         except FileNotFoundError:
-            print('FileNotFound') #CHANGE TO LOG FILE?
+            print(SYSTEM.noFilesFound)
             
         return self.path
     
@@ -197,7 +197,6 @@ class mywindow(QtWidgets.QMainWindow):
                         child.setFlags(child.flags() | QtCore.Qt.ItemIsUserCheckable)
                         self.countFiles = self.countFiles + 1
                         self.tree_dict[os.path.join(path, folder)] = child
-                    continue
             else:
                 child = QtWidgets.QTreeWidgetItem(parent)
                 child.setText(0, _translate("MainWindow", folder))
