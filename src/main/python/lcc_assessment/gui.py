@@ -307,7 +307,7 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "Browse..."))
         self.groupBox_5.setTitle(_translate("MainWindow", "Select Data"))
         self.groupBox_3.setTitle(_translate("MainWindow", "Statistics"))
-        self.label_4.setText(_translate("MainWindow", "Checked"))
+        self.label_4.setText(_translate("MainWindow", "Files Selected"))
         self.label_3.setText(_translate("MainWindow", "Files Found"))
         self.label.setText(_translate("MainWindow", "Instructors:"))
         self.label_2.setText(_translate("MainWindow", "Term Range:"))

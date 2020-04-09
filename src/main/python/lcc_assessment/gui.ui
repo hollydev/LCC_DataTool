@@ -154,7 +154,7 @@
                     </sizepolicy>
                    </property>
                    <property name="text">
-                    <string>Checked</string>
+                    <string>Files Selected</string>
                    </property>
                   </widget>
                  </item>

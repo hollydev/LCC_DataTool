@@ -21,7 +21,6 @@ class mywindow(QtWidgets.QMainWindow):
         self.start_up()
         
         #Set up any event listeners
-        #self.ui.treeWidget..connect(self.update_selected_items_treeWidget)
         self.ui.treeWidget.expanded.connect(self.resize_treeWidget)
         
         #Code for handling widgets on "column configuration" window
@@ -62,6 +61,18 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.tabWidget.setTabEnabled(3, False)
         self.ui.buttonBox.setEnabled(False)
         
+        self.ui.buttonBox.setEnabled(False)
+        self.ui.lineEdit.clear()
+        self.ui.listWidget.clear()
+        self.ui.listWidget_2.clear()
+        self.ui.treeWidget.clear()
+        self.ui.label.setText("Instructors:")
+        self.ui.label_2.setText("Terms:")
+        self.ui.label_3.setText("Files Found:")
+        self.ui.label_4.setText("Items Selected:")
+        
+        self.ui.treeWidget.resizeColumnToContents(0)
+        
         self.df = None
         self.output = None
         self.outPath = None
@@ -77,25 +88,7 @@ class mywindow(QtWidgets.QMainWindow):
         worker = Worker(main, theColumns, self.df)
         worker.signals.returnVal.connect(self.displayFeedBack)
         self.threadpool.start(worker)
-        
-    def update_selected_items_treeWidget(self):
-        selectedItems = self.ui.treeWidget.selectedItems()
-        
-        firstItemState = selectedItems[0].checkState(0)
-        if(firstItemState == 0):
-            for item in selectedItems:
-                item.setCheckState(0, 2)
-        else:
-            for item in selectedItems:
-                item.setCheckState(0, 0)
-        
-        selectedCount = len(self.ui.treeWidget.selectedItems())
-        
-        for item in selectedItems:
-            print(selectedItems)
-        
-        self.ui.label_4.setText("{} Checked".format(selectedCount))
-        
+             
     def count_checked_treeWidget(self):
         #Get the count of checked items
         treeItemIterator = QtWidgets.QTreeWidgetItemIterator(self.ui.treeWidget, QtWidgets.QTreeWidgetItemIterator.Checked)
@@ -106,7 +99,7 @@ class mywindow(QtWidgets.QMainWindow):
             treeItemIterator += 1
         
         #Update the label
-        self.ui.label_4.setText("Files Selected: {}".format(checkedItemCount))
+        self.ui.label_4.setText("Items Selected: {}".format(checkedItemCount))
     
     
     def resize_treeWidget(self):
@@ -124,7 +117,7 @@ class mywindow(QtWidgets.QMainWindow):
             self.countFiles = 0
             self.numFiles = self.build_tree()
             self.ui.label_3.setText(_translate("MainWindow",('Files Found: '+str(self.countFiles))))
-            self.ui.label_4.setText("Files Selected: {}".format(str(self.countFiles)))  
+            self.ui.label_4.setText("Items Selected: {}".format(str(self.countFiles)))  
                         
             self.ui.buttonBox.setEnabled(True)
             
@@ -152,14 +145,8 @@ class mywindow(QtWidgets.QMainWindow):
             
                 self.ui.tabWidget.setTabEnabled(1, True)
             elif sb == QtWidgets.QDialogButtonBox.Discard: #DISCARD CLICKED
-                self.ui.lineEdit.clear()
-                self.ui.listWidget.clear()
-                self.ui.listWidget_2.clear()
-                self.ui.treeWidget.clear()
-                self.ui.label.setText("Instructors:")
-                self.ui.label_2.setText("Terms:")
-                self.ui.label_3.setText(_translate("MainWindow",('Files Found:    ')))
-                self.ui.buttonBox.setEnabled(False)
+                #Reset flow
+                self.start_up()
         except AttributeError:
             return
             
@@ -204,7 +191,7 @@ class mywindow(QtWidgets.QMainWindow):
     def build_tree(self):
         _translate = QtCore.QCoreApplication.translate
         self.ui.item.setText(0, _translate("MainWindow", os.path.basename(self.path)))
-        #self.ui.item.setCheckState(0, QtCore.Qt.Checked)
+        self.ui.item.setCheckState(0, QtCore.Qt.Checked)
         self.ui.item.setFlags(self.ui.item.flags() | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
     
         self.tree_dict[self.path] = self.ui.item
@@ -223,6 +210,7 @@ class mywindow(QtWidgets.QMainWindow):
                         child = QtWidgets.QTreeWidgetItem(parent)
                         child.setText(0, _translate("MainWindow", folder))
                         child.setCheckState(0, QtCore.Qt.Checked)
+                        child.setFlags(child.flags() | QtCore.Qt.ItemIsUserCheckable)               
                         self.countFiles = self.countFiles + 1
                         self.tree_dict[os.path.join(path, folder)] = child
                     continue
