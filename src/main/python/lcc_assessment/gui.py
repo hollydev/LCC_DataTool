@@ -161,6 +161,11 @@ class Ui_MainWindow(object):
         item = QtWidgets.QListWidgetItem()
         self.listWidget_3.addItem(item)
         self.gridLayout.addWidget(self.listWidget_3, 1, 0, 3, 2)
+
+        self.progressBar = QtWidgets.QProgressBar(self.tab) #PROGRESS BAR
+        self.progressBar.setObjectName("progressBar")
+        self.gridLayout.addWidget(self.progressBar)
+
         self.label_5 = QtWidgets.QLabel(self.Column)
         self.label_5.setObjectName("label_5")
         self.gridLayout.addWidget(self.label_5, 0, 0, 1, 1)

@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget, QHeaderView, QVBoxLayout, QFileDialog, QMainWindow
 from PyQt5.QtCore import QRunnable, QThreadPool, QObject, pyqtSignal, pyqtSlot
 from lcc_assessment.gui import Ui_MainWindow
-from lcc_assessment.system import main
+#from lcc_assessment.system import main
 import sys, os
 import lcc_assessment.getFiles as getFiles
 import lcc_assessment.system as system
@@ -61,6 +61,11 @@ class mywindow(QtWidgets.QMainWindow):
         self.df = None
         self.output = None
         self.outPath = None
+
+    def progressUpdate(self, n):
+
+        self.ui.progressBar.setValue(n)
+
     
     def validate_button(self):
         self.threadpool = QThreadPool()
@@ -70,8 +75,11 @@ class mywindow(QtWidgets.QMainWindow):
             theColumns.append(self.ui.listWidget_4.item(x).text())
             x -= 1
 
-        worker = Worker(main, theColumns, self.df)
+        worker = Worker(system.main, theColumns, self.df)
+
+        #connect the signals returned from thread to their functions
         worker.signals.returnVal.connect(self.displayFeedBack)
+        worker.signals.progress.connect(self.progressUpdate)
         self.threadpool.start(worker)
         
     def update_selected_text(self):
@@ -355,8 +363,9 @@ class mywindow(QtWidgets.QMainWindow):
             print('FileNotFound') #CHANGE TO LOG FILE?
         
 class WorkerSignals(QObject):
-    #
+    
     returnVal = pyqtSignal(object)
+    progress = pyqtSignal(int)
     
 
                
@@ -372,7 +381,7 @@ class Worker(QRunnable):
     @pyqtSlot()
     def run(self):
 
-        theInfo = self.fn(self.theColumns, self.theData)
+        theInfo = self.fn(self.theColumns, self.theData, self.signals)
         
         #send the info returned from validators back to the GUI from worker thread
         self.signals.returnVal.emit(theInfo)
