@@ -120,15 +120,8 @@ def cleaned_data(df):
             
         @Returns
             cleaned_df - The processed data frame to be output.
-    """
-    if(df != None):
-        print(df.columns)
-        
-        clean = base_selector.output_processing(df)
-        print(clean.columns)
-        return clean
-    else:
-        return None
+    """        
+    return base_selector.output_processing(df)
     
     
 def main(selectedColumns, data):
