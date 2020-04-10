@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'gui.ui'
+# Form implementation generated from reading ui file 'gui'
 #
 # Created by: PyQt5 UI code generator 5.14.1
 #
@@ -167,6 +167,7 @@ class Ui_MainWindow(object):
 
         self.progressBar = QtWidgets.QProgressBar(self.tab) #PROGRESS BAR
         self.progressBar.setObjectName("progressBar")
+        self.progressBar.setFixedWidth(400)
         self.gridLayout.addWidget(self.progressBar)
 
 
@@ -188,8 +189,7 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.Column, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
-        self.formLayout = QtWidgets.QFormLayout(self.tab_2)
-        self.formLayout.setObjectName("formLayout")
+        self.tabWidget.insertTab(2, self.tab_2, "Feedback")
         self.tableWidget = QtWidgets.QTableWidget(self.tab_2)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setMinimumSize(500, 195)
