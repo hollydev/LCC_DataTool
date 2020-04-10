@@ -2,12 +2,13 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget, QHeaderView, QVBoxLayout, QFileDialog, QMainWindow
 from PyQt5.QtCore import QRunnable, QThreadPool, QObject, pyqtSignal, pyqtSlot
 from lcc_assessment.gui import Ui_MainWindow
-from lcc_assessment.system import main
+# from lcc_assessment.system import main, cleaned_data
 import sys, os
 import lcc_assessment.getFiles as getFiles
 import lcc_assessment.system as system
 import lcc_assessment.output as output
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
+from messages.system import SYSTEM
 
 import sys
 
@@ -90,13 +91,14 @@ class mywindow(QtWidgets.QMainWindow):
         x = self.ui.listWidget_4.count()-1
         while(x >= 0):
             theColumns.append(self.ui.listWidget_4.item(x).text())
-            x -= 1
+            x -= 1                         
 
-        worker = Worker(main, theColumns, self.df)
+        worker = Worker(system.main, theColumns, self.df)
         worker.signals.returnVal.connect(self.displayFeedBack)
         worker.signals.progress.connect(self.progressUpdate)
         self.threadpool.start(worker)
-             
+              
+        
     def count_checked_treeWidget(self):
         #Get the count of checked items
         treeItemIterator = QtWidgets.QTreeWidgetItemIterator(self.ui.treeWidget, QtWidgets.QTreeWidgetItemIterator.Checked)
@@ -130,7 +132,7 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.buttonBox.setEnabled(True)
             
         except FileNotFoundError:
-            print('FileNotFound') #CHANGE TO LOG FILE?
+            print(SYSTEM.noFilesFound)
             
         return self.path
     
@@ -352,6 +354,9 @@ class mywindow(QtWidgets.QMainWindow):
         
         #DB Status Message
         self.ui.DBConnectionStatusLabel.setText("Status: {}".format(self.output.dbStatus))
+        
+        #While validation and cleaning are coupled, get final df here
+        self.df = system.cleaned_data(self.df)    
         
     def db_connect(self):
         #Get FBS connection resource location

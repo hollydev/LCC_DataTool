@@ -220,24 +220,11 @@ class FILE_WRITER():
 
         #Save Pandas DF using Pandas
         if(isinstance(file, pd.DataFrame)):
-            keptColumns = ["username",
-                           "firstname",
-                           "lastname",
-                           "courseofferingname",
-                           "coursesectioncode",
-                           "gradeitemcategoryname",
-                           "gradeitemname",
-                           "pointsnumerator",
-                           "pointsdenominator",
-                           "gradecomments"]
-                           
-            cleanFile = file[keptColumns]
-            
             #Check if the filename has an extension
             if(cls.outName.endswith(".csv")):
-                cleanFile.to_csv(cls.outPath + cls.outName, index=False)
+                file.to_csv(cls.outPath + cls.outName, index=False)
             else:
-                cleanFile.to_csv(cls.outPath + cls.outName + ".csv", index=False)
+                file.to_csv(cls.outPath + cls.outName + ".csv", index=False)
         
         #Save dict object using CSV
         elif (isinstance(file, dict)):
