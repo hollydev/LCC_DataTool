@@ -76,9 +76,16 @@ class mywindow(QtWidgets.QMainWindow):
         self.df = None
         self.output = None
         self.outPath = None
+
+    #function for updating the progress bar in validate tab
+    def progressUpdate(self, n):
+        self.currentValue += n
+        self.ui.progressBar.setValue(self.currentValue)
+
     
     def validate_button(self):
         self.threadpool = QThreadPool()
+        self.currentValue = 0 #holds current value of progress bar for thread
         theColumns = []
         x = self.ui.listWidget_4.count()-1
         while(x >= 0):
@@ -87,6 +94,7 @@ class mywindow(QtWidgets.QMainWindow):
 
         worker = Worker(main, theColumns, self.df)
         worker.signals.returnVal.connect(self.displayFeedBack)
+        worker.signals.progress.connect(self.progressUpdate)
         self.threadpool.start(worker)
              
     def count_checked_treeWidget(self):
@@ -252,35 +260,6 @@ class mywindow(QtWidgets.QMainWindow):
         self.x = 0
         header = list()
         vBox1 = QVBoxLayout()
-    
-        #Create the feedback tab with a table widget and list widget
-        self.ui.tabWidget.insertTab(2, self.ui.tab_2, "Feedback")
-        self.ui.tableWidget = QtWidgets.QTableWidget(self.ui.tab_2)
-        self.ui.tableWidget.setObjectName("tableWidget")
-        self.ui.tableWidget.setMinimumSize(500, 195)
-        self.ui.tableWidget.setColumnCount(1)
-        self.ui.tableWidget.setRowCount(2)
-        self.ui.tableWidget.move(130, 20)
-        self.ui.checkBox_2 = QtWidgets.QCheckBox(self.ui.tab_2)
-        self.ui.checkBox_2.setObjectName("checkBox_2")
-        self.ui.checkBox_2.setText("Clean")
-        self.ui.checkBox_2.move(130, 230)
-        self.ui.pushButton_5 = QtWidgets.QPushButton(self.ui.tab_2)
-        self.ui.pushButton_5.setObjectName("pushButton_5")
-        self.ui.pushButton_5.setText("Next")
-        self.ui.pushButton_5.move(520, 230)
-        self.ui.pushButton_6 = QtWidgets.QPushButton(self.ui.tab_2)
-        self.ui.pushButton_6.setObjectName("pushButton_6")
-        self.ui.pushButton_6.setText("Warnings")
-        self.ui.pushButton_6.move(40,350)
-        self.ui.pushButton_7 = QtWidgets.QPushButton(self.ui.tab_2)
-        self.ui.pushButton_7.setObjectName("pushButton_7")
-        self.ui.pushButton_7.setText("Errors")
-        self.ui.pushButton_7.move(40, 390)
-        self.ui.exceptionsList = QtWidgets.QListWidget(self.ui.tab_2)
-        self.ui.exceptionsList.setObjectName("exceptionsList")
-        self.ui.exceptionsList.move(150, 330)
-        self.ui.exceptionsList.setMinimumSize(550, 150)
        
         header.append(str(theInfo[0]).split('>')[1])
         
@@ -408,8 +387,9 @@ class mywindow(QtWidgets.QMainWindow):
             print('FileNotFound') #CHANGE TO LOG FILE?
         
 class WorkerSignals(QObject):
-    #
+    
     returnVal = pyqtSignal(object)
+    progress = pyqtSignal(int)
     
 
                
@@ -425,7 +405,7 @@ class Worker(QRunnable):
     @pyqtSlot()
     def run(self):
 
-        theInfo = self.fn(self.theColumns, self.theData)
+        theInfo = self.fn(self.theColumns, self.theData, self.signals)
         
         #send the info returned from validators back to the GUI from worker thread
         self.signals.returnVal.emit(theInfo)
