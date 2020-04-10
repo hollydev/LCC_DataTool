@@ -77,6 +77,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.df = None
         self.output = None
         self.outPath = None
+        self.applyFlag = 0
 
     #function for updating the progress bar in validate tab
     def progressUpdate(self, n):
@@ -102,7 +103,7 @@ class mywindow(QtWidgets.QMainWindow):
     def count_checked_treeWidget(self):
         #Get the count of checked items
         treeItemIterator = QtWidgets.QTreeWidgetItemIterator(self.ui.treeWidget, QtWidgets.QTreeWidgetItemIterator.Checked)
-        
+        self.applyFlag = 0
         checkedItemCount = 0
         while treeItemIterator.value():
             checkedItemCount += 1
@@ -145,15 +146,14 @@ class mywindow(QtWidgets.QMainWindow):
     def apply_discard_buttons(self, button): 
         try:
             sb = self.ui.buttonBox.standardButton(button)
-            _translate = QtCore.QCoreApplication.translate
             if sb == QtWidgets.QDialogButtonBox.Apply: #APPLY CLICKED
-                self.check_state()
-                self.df = getFiles.execute(self.path, self.unwanted)
-            
-                self.print_instructors()
-                self.print_termcodes()    
-            
-                self.ui.tabWidget.setTabEnabled(1, True)
+                if self.applyFlag == 0:
+                    self.check_state()
+                    self.df = getFiles.execute(self.path, self.unwanted)
+                    self.print_instructors()
+                    self.print_termcodes()    
+                    self.ui.tabWidget.setTabEnabled(1, True)
+                    self.applyFlag = 1
             elif sb == QtWidgets.QDialogButtonBox.Discard: #DISCARD CLICKED
                 #Reset flow
                 self.start_up()
