@@ -167,8 +167,8 @@ class Ui_MainWindow(object):
 
         self.progressBar = QtWidgets.QProgressBar(self.tab) #PROGRESS BAR
         self.progressBar.setObjectName("progressBar")
-        self.progressBar.setFixedWidth(400)
         self.gridLayout.addWidget(self.progressBar)
+        
 
 
         self.label_5 = QtWidgets.QLabel(self.Column)
