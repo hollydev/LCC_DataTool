@@ -33,7 +33,10 @@ def get_instructors(data):
         ret_list - a list of all unique instructor names
     '''
     ret_list = []
-    names = data['GraderFirstName'] + ' ' + data['GraderLastName']
+    try:
+        names = data['GraderFirstName'] + ' ' + data['GraderLastName']
+    except KeyError:
+        names = ""
     
     ret_list = remove_duplicates(names)
     ret_list.sort(key=get_last)
