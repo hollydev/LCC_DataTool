@@ -122,14 +122,19 @@ def cleaned_data(df):
             cleaned_df - The processed data frame to be output.
     """        
     return base_selector.output_processing(df)
+    
+def clean(df):
+
+    return base_selector.callCleaner(df)
+    
 
 def main(selectedColumns, data, signal):
     """ 
 		Serves as a controller for the system as a whole. Manages the messages of
 		different components, and handles data calls to the GUI.
 	"""
+	#Calling the Base Column Selector to handle validation.
     theInfo = base_selector.get_base_column(data, selectedColumns, signal)
-
     return theInfo
+
 	
-    

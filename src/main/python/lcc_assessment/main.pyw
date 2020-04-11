@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget, QHeaderView, QVBoxLayout, QFileDialog, QMainWindow
 from PyQt5.QtCore import QRunnable, QThreadPool, QObject, pyqtSignal, pyqtSlot
 from lcc_assessment.gui import Ui_MainWindow
-# from lcc_assessment.system import main, cleaned_data
+import re
 import sys, os
 import lcc_assessment.getFiles as getFiles
 import lcc_assessment.system as system
@@ -83,6 +83,10 @@ class mywindow(QtWidgets.QMainWindow):
         self.currentValue += n
         self.ui.progressBar.setValue(self.currentValue)
 
+    #catches the signal from BCselector, assigns the validated frame to self.df
+    def setValidatedFrame(self, dataframe):
+        self.df = dataframe
+
     
     def validate_button(self):
         self.threadpool = QThreadPool()
@@ -96,6 +100,7 @@ class mywindow(QtWidgets.QMainWindow):
         worker = Worker(system.main, theColumns, self.df)
         worker.signals.returnVal.connect(self.displayFeedBack)
         worker.signals.progress.connect(self.progressUpdate)
+        worker.signals.dataframe.connect(self.setValidatedFrame)
         self.threadpool.start(worker)
               
         
@@ -310,16 +315,26 @@ class mywindow(QtWidgets.QMainWindow):
                 i += 1
 
 
+    def cleanColumn(self, columnName):
+        self.threadpool = QThreadPool()
+        columnName = re.findall(r'\[([^][]*[^][]*)]', columnName)
+        wholeColumn = self.df.loc[ :,columnName]
+        worker2 = Worker2(system.clean, wholeColumn)
+        self.threadpool.start(worker2)
+
+
     def getNextColumn(self, x, theInfo):
         
         self.ui.exceptionsList.clear()
 
         if(self.x < len(theInfo)-1):    
-            self.x += 1
             if(self.ui.checkBox_2.isChecked() == True):
+
+                self.cleanColumn(str(theInfo[self.x]).split('>')[1])
                 self.ui.checkBox_2.toggle()
-                #TODO: add code for preserving info or cleaning column
+                
             
+            self.x += 1
             header = list()
             header.append(str(theInfo[self.x]).split('>')[1])
            
@@ -395,9 +410,10 @@ class WorkerSignals(QObject):
     
     returnVal = pyqtSignal(object)
     progress = pyqtSignal(int)
-    
+    dataframe = pyqtSignal(object)
 
-               
+
+#thread for validating columns
 class Worker(QRunnable):
 
     def __init__(self, fn, selectedColumns, df):
@@ -415,6 +431,18 @@ class Worker(QRunnable):
         #send the info returned from validators back to the GUI from worker thread
         self.signals.returnVal.emit(theInfo)
         
+#thread for cleaning columns
+class Worker2(QRunnable):
+    def __init__(self, fn, columntoclean):
+        super(Worker2, self).__init__()
+        self.fn = fn
+        self.columntoclean = columntoclean
+        self.signals = WorkerSignals
+
+    @pyqtSlot()
+    def run(self):
+
+        cleanedColumn = self.fn(self.columntoclean)
     
 if __name__ == "__main__":       
     appctxt = ApplicationContext()       # 1. Instantiate ApplicationContext
