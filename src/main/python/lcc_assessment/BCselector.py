@@ -58,7 +58,8 @@ def get_base_column(dataframe, selectedColumns, signal):
         callValidators(selectedColumns, df, df, allSections, vInfo, percentage, signal) #df is also passed in for columnseries since only one column was selected(a series)
     
     signal.progress.emit(remainder)
-    return vInfo #Return the processed data frame.
+    signal.dataframe.emit(df)
+    return (vInfo) #Return the processed data frame.
     
 def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, signal):
     
@@ -127,9 +128,9 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
         vInfo.append(validateMixed(columnSeries))
         signal.progress.emit(percentage)
         print("\n")
-        newColumn = fuzzyMatchingCleaner(columnSeries, n_match=50)
-        newName = oneColumn + "_cleaned"
-        df[newName] = newColumn #Save the new column with a suffix
+        # cleaned = cleanFuzzyMatching(columnSeries, n_match=50)
+        # newName = columnSeries.name + "_cleaned"
+        # df[newName] = cleaned #Save the new column with a suffix
     elif(oneColumn.lower() == "gradeitemid"):
         print("--gradeitemid--")
         vInfo.append(validateNum(columnSeries, 7))
@@ -140,9 +141,9 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
         vInfo.append(validateMixed(columnSeries))
         signal.progress.emit(percentage)
         print("\n")
-        newColumn = fuzzyMatchingCleaner(columnSeries, n_match=200)
-        newName = oneColumn + "_cleaned"
-        df[newName] = newColumn #Save the new column with a suffix
+        # cleaned = cleanFuzzyMatching(columnSeries, n_match=200)
+        # newName = columnSeries.name + "_cleaned"
+        # df[newName] = cleaned #Save the new column with a suffix
     elif(oneColumn.lower() == "gradeitemweight"):
         print("no validator for %s", oneColumn)
         signal.progress.emit(percentage)
@@ -167,6 +168,11 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
         print("\n")
      
     return(vInfo)
+
+def callCleaner(columntoclean):
+    
+    if(columntoclean.columns[0] == 'gradeitemname'):
+        columntoclean = cleanFuzzyMatching(columntoclean, n_match=200)
 
 
 
@@ -281,7 +287,9 @@ def fuzzyMatchingCleaner(df, threshold=80, n_match=None):
     cleanedColumn = cleanFuzzyMatching.run(threshold= threshold, n_match = n_match)
 
     info = cleanFuzzyMatching.statistics()
+    
     warnings = cleanFuzzyMatching.get_warnings()
+    
     errors = cleanFuzzyMatching.get_errors()
     
     return cleanedColumn
