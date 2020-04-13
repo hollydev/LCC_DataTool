@@ -16,7 +16,7 @@ import csv
 import os
 import cx_Oracle
 
-from messages.system import SYSTEM, LOG
+from src.main.python.messages.system import SYSTEM, LOG
 
 # class InvalidPathError(Error):
 #     def __init__(self, expression, message):

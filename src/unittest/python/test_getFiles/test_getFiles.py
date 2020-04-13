@@ -1,5 +1,5 @@
 import unittest
-import lcc_assessment.getFiles as getFiles
+import src.unittest.python.test_getFiles.mock_getFiles as getFiles
 
 class test_getFiles(unittest.TestCase):
     def test_checkFiles(self):
@@ -10,7 +10,7 @@ class test_getFiles(unittest.TestCase):
         self.assertEqual(getFiles.check_file(fileName),False)
         
         fileName = r'.\D2l Data\TC\Spring 19\AllGradesWithWithdrawnStudents_20190509_160155_WELD115-51731-201920.csv'
-        self.assertEqual(getFiles.check_file(fileName),False)
+        self.assertEqual(getFiles.check_file(fileName),True)
         
         fileName = r'.\D2l Data\A&S\CTL\Archived\Spring 17\AllGradesExport_AAST290-82669-201720.csv'
         self.assertEqual(getFiles.check_file(fileName),True)
@@ -32,11 +32,11 @@ class test_getFiles(unittest.TestCase):
         self.assertEqual(getFiles.check_file_name(fileName,unwanted), True)
         
         fileName = r'.\D2l Data\A&S\CTL\Archived\Spring 17\AllGradesExport_AAST290-82669-201720.csv'
-        unwanted = ['.\D2l Data']
+        unwanted = [r".\D2l Data"]
         self.assertEqual(getFiles.check_file_name(fileName,unwanted), False)
         
         fileName = r'.\D2l Data\TC\Spring 19\AllGradesWithWithdrawnStudents_20190509_160155_WELD115-51731-201920.csv'
-        unwanted = r'.\D2l Data\TC\Spring 19'
+        unwanted = [r'.\D2l Data\TC\Spring 19']
         self.assertEqual(getFiles.check_file_name(fileName,unwanted), False)
         
         

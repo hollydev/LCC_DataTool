@@ -10,8 +10,8 @@
 """
 import numpy
 import pandas
-from messages.validators import VALIDATORS
-from messages.system import SYSTEM, LOG
+from src.main.python.messages.validators import VALIDATORS
+from src.main.python.messages.system import SYSTEM, LOG
 import datetime
 import re
 

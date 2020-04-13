@@ -1,6 +1,6 @@
-from messages.system import SYSTEM, LOG
-import lcc_assessment.BCselector as base_selector
-import lcc_assessment.output as outputs
+from src.main.python.messages.system import SYSTEM, LOG
+import src.main.python.lcc_assessment.BCselector as base_selector
+import src.main.python.lcc_assessment.output as outputs
 import os
 
 def remove_duplicates(lst):
@@ -20,6 +20,13 @@ def remove_duplicates(lst):
 
 
 def get_last(element):
+    '''
+    Returns the last word in the string
+    @Params:
+        element - a string (an instructor name)
+    @Returns:
+        names[-1] - the last word in the string (the instructors last name)
+    '''
     names = element.split()
     return names[-1]
     

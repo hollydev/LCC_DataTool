@@ -8,9 +8,9 @@
 
 import pandas as pd 
 import glob as gb 
-from lcc_assessment.validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID, CRN
-from lcc_assessment.cleaners import FUZZY_MATCHING, BOOLEAN_CLEANER
-from lcc_assessment.main import Worker, WorkerSignals
+from src.main.python.lcc_assessment.validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID, CRN
+from src.main.python.lcc_assessment.cleaners import FUZZY_MATCHING, BOOLEAN_CLEANER
+from src.main.python.lcc_assessment.main import Worker, WorkerSignals
 from collections import namedtuple
 #from cleaners import GRADE_ITEM_NAME
 

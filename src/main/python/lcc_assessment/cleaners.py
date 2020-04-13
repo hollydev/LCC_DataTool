@@ -14,8 +14,8 @@ import numpy as np
 from tqdm import tqdm
 from fuzzywuzzy import fuzz, process
 
-from messages.cleaners import CLEANERS
-from messages.system import SYSTEM, LOG
+from src.main.python.messages.cleaners import CLEANERS
+from src.main.python.messages.system import SYSTEM, LOG
 
 
 class FUZZY_MATCHING:
