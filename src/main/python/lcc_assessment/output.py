@@ -12,7 +12,7 @@
 import pandas as pd
 import numpy as np
 import csv
-import pickle
+# import pickle
 import os
 import cx_Oracle
 
@@ -27,6 +27,7 @@ class FILE_WRITER():
     messages = []
     log = []
     dbStatus = "Disconnected"
+    dbTask = "Pending"
 
     def __init__(self, outPath=None, outName=None):
         """ Writer init function. Handles all file writing capabilites. Performs path validation
@@ -186,23 +187,23 @@ class FILE_WRITER():
             return True
 
 
-    def available_types(cls, file):
-        """ Provide a list of file types which are available to save.
-            TODO: Provide a list based on the filetype of the parameter.
+    # def available_types(cls, file):
+        # """ Provide a list of file types which are available to save.
+            # TODO: Provide a list based on the filetype of the parameter.
 
-            @Params:
-                cls - self object allows access to set path and outName.
-                file - The file to be saved. For file type checking.
+            # @Params:
+                # cls - self object allows access to set path and outName.
+                # file - The file to be saved. For file type checking.
 
-            @Returns:
-                types - A list of file types which are available for the file.
-        """
+            # @Returns:
+                # types - A list of file types which are available for the file.
+        # """
 
-        #If the file is a data frame
-        if(isinstance(file, pd.DataFrame)):
-            return(["CSV, XLSX, Pickle"])
-        else:
-            return(["Pickle"])
+        # If the file is a data frame
+        # if(isinstance(file, pd.DataFrame)):
+            # return(["CSV, XLSX, Pickle"])
+        # else:
+            # return(["Pickle"])
 
     
     def write_csv(cls, file):
@@ -220,12 +221,16 @@ class FILE_WRITER():
 
         #Save Pandas DF using Pandas
         if(isinstance(file, pd.DataFrame)):
-            #Check if the filename has an extension
-            if(cls.outName.endswith(".csv")):
-                file.to_csv(cls.outPath + cls.outName, index=False)
-            else:
-                file.to_csv(cls.outPath + cls.outName + ".csv", index=False)
-        
+            try:
+                
+                #Check if the filename has an extension
+                if(cls.outName.endswith(".csv")):
+                    file.to_csv(cls.outPath + cls.outName, index=False)
+                else:
+                    file.to_csv(cls.outPath + cls.outName + ".csv", index=False)
+                return True
+            except PermissionError:
+                return False
         #Save dict object using CSV
         elif (isinstance(file, dict)):
             #Use the csv package to handle writing dicts to files.
@@ -233,28 +238,31 @@ class FILE_WRITER():
 
             for row in file:
                 writer.WriteRow(line)
-
-    def write_pickle(cls, file):
-        """ Saving of pickle objects for later use by the python program.
-
-        @Params:
-            file - The file to be pickled.
-        """
-
-        #Save the pickle object, a serialized representation.
-        if(isinstance(file, pd.DataFrame)):
-            cls.fileName = cls.fileName + "_pandasDataFrame"
-        elif (isinstance(file, pd.Series)):
-            cls.fileName = cls.fileName + "_pandasSeries"
+            
+            return True
+        return False
         
-        if(check_overwrite(cls.outPath) == True):
-            try:
-                outFile = open(cls.outPath + cls.fileName, 'rw')
-                pickle.dump(file, outFile)
-                outFile.close()
+    # def write_pickle(cls, file):
+        # """ Saving of pickle objects for later use by the python program.
 
-            except OSError as e:
-                print("Unable to open file, please try again.", e)
+        # @Params:
+            # file - The file to be pickled.
+        # """
+
+        # Save the pickle object, a serialized representation.
+        # if(isinstance(file, pd.DataFrame)):
+            # cls.fileName = cls.fileName + "_pandasDataFrame"
+        # elif (isinstance(file, pd.Series)):
+            # cls.fileName = cls.fileName + "_pandasSeries"
+        
+        # if(check_overwrite(cls.outPath) == True):
+            # try:
+                # outFile = open(cls.outPath + cls.fileName, 'rw')
+                # pickle.dump(file, outFile)
+                # outFile.close()
+
+            # except OSError as e:
+                # print("Unable to open file, please try again.", e)
                 
     ######################################################
     ############## DB Connection Code ####################
@@ -264,7 +272,8 @@ class FILE_WRITER():
         """ Read the configuration file to get the database connection details. This allows the GUI to hide necessary information.
         
         @Returns:
-            configs - A map of with named configurations. Keys are the DB info, values are the specified configs. Returns None on invalid config.
+            configs - A map of with named configurations. Keys are the DB info, values are the specified configs.
+            Returns None on invalid config.
         """
 
         user = ""
@@ -275,9 +284,16 @@ class FILE_WRITER():
         port = None
 
         if(config_file == None):
-            cls.dbStatus = "Connection file not found!"
+            cls.dbStatus = SYSTEM.noConfigFileFound
             return None
-        
+        if(isinstance(config_file, str)):
+            #If the file is a path, read the file object
+            try:
+                config_file = open(config_file, 'r')
+            except FileNotFoundError:
+                cls.dbStatus = SYSTEM.noConfigFileFound
+                return None
+            
         lines = config_file.readlines()
         for line in lines:
             if('#' not in line and len(line) > 1):

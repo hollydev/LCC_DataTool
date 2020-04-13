@@ -1,5 +1,5 @@
 import unittest
-import src.main.python.lcc_assessment.getFiles as getFiles
+import lcc_assessment.getFiles as getFiles
 
 class test_getFiles(unittest.TestCase):
     def test_checkFiles(self):

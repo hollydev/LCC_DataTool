@@ -4,7 +4,7 @@ import getFiles
 
 class Test_analyzeData(unittest.TestCase):
     
-    files = getFiles.get_files("./D2L Data")
+    files = getFiles.get_files("./dirpath")
     
     def test_ProgramArea(self):
         self.assertEqual(analyzePath.get_program_area(self.files[0]),'A&S')

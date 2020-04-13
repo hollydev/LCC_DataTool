@@ -9,7 +9,7 @@
 import pandas as pd 
 import glob as gb 
 from lcc_assessment.validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID, CRN
-from lcc_assessment.cleaners import FUZZY_MATCHING
+from lcc_assessment.cleaners import FUZZY_MATCHING, BOOLEAN_CLEANER
 from lcc_assessment.main import Worker, WorkerSignals
 from collections import namedtuple
 #from cleaners import GRADE_ITEM_NAME
@@ -127,9 +127,9 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
         vInfo.append(validateMixed(columnSeries))
         signal.progress.emit(percentage)
         print("\n")
-        cleaned = cleanFuzzyMatching(columnSeries, n_match=50)
-        newName = columnSeries.name + "_cleaned"
-        df[newName] = cleaned #Save the new column with a suffix
+        newColumn = fuzzyMatchingCleaner(columnSeries, n_match=50)
+        newName = oneColumn + "_cleaned"
+        df[newName] = newColumn #Save the new column with a suffix
     elif(oneColumn.lower() == "gradeitemid"):
         print("--gradeitemid--")
         vInfo.append(validateNum(columnSeries, 7))
@@ -140,9 +140,9 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
         vInfo.append(validateMixed(columnSeries))
         signal.progress.emit(percentage)
         print("\n")
-        cleaned = cleanFuzzyMatching(columnSeries, n_match=200)
-        newName = columnSeries.name + "_cleaned"
-        df[newName] = cleaned #Save the new column with a suffix
+        newColumn = fuzzyMatchingCleaner(columnSeries, n_match=200)
+        newName = oneColumn + "_cleaned"
+        df[newName] = newColumn #Save the new column with a suffix
     elif(oneColumn.lower() == "gradeitemweight"):
         print("no validator for %s", oneColumn)
         signal.progress.emit(percentage)
@@ -159,6 +159,11 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
         print("--gradelastmodified--")
         signal.progress.emit(percentage)
         vInfo.append(validateDate(columnSeries))
+        print("\n")
+    elif(oneColumn.lower() == "gradercomment"):
+        print("no validator for %s", oneColumn)
+        signal.progress.emit(percentage)
+        df[oneColumn] = booleanCleaner(columnSeries) #Replace the column with the cleaned version.
         print("\n")
      
     return(vInfo)
@@ -271,13 +276,22 @@ def validateCRN(df, allSections):
     return(info, theStats)
 
 
-def cleanFuzzyMatching(df, threshold=80, n_match=None):
-
+def fuzzyMatchingCleaner(df, threshold=80, n_match=None):
     cleanFuzzyMatching = FUZZY_MATCHING(df)
     cleanedColumn = cleanFuzzyMatching.run(threshold= threshold, n_match = n_match)
 
     info = cleanFuzzyMatching.statistics()
     warnings = cleanFuzzyMatching.get_warnings()
     errors = cleanFuzzyMatching.get_errors()
+    
+    return cleanedColumn
+    
+def booleanCleaner(df):
+    cleanBoolean = BOOLEAN_CLEANER(df)
+    cleanedColumn = cleanBoolean.run()
+    
+    info = cleanBoolean.statistics()
+    warnings = cleanBoolean.get_warnings()
+    errors = cleanBoolean.get_errors()
     
     return cleanedColumn

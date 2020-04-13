@@ -19,6 +19,7 @@ from messages.system import SYSTEM, LOG
 
 
 class FUZZY_MATCHING:
+
     def __init__(self, column):
         #Normalize to string before saving to object
         column = column.apply(str)
@@ -29,7 +30,7 @@ class FUZZY_MATCHING:
 
         self.messages = list()
         self.errors = list()
-        self.items = 0
+        self.items = len(column)
 
 
     def run(self, threshold=80, n_match=None):
@@ -55,18 +56,7 @@ class FUZZY_MATCHING:
                 matchedList.append(val)
 
             self.messages.append(CLEANERS.matchResult.format(val, match[0], match[1]))
-            
-        #Return matches past a threshold
-        # for i, val in enumerate(self.values):
-        #     match, confidence = matches[val]
-
-        #     if(confidence >= threshold):
-        #         self.values[i] = match
-        #         self.items += 1 #Count items cleaned
-        #     else:
-        #         continue
-
-
+                    
         return matchedList
 
 
@@ -134,20 +124,14 @@ class FUZZY_MATCHING:
         return(self.errors)
 
 
-# class GRADE_VALUE:
-#     messages = list()
-#     errors = list()
-
-#     def __init__(self, column):
-#         self.column = column
-
-#     def run():
 
 class DATE:
     messages = list()
     errors = list()
+    
 
     def __init__(self, column):
+        self.items = len(columns)
         self.column = column
 
     def run(self,gradeItemName):
@@ -200,5 +184,23 @@ class DATE:
     
         return data
    
-         
+class BOOLEAN_CLEANER:
+    messages = list()
+    errors = list()
+    
+    def __init(self, column):
+        self.items = len(columns)
+        self.column = column
+       
+    def run(self):        
+        return self.column.notna()
+    
+    def statistics(self):
+        return SYSTEM.cleanerStats.format("Boolean Cleaner", self.items, len(self.messages), len(self.errors))
+
+    def get_warnings(self):
+        return(self.messages)
+
+    def get_errors(self):
+        return(self.errors)
     

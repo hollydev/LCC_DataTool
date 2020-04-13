@@ -10,7 +10,7 @@ import unittest
 import pandas as pd 
 import glob as gb 
 from enum import Enum 
-from source.BCselector import get_base_column
+from lcc_assessment.BCselector import get_base_column
 #from cleaners import GRADE_ITEM_NAME
 
 
@@ -24,7 +24,7 @@ class TestBCselector(unittest.TestCase):
 
     def test_get_base_column(self):
 
-         for file in gb.glob("testing/mock_data/*.csv"):
+         for file in gb.glob("./mock_data/*.csv"):
             #grab the base columns from the csv file
             df = pd.read_csv(file, usecols = list(range(0,18)), sep = ',')
 
