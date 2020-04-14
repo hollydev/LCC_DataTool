@@ -1,12 +1,18 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget, QHeaderView, QVBoxLayout, QFileDialog, QMainWindow
 from PyQt5.QtCore import QRunnable, QThreadPool, QObject, pyqtSignal, pyqtSlot
-from gui import Ui_MainWindow
+from lcc_assessment.gui import Ui_MainWindow
 import re
 import sys, os
-import getFiles as getFiles
-import system as system
-import output as output
+import lcc_assessment.getFiles as getFiles
+import lcc_assessment.system as system
+import lcc_assessment.output as output
+# from src.main.python.lcc_assessment.gui import Ui_MainWindow
+# import re
+# import sys, os
+# import src.main.python.lcc_assessment.getFiles as getFiles
+# import src.main.python.lcc_assessment.system as system
+# import src.main.python.lcc_assessment.output as output
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from messages.system import SYSTEM
 
@@ -262,7 +268,6 @@ class mywindow(QtWidgets.QMainWindow):
 
 
     def displayFeedBack(self, theInfo):
-
         #Initialize variables
         self.x = 0
         header = list()
@@ -307,6 +312,7 @@ class mywindow(QtWidgets.QMainWindow):
         i = 0
         if(buttonId == 0):
             for element in columnInfo[1].warn:
+            
                 self.ui.exceptionsList.insertItem(i, element)
                 i += 1
         else:
