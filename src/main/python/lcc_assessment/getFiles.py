@@ -136,7 +136,7 @@ def recursive_concat(frames):
     @Returns:
         finalFrame - one dataframe made up of all the dataframes in frames
 '''
-def concat_data_frames(frames):
+def concat_data_frames(frames, files):
     size = len(frames)
     
     #Return the single frame on one file selected.
@@ -152,8 +152,11 @@ def concat_data_frames(frames):
         frames1 = frames[:firstThird]
         frames2 = frames[firstThird:secondThird]
         frames3 = frames[secondThird:-1]
-    
-        concatFrames1 = pd.concat(frames1, sort = False)
+        files1 = files[:firstThird]
+        files2 = files[firstThird:secondThird]
+        files3 = files[secondThird:]
+        
+        concatFrames1 = pd.concat(frames1, sort = False, keys = files1)
     
     
     #For each deleted frame, concat to the new frame.
@@ -162,14 +165,14 @@ def concat_data_frames(frames):
         progressBar.update(1)
         progressBar.display()
     
-        concatFrames2 = pd.concat(frames2, sort = False)
+        concatFrames2 = pd.concat(frames2, sort = False, keys = files2)
     
         for delFrame in frames2:
             recursive_concat(frames2)
         progressBar.update(1)
         progressBar.display()
 
-        concatFrames3 = pd.concat(frames3, sort = False)
+        concatFrames3 = pd.concat(frames3, sort = False, keys = files3)
     
         for delFrame in frames3:
             recursive_concat(frames3)
@@ -180,7 +183,7 @@ def concat_data_frames(frames):
         finalFrame = pd.concat(allFrames, sort = False)
         progressBar.close()
     else:
-        finalFrame = pd.concat(frames, sort = False)
+        finalFrame = pd.concat(frames, sort = False, keys = files)
         for delFrame in frames:
             recursive_concat(frames)
 
@@ -209,6 +212,6 @@ def execute(path, unwanted):
         
     else:
         readFiles = get_data_frames(files)
-        ret = concat_data_frames(readFiles)
+        ret = concat_data_frames(readFiles, files)
         
     return ret
