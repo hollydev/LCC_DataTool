@@ -5,6 +5,7 @@ import lcc_assessment.output as outputs
 # import src.main.python.lcc_assessment.BCselector as base_selector
 # import src.main.python.lcc_assessment.output as outputs
 import os
+import numpy as np
 
 def remove_duplicates(lst):
     '''
@@ -31,7 +32,10 @@ def get_last(element):
         names[-1] - the last word in the string (the instructors last name)
     '''
     names = element.split()
-    return names[-1]
+    if(len(names) == 0):
+        print("Test")
+        return None
+    return last
     
 def get_instructors(data):
     '''
@@ -45,11 +49,13 @@ def get_instructors(data):
     ret_list = []
     try:
         names = data['GraderFirstName'] + ' ' + data['GraderLastName']
+        names = names.fillna('')
     except KeyError:
-        names = ""
+        names = ["No instructors found"]
     
-    ret_list = remove_duplicates(names)
-    ret_list.sort(key=get_last)
+    ret_list = remove_duplicates(names) #Use a set to remove duplicates.
+    ret_list.remove('') #Remove blank entries if they exist.
+    #ret_list.sort(key=get_last)
     
     return ret_list
 
