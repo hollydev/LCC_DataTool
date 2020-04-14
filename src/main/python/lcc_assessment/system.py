@@ -1,6 +1,6 @@
 from messages.system import SYSTEM, LOG
 import lcc_assessment.BCselector as base_selector
-import lcc_assessment.output as outputs
+import output as outputs
 import os
 
 def remove_duplicates(lst):

@@ -17,21 +17,31 @@ class SYSTEM:
         pass
 
     #System Statistics Messages
-    validatorStats = ">Column [%s]>Validated with [%s]>Items Validated: [%i] Warnings: [%i] Errors: [%i]>"
-    cleanerStats = "Cleaner [{}]: Items cleaned [{}]\t Messages: [{}]\t Errors: [{}]"
+    validatorStats      = ">Column [%s]>Validated with [%s]>Items Validated: [%i] Warnings: [%i] Errors: [%i]>"
+    cleanerStats        = "Cleaner [{}]: Items cleaned [{}]\t Messages: [{}]\t Errors: [{}]"
      
     #System Output Messages
-    emptyPath = "Found empty path, enter a valid path."
-    notPath = "Entered path is invalid. Please check to make sure the folder exists."
-    notPath_stat = "Unable to check status of the given path. Contact the analyst."
-    overwrite = "File {} already exists. Do you want to overwrite the file? (Yes/No)"
-    newPathSame = "Given path '{}' matches current output path."
-    noFilesFound = " "
-    noConfigFileFound = "Connection configuration file not found."
+    emptyPath           = "Found empty path, enter a valid path."
+    notPath             = "Entered path is invalid. Please check to make sure the folder exists."
+    notPath_stat        = "Unable to check status of the given path. Contact the analyst."
+    overwrite           = "File {} already exists. Do you want to overwrite the file? (Yes/No)"
+    newPathSame         = "Given path '{}' matches current output path."
+    noFilesFound        = " "
+    noConfigFileFound   = "Connection configuration file not found."
+    dbConnected         = "Connected"
+    failedConnect       = "Unable to connect"
+    dbWaiting           = "Waiting..."
+    dbPrepLoad          = "Preparing data for loading..."
+    dbPerformLoad       = "Loading {} rows..."
+    dbNoLoadDataFound   = "Found no data to load! Please try again!"
+    dbLoadFailed        = "Loading failed with error: {}"
+    dbLoadFailedFormat  = "Loading failed due to formatting error. Check with your developer.\nError: {}"
+    dbLoadSuccess       = "Data successfully loaded!"
+    
 
     #System Exception Messages
-    FileNotFoundException = "Path points to invalid file or path. Entered path was {}"
-    TypeException = "Wrong variable type used. Expected: {}\tGot: {}"
+    FileNotFoundException   = "Path points to invalid file or path. Entered path was {}"
+    TypeException           = "Wrong variable type used. Expected: {}\tGot: {}"
 
 class LOG:
     def __init__(self):

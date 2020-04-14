@@ -8,8 +8,8 @@
 
 import pandas as pd 
 import glob as gb 
-from lcc_assessment.validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID, CRN
-from lcc_assessment.cleaners import FUZZY_MATCHING, BOOLEAN_CLEANER
+from validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID, CRN
+from cleaners import FUZZY_MATCHING, BOOLEAN_CLEANER
 from lcc_assessment.main import Worker, WorkerSignals
 from collections import namedtuple
 #from cleaners import GRADE_ITEM_NAME
@@ -196,7 +196,9 @@ def split_and_reorganize(theDataFrame):
     return theDataFrame
 
 def output_processing(df):
-    keptColumns = ["username",
+    keptColumns = ["pidm",
+                   "banner_id",
+                   "username",
                    "firstname",
                    "lastname",
                    "courseofferingname",
@@ -209,6 +211,7 @@ def output_processing(df):
                    "gradeitemname_cleaned",
                    "pointsnumerator",
                    "pointsdenominator",
+                   "gradevalue",
                    "gradecomments"]
                           
     processedDf = df.reindex(columns = keptColumns) #Keep only the listed columns, if they don't exist just return a NaN column

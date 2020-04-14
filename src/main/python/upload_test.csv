@@ -1,11 +1,11 @@
-pidm,banner_id,username,firstname,lastname,courseofferingname,section,crn,term,gradeitemcategoryname,gradeitemcategoryname_cleaned,gradeitemname,gradeitemname_cleaned,pointsnumerator,pointsdenominator,gradecomments,gradevalue
-12345678,X00123456,mcneiln3,Rebekah,Abolibdeh,Leadership Practicum II,TEST,50700,201920,Discussion and Participation,Discussion and Participation,Paper Three 031919,Paper Three ,8,25,,0.32
-12345679,X00123457,abolibdt,Tala,Amir,Leadership Practicum II,TEST,50700,201920,Discussion and Participation,Discussion and Participation,Workgroup Presentation 043019,Workgroup Presentation,1,126,,0.007936508
-12345680,X00123458,hartgesr,Morgan,Abolibdeh,Leadership Practicum II,TEST,50700,201920,Semester Projects,Projects,Paper Four 040919,Paper Four,10,1,,10
-12345681,X00123459,florec11,Jangwa,McNeilly,Leadership Practicum II,TEST,50700,201920,Discussion and Participation,Discussion and Participation,Class Four 012919,Class Four,25,10,,2.5
-12345682,X00123460,alij2,Rebekah,Amir,Leadership Practicum II,TEST,50700,201920,,,Class Thirteen 040919,Class Thirteen,10,1,,10
-12345683,X00123461,bradburm,Marymargaret,Ali,Leadership Practicum II,TEST,50700,201920,Discussion and Participation,Discussion and Participation,Class Twelve 040219,Class Twelve,1,1,,1
-12345684,X00123462,alij2,Islam,McNeilly,Leadership Practicum II,TEST,50700,201920,Discussion and Participation,Discussion and Participation,Servant-Leader Research Paper 041619,Servant-Leader Research Paper,10,10,,1
-12345685,X00123463,mcneiln3,Marymargaret,Abolibdeh,Leadership Practicum II,TEST,50700,201920,Semester Projects,Projects,Class Fourteen 041619,Class,1,1,,1
-12345686,X00123464,fowlerm7,Tala,Abolibdeh,Leadership Practicum II,TEST,50700,201920,Discussion and Participation,Discussion and Participation,Final Calculated Grade,Final Calculated Grade,1,1,,1
-12345687,X00123465,tysonk4,Morgan,Hartges,Leadership Practicum II,TEST,50700,201920,Discussion and Participation,Discussion and Participation,Class Thirteen 040919,Class Thirteen,1,10,,0.1
+pidm,banner_id,username,firstname,lastname,courseofferingname,section,crn,term,gradeitemcategoryname,gradeitemcategoryname_cleaned,gradeitemname,gradeitemname_cleaned,pointsnumerator,pointsdenominator,gradevalue,gradecomments
+12345678,X00123456,mcneiln3,Rebekah,Abolibdeh,Leadership Practicum II,TEST123,50700,201920,Discussion and Participation,Discussion and Participation,Paper Three 031919,Paper Three ,8,25,0.32,No Feedback
+12345679,X00123457,abolibdt,Tala,Amir,Leadership Practicum II,TEST123,50700,201920,Discussion and Participation,Discussion and Participation,Workgroup Presentation 043019,Workgroup Presentation,1,126,0.007936508,No Feedback
+12345680,X00123458,hartgesr,Morgan,Abolibdeh,Leadership Practicum II,TEST123,50700,201920,Semester Projects,Projects,Paper Four 040919,Paper Four,10,1,10,No Feedback
+12345681,X00123459,florec11,Jangwa,McNeilly,Leadership Practicum II,TEST123,50700,201920,Discussion and Participation,Discussion and Participation,Class Four 012919,Class Four,25,10,2.5,No Feedback
+12345682,X00123460,alij2,Rebekah,Amir,Leadership Practicum II,TEST123,50700,201920,ex,ex,Class Thirteen 040919,Class Thirteen,10,1,10,No Feedback
+12345683,X00123461,bradburm,Marymargaret,Ali,Leadership Practicum II,TEST123,50700,201920,Discussion and Participation,Discussion and Participation,Class Twelve 040219,Class Twelve,1,1,1,No Feedback
+12345684,X00123462,alij2,Islam,McNeilly,Leadership Practicum II,TEST123,50700,201920,Discussion and Participation,Discussion and Participation,Servant-Leader Research Paper 041619,Servant-Leader Research Paper,10,10,1,No Feedback
+12345685,X00123463,mcneiln3,Marymargaret,Abolibdeh,Leadership Practicum II,TEST123,50700,201920,Semester Projects,Projects,Class Fourteen 041619,Class,1,1,1,No Feedback
+12345686,X00123464,fowlerm7,Tala,Abolibdeh,Leadership Practicum II,TEST123,50700,201920,Discussion and Participation,Discussion and Participation,Final Calculated Grade,Final Calculated Grade,1,1,1,No Feedback
+12345687,X00123465,tysonk4,Morgan,Hartges,Leadership Practicum II,TEST123,50700,201920,Discussion and Participation,Discussion and Participation,Class Thirteen 040919,Class Thirteen,1,10,0.1,No Feedback

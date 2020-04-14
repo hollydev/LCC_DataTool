@@ -1,12 +1,12 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget, QHeaderView, QVBoxLayout, QFileDialog, QMainWindow
 from PyQt5.QtCore import QRunnable, QThreadPool, QObject, pyqtSignal, pyqtSlot
-from lcc_assessment.gui import Ui_MainWindow
+from gui import Ui_MainWindow
 import re
 import sys, os
-import lcc_assessment.getFiles as getFiles
-import lcc_assessment.system as system
-import lcc_assessment.output as output
+import getFiles as getFiles
+import system as system
+import output as output
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from messages.system import SYSTEM
 

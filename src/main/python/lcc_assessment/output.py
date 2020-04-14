@@ -26,8 +26,11 @@ from messages.system import SYSTEM, LOG
 class FILE_WRITER():
     messages = []
     log = []
+    
+    #Database attributes
     dbStatus = "Disconnected"
     dbTask = "Pending"
+    dbLoadData = None
 
     def __init__(self, outPath=None, outName=None):
         """ Writer init function. Handles all file writing capabilites. Performs path validation
@@ -333,7 +336,8 @@ class FILE_WRITER():
     def connect(cls, configs):
         try:
             connection = cx_Oracle.connect(configs["user"], configs["password"], configs["tns"])
-            cls.dbStatus  = "Connected!"
+            cls.dbStatus  = SYSTEM.dbConnected
+            cls.dbTask = SYSTEM.dbWaiting
             
             return connection
 
@@ -342,8 +346,51 @@ class FILE_WRITER():
             
             try:
                 connection = cx_Oracle.connect(configs["user"], configs["password"], configs["hostname"] + ':' + configs["port"] + '/' + configs["service"])
-                cls.dbStatus  = "Connected!"
+                cls.dbStatus  = SYSTEM.dbConnected
+                cls.dbTask = SYSTEM.dbWaiting
                 return connection
             except cx_Oracle.DatabaseError:
-                cls.dbStatus = "Unable to Connect"
+                cls.dbStatus = SYSTEM.failedConnect
                 return None
+                
+    def db_prepare(cls, file):
+        
+        cls.dbTask = SYSTEM.dbPrepLoad
+        
+        if(isinstance(file, pd.DataFrame)):
+            tupleData = [tuple(x) for x in file.to_numpy()]
+            cls.dbLoadData = tupleData
+            cls.dbRowsCount = len(tupleData)
+            return True
+        else:
+            cls.dbLoadData = None
+            return False
+    
+    def db_load(cls, connection):
+    
+        if(cls.dbLoadData != None and connection != None):
+            cls.dbTask = SYSTEM.dbPerformLoad.format(cls.dbRowsCount)
+            try:
+                cursor = connection.cursor()
+                cursor.executemany("insert into ASSESSMENT_GRADEBOOKS values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16)", cls.dbLoadData, batcherrors = True)
+                
+                #Save any DB loading errors
+                cls.dbLoadErrors = []
+                for error in cursor.getbatcherrors():
+                    print("Error", error.message, "at row offset", error.offset)
+                    cls.dbLoadErrors.append("Error", error.message, "at row offset", error.offset)
+            except cx_Oracle.DatabaseError as e:
+                cls.dbTask = SYSTEM.dbLoadFailed.format(e)
+            # except TypeError as e:
+                # cls.dbTask = SYSTEM.dbLoadFailedFormat.format(e)
+                # return False                
+            
+            #Commit and close the connection
+            connection.commit()
+            cursor.close()
+            connection.close()
+            cls.dbTask = SYSTEM.dbLoadSuccess
+            return True
+        else:
+            cls.dbTask = SYSTEM.dbNoLoadDataFound
+            return False
