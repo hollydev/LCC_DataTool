@@ -7,12 +7,6 @@ import sys, os
 import lcc_assessment.getFiles as getFiles
 import lcc_assessment.system as system
 import lcc_assessment.output as output
-# from src.main.python.lcc_assessment.gui import Ui_MainWindow
-# import re
-# import sys, os
-# import src.main.python.lcc_assessment.getFiles as getFiles
-# import src.main.python.lcc_assessment.system as system
-# import src.main.python.lcc_assessment.output as output
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from messages.system import SYSTEM
 
@@ -86,18 +80,24 @@ class mywindow(QtWidgets.QMainWindow):
         self.applyFlag = 0
 
     #function for updating the progress bar in validate tab
-    def progressUpdate(self, n):
-        self.currentValue += n
-        self.ui.progressBar.setValue(self.currentValue)
+    def validatorProgress(self, n):
+        self.currentValue1 += n
+        self.ui.progressBar.setValue(self.currentValue1)
 
-    #catches the signal from BCselector, assigns the validated frame to self.df
-    def setValidatedFrame(self, dataframe):
+    def getFilesProgress(self, n):
+        self.currentValue2 += n
+        self.ui.progressBar1.setValue(self.currentValue2)
+
+
+    #catches the signal from BCselector and getFiles, assigns the returned frame to self.df
+    def setFrame(self, dataframe):
+
         self.df = dataframe
 
     
     def validate_button(self):
         self.threadpool = QThreadPool()
-        self.currentValue = 0 #holds current value of progress bar for thread
+        self.currentValue1 = 0 #holds current value of progress bar for validator thread
         theColumns = []
         x = self.ui.listWidget_4.count()-1
         while(x >= 0):
@@ -106,8 +106,8 @@ class mywindow(QtWidgets.QMainWindow):
 
         worker = Worker(system.main, theColumns, self.df)
         worker.signals.returnVal.connect(self.displayFeedBack)
-        worker.signals.progress.connect(self.progressUpdate)
-        worker.signals.dataframe.connect(self.setValidatedFrame)
+        worker.signals.progress2.connect(self.validatorProgress)
+        worker.signals.dataframe.connect(self.setFrame)
         self.threadpool.start(worker)
               
         
@@ -156,18 +156,23 @@ class mywindow(QtWidgets.QMainWindow):
 
     def apply_discard_buttons(self, button): 
         try:
+            self.threadpool = QThreadPool()
+            self.currentValue2 = 0 #current value for progress of apply_button thread
             sb = self.ui.buttonBox.standardButton(button)
             if sb == QtWidgets.QDialogButtonBox.Apply: #APPLY CLICKED
                 if self.applyFlag == 0:
                     self.check_state()
-                    self.df = getFiles.execute(self.path, self.unwanted)
-                    self.print_instructors()
-                    self.print_termcodes()    
-                    self.ui.tabWidget.setTabEnabled(1, True)
+                    worker3 = Worker3(getFiles.execute, self.path, self.unwanted)
+                    worker3.signals.dataframe.connect(self.setFrame)
+                    worker3.signals.finished1.connect(self.print_instructors)
+                    worker3.signals.finished2.connect(self.print_termcodes)
+                    worker3.signals.progress2.connect(self.getFilesProgress)
+                    self.threadpool.start(worker3)
                     self.applyFlag = 1
             elif sb == QtWidgets.QDialogButtonBox.Discard: #DISCARD CLICKED
                 #Reset flow
                 self.start_up()
+            self.ui.tabWidget.setTabEnabled(1, True)
         except AttributeError:
             return
             
@@ -268,6 +273,7 @@ class mywindow(QtWidgets.QMainWindow):
 
 
     def displayFeedBack(self, theInfo):
+
         #Initialize variables
         self.x = 0
         header = list()
@@ -312,7 +318,6 @@ class mywindow(QtWidgets.QMainWindow):
         i = 0
         if(buttonId == 0):
             for element in columnInfo[1].warn:
-            
                 self.ui.exceptionsList.insertItem(i, element)
                 i += 1
         else:
@@ -331,7 +336,7 @@ class mywindow(QtWidgets.QMainWindow):
 
     def getNextColumn(self, x, theInfo):
         
-        self.ui.exceptionsList.clear()
+        self.ui.exceptionsList.clear() #clear the exceptionsList box before moving to next column
 
         if(self.x < len(theInfo)-1):    
             if(self.ui.checkBox_2.isChecked() == True):
@@ -415,8 +420,14 @@ class mywindow(QtWidgets.QMainWindow):
 class WorkerSignals(QObject):
     
     returnVal = pyqtSignal(object)
-    progress = pyqtSignal(int)
+
+    progress2 = pyqtSignal(int)#signal for updating validator progress bar
+    progress1 = pyqtSignal(int)#signal for updating apply button progress bar
+
     dataframe = pyqtSignal(object)
+
+    finished1 = pyqtSignal()#for print_instructors()
+    finished2 = pyqtSignal()#for print_termcodes()
 
 
 #thread for validating columns
@@ -449,6 +460,26 @@ class Worker2(QRunnable):
     def run(self):
 
         cleanedColumn = self.fn(self.columntoclean)
+
+class Worker3(QRunnable):
+    def __init__(self, fn, path, unwanted):
+        super(Worker3, self).__init__()
+        self.fn = fn
+        self.path = path
+        self.unwanted = unwanted
+        self.signals = WorkerSignals()
+
+    @pyqtSlot()
+    def run(self):
+
+        # self.signals.dataframe.emit(self.fn(self.path, self.unwanted))
+        theFiles = self.fn(self.path, self.unwanted, self.signals)
+        self.signals.dataframe.emit(theFiles)
+        self.signals.finished1.emit()
+        self.signals.finished2.emit()
+
+        return
+
     
 if __name__ == "__main__":       
     appctxt = ApplicationContext()       # 1. Instantiate ApplicationContext

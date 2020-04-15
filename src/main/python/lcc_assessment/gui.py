@@ -115,6 +115,10 @@ class Ui_MainWindow(object):
         self.treeWidget.setObjectName("treeWidget")
         self.gridLayout_5.addWidget(self.treeWidget, 0, 0, 1, 1)
         self.verticalLayout_6.addWidget(self.groupBox_5)
+        self.progressBar1 = QtWidgets.QProgressBar(self.tab) #PROGRESS BAR APPLY FUNCTION
+        self.progressBar1.setAlignment(QtCore.Qt.AlignVCenter)
+        self.progressBar1.setObjectName("progressBar1")
+        self.verticalLayout_6.addWidget(self.progressBar1)
         self.buttonBox = QtWidgets.QDialogButtonBox(self.tab)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Discard)
@@ -164,13 +168,9 @@ class Ui_MainWindow(object):
         item = QtWidgets.QListWidgetItem()
         self.listWidget_3.addItem(item)
         self.gridLayout.addWidget(self.listWidget_3, 1, 0, 3, 2)
-
-        self.progressBar = QtWidgets.QProgressBar(self.tab) #PROGRESS BAR
+        self.progressBar = QtWidgets.QProgressBar(self.tab) #PROGRESS BAR FOR VALIDATOR
         self.progressBar.setObjectName("progressBar")
         self.gridLayout.addWidget(self.progressBar)
-        
-
-
         self.label_5 = QtWidgets.QLabel(self.Column)
         self.label_5.setObjectName("label_5")
         self.gridLayout.addWidget(self.label_5, 0, 0, 1, 1)

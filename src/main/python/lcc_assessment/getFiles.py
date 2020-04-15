@@ -12,6 +12,7 @@
 from messages.system import SYSTEM
 import os
 import pandas as pd
+import time
 
 
 #Progress Bar
@@ -76,8 +77,8 @@ def check_file_name(filename, unwanted):
     @Returns:
         
 '''
-def get_files(myPath, unwanted):
-
+def get_files(myPath, unwanted, signal):
+    progressCap = 30
     files = []
     skippedFiles = 0
 
@@ -95,8 +96,15 @@ def get_files(myPath, unwanted):
                 else:
                     skippedFiles += 1
 
+    increment = 1
+    for x in range(0, progressCap):
+        time.sleep(0.01)
+        signal.progress2.emit(1)
+        
+
     print("Found {} files. ({} skipped)".format(len(files), skippedFiles))
-                    
+
+                 
     return files
 
 '''
@@ -107,12 +115,17 @@ def get_files(myPath, unwanted):
     @Returns:
         readFiles - a list of all newly created pandas dataframes
 '''
-def get_data_frames(files):
+def get_data_frames(files, signal):
+    progressCap = 25
+    increment = progressCap//len(files)
+    remainder = progressCap%len(files)
     readFiles = []
-    #Iterate using tqdm to show a progress bar.
-    for file in tqdm(files, total=len(files)):
+   
+    for file in files:
         readFiles.append(pd.read_csv(file))
-    
+        signal.progress2.emit(increment)
+    signal.progress2.emit(remainder)
+
     return readFiles
 
 '''
@@ -136,17 +149,21 @@ def recursive_concat(frames):
     @Returns:
         finalFrame - one dataframe made up of all the dataframes in frames
 '''
-def concat_data_frames(frames):
+def concat_data_frames(frames, signal):
     size = len(frames)
+    progressCap = 45
     
     #Return the single frame on one file selected.
     if size == 1:
+        signal.progress2.emit(45)
         return frames[0]
     
-    progressBar = tqdm(total=3)
+    # progressBar = tqdm(total=3)
     
     if size > 5:
     
+        increment = progressCap//len(frames)
+        remainder = progressCap%(len(frames))
         firstThird = round(size/3)
         secondThird = round(2*size/3)
         frames1 = frames[:firstThird]
@@ -159,30 +176,36 @@ def concat_data_frames(frames):
     #For each deleted frame, concat to the new frame.
         for delFrame in frames1:
             recursive_concat(frames1)
-        progressBar.update(1)
-        progressBar.display()
+        signal.progress2.emit(increment)
+        # progressBar.update(1)
+        # progressBar.display()
     
         concatFrames2 = pd.concat(frames2, sort = False)
     
         for delFrame in frames2:
             recursive_concat(frames2)
-        progressBar.update(1)
-        progressBar.display()
+        signal.progress2.emit(increment)
+        # progressBar.update(1)
+        # progressBar.display()
 
         concatFrames3 = pd.concat(frames3, sort = False)
     
         for delFrame in frames3:
             recursive_concat(frames3)
-        progressBar.update(1)
-        progressBar.display()
+        signal.progress2.emit(increment)
+        # progressBar.update(1)
+        # progressBar.display()
 
         allFrames = [concatFrames1, concatFrames2, concatFrames3]
         finalFrame = pd.concat(allFrames, sort = False)
-        progressBar.close()
+        # progressBar.close()
+        signal.progress2.emit(remainder)
     else:
         finalFrame = pd.concat(frames, sort = False)
         for delFrame in frames:
             recursive_concat(frames)
+            signal.progress2.emit(increment)
+        signal.progress2.emit(remainder)
 
     return finalFrame
 
@@ -200,15 +223,16 @@ def concat_data_frames(frames):
         ret - the combined data frame of all the files
                 (if directory is empty, returns empty data frame)
 '''
-def execute(path, unwanted):
+def execute(path, unwanted, signal):
     ret = pd.DataFrame()
-    files = get_files(path, unwanted)
+    files = get_files(path, unwanted, signal)
     
     if(len(files) == 0):
         print(SYSTEM.noFilesFound)
         
     else:
-        readFiles = get_data_frames(files)
-        ret = concat_data_frames(readFiles)
-        
+        readFiles = get_data_frames(files, signal)
+        ret = concat_data_frames(readFiles, signal)
+
+    print("ok")   
     return ret

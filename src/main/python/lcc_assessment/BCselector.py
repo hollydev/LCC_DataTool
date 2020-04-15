@@ -13,7 +13,6 @@ from lcc_assessment.cleaners import FUZZY_MATCHING, BOOLEAN_CLEANER
 from lcc_assessment.main import Worker, WorkerSignals
 # from src.main.python.lcc_assessment.validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID, CRN
 # from src.main.python.lcc_assessment.cleaners import FUZZY_MATCHING, BOOLEAN_CLEANER
-# from src.main.python.lcc_assessment.main import Worker, WorkerSignals
 from collections import namedtuple
 #from cleaners import GRADE_ITEM_NAME
 
@@ -32,12 +31,11 @@ def get_base_column(dataframe, selectedColumns, signal):
     count = 0
     #Re-order and split the data.
     orderedData = split_and_reorganize(dataframe)
-    signal.progress.emit(10)
+    signal.progress2.emit(10)
     #preserve the sections and termcodes from the dataframe for use in validating CRNs
     allSections = orderedData[["section", "crn","term"]]
-    signal.progress.emit(25)
+    signal.progress2.emit(25)
 
-    
 
     #check if the user wants to validate multiple columns
     if isinstance(selectedColumns, list): 
@@ -60,7 +58,7 @@ def get_base_column(dataframe, selectedColumns, signal):
         df = orderedData.loc[ :,selectedColumns]
         callValidators(selectedColumns, df, df, allSections, vInfo, percentage, signal) #df is also passed in for columnseries since only one column was selected(a series)
     
-    signal.progress.emit(remainder)
+    signal.progress2.emit(remainder)
     signal.dataframe.emit(df)
     return (vInfo) #Return the processed data frame.
     
@@ -69,67 +67,67 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
     if(oneColumn.lower() == "username"):
         print("--username--")
         vInfo.append(validateMixed(columnSeries))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "firstname"):
         print("--firtname--")
         vInfo.append(validatePlain(columnSeries))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "lastname"):
         print("--lastname--")
         vInfo.append(validatePlain(columnSeries))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "roleid"):
         print("--roleid--")
         vInfo.append(validateNum(columnSeries, 3))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "rolename"):
         print("--rolename--")
         vInfo.append(validatePlain(columnSeries))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "courseofferingid"):
         print("--courseofferingid--")
         vInfo.append(validateNum(columnSeries, 6))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "courseofferingcode"):
         print("--courseofferingcode--")
         vInfo.append(validateMixed(columnSeries))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "courseofferingname"):
         print("--courseofferingname--")
         vInfo.append(validateMixed(columnSeries))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "section"):
         print("--section--")
         vInfo.append(validateMixed(columnSeries))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "crn"):
         print("--CRN--")
         vInfo.append(validateCRN(columnSeries,allSections))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "term"):
         print("--term--")
         vInfo.append(validateNum(columnSeries, 6))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "gradeitemcategoryid"):
         print("--gradeitemcategoryid--")
         vInfo.append(validateNum(columnSeries, 7))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "gradeitemcategoryname"):
         print("--gradeitemcategoryname--")
         vInfo.append(validateMixed(columnSeries))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
         # cleaned = cleanFuzzyMatching(columnSeries, n_match=50)
         # newName = columnSeries.name + "_cleaned"
@@ -137,36 +135,36 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
     elif(oneColumn.lower() == "gradeitemid"):
         print("--gradeitemid--")
         vInfo.append(validateNum(columnSeries, 7))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "gradeitemname"):
         print("--gradeitemname--")
         vInfo.append(validateMixed(columnSeries))
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         print("\n")
         # cleaned = cleanFuzzyMatching(columnSeries, n_match=200)
         # newName = columnSeries.name + "_cleaned"
         # df[newName] = cleaned #Save the new column with a suffix
     elif(oneColumn.lower() == "gradeitemweight"):
         print("no validator for %s", oneColumn)
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
     elif(oneColumn.lower() == "pointsnumerator"):
         print("no validator for %s", oneColumn)
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
     elif(oneColumn.lower() == "pointsdenominator"):
         print("no validator for %s", oneColumn)
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
     elif(oneColumn.lower() == "gradevalue"):
         print("no validator for %s", oneColumn)
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
     elif(oneColumn.lower() == "gradelastmodified"):
         print("--gradelastmodified--")
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         vInfo.append(validateDate(columnSeries))
         print("\n")
     elif(oneColumn.lower() == "gradercomment"):
         print("no validator for %s", oneColumn)
-        signal.progress.emit(percentage)
+        signal.progress2.emit(percentage)
         df[oneColumn] = booleanCleaner(columnSeries) #Replace the column with the cleaned version.
         print("\n")
      
