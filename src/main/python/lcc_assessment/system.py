@@ -143,8 +143,8 @@ def cleaned_data(df):
     return base_selector.output_processing(df)
     
 def clean(df):
-
-    return base_selector.callCleaner(df)
+    cleanedColumn = base_selector.callCleaner(df)
+    return cleanedColumn
     
 
 def main(selectedColumns, data, signal):
