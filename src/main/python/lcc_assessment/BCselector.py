@@ -20,11 +20,12 @@ from collections import namedtuple
 def get_base_column(dataframe, selectedColumns, signal):
 
     for column in selectedColumns:
-        if column == "CourseSectionCode":
-            selectedColumns.remove('CourseSectionCode')
-            selectedColumns.append('section')
-            selectedColumns.append('crn')
-            selectedColumns.append('term')
+        pass
+        # if column == "CourseSectionCode":
+            # selectedColumns.remove('CourseSectionCode')
+            # selectedColumns.append('section')
+            # selectedColumns.append('crn')
+            # selectedColumns.append('term')
             
     #convert column headers in dataframe and selectedColumns to lowercase 
     dataframe.columns = map(str.lower, dataframe.columns)
@@ -167,15 +168,22 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
         signal.progress2.emit(percentage)
         df[oneColumn] = booleanCleaner(columnSeries) #Replace the column with the cleaned version.
         print("\n")
-     
+    else:
+        #Fill the vInfo variable for columns that don't have validators.
+        fakeInfo = ">Column [{}]>Validated with [{}]>Items Validated: [0] Warnings: [0] Errors: [0]".format(oneColumn.lower(), "SKIPPED")
+        stat = namedtuple('name', 'err warn')
+        fakeStats = stat(err = [], warn = [])        
+        vInfo.append((fakeInfo, fakeStats))
+        
     return(vInfo)
 
 def callCleaner(columntoclean):
     
     if(columntoclean.columns[0] == 'gradeitemname'):
-        columntoclean = cleanFuzzyMatching(columntoclean, n_match=200)
-
-
+        cleanedColumn = fuzzyMatchingCleaner(columntoclean.gradeitemname, n_match=200)
+        return cleanedColumn
+    else:
+        return None
 
 #splits CourseOfferingCode into three columns and replaces it with the new columns
 def split_and_reorganize(theDataFrame):
@@ -197,8 +205,8 @@ def split_and_reorganize(theDataFrame):
     return theDataFrame
 
 def output_processing(df):
-    keptColumns = ["pidm",
-                   "banner_id",
+    keptColumns = ["userid",	
+                   "orgdefinedid",
                    "username",
                    "firstname",
                    "lastname",

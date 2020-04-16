@@ -21,9 +21,7 @@ from messages.system import SYSTEM, LOG
 class FUZZY_MATCHING:
 
     def __init__(self, column):
-        #Normalize to string before saving to object
-        column = column.apply(str)
-        
+                
         #Save data to their respective objects
         self.column = column
         self.values = column.values
@@ -101,6 +99,9 @@ class FUZZY_MATCHING:
         #Normalize to reduce duplication chance
         column = column.str.lower()
         column = column.str.strip()
+        
+        #Normalize to string before saving to object
+        column = column.apply(str)
         
         iterator = 0
         

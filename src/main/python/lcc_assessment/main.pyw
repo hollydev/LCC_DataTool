@@ -29,7 +29,6 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.listWidget_4.itemClicked.connect(self.item_4_click)
         self.ui.pushButton_3.clicked.connect(self.all_columns_button)
         self.ui.pushButton_4.clicked.connect(self.validate_button)
-        self.ui.pushButton_4.clicked.connect(self.setup_output)
 
         self.ui.pushButton.clicked.connect(self.start_up) #Reset the program flow when data is re-selected.
         self.ui.pushButton.clicked.connect(self.get_path) #Browse button
@@ -41,6 +40,14 @@ class mywindow(QtWidgets.QMainWindow):
         
         self.ui.outputBrowseButton.clicked.connect(self.get_out_path)
         
+        
+    def fill_columns_list(self):
+        _translate = QtCore.QCoreApplication.translate
+        
+        for i, columnName in enumerate(self.df.columns):
+            item = self.ui.listWidget_3.item(i)
+            item.setText(_translate("MainWindow", columnName))
+                
     def item_3_click(self, item):
         index = self.ui.listWidget_3.row(item)
         self.ui.listWidget_4.addItem(self.ui.listWidget_3.takeItem(index))
@@ -78,6 +85,12 @@ class mywindow(QtWidgets.QMainWindow):
         self.output = None
         self.outPath = None
         self.applyFlag = 0
+        
+        self.ui.pushButton_5.setText("Next")
+        try:
+            self.ui.pushButton_5.clicked.disconnect()
+        except TypeError:
+            pass
 
     #function for updating the progress bar in validate tab
     def validatorProgress(self, n):
@@ -169,6 +182,8 @@ class mywindow(QtWidgets.QMainWindow):
                     worker3.signals.progress2.connect(self.getFilesProgress)
                     self.threadpool.start(worker3)
                     self.applyFlag = 1
+                    #Fill the list of columns found in the 
+                    self.fill_columns_list()
             elif sb == QtWidgets.QDialogButtonBox.Discard: #DISCARD CLICKED
                 #Reset flow
                 self.start_up()
@@ -250,27 +265,6 @@ class mywindow(QtWidgets.QMainWindow):
                 p = os.path.join(path, folder)
                 self.recurr(p, child)
 
-        
-    def setup_output(self, configs):
-        #Get a file writer object
-        self.output = output.FILE_WRITER()
-                
-        #Get the found configurations
-        configs = self.output.get_db_config()
-        
-        if(configs != None):
-            #Display the found configurations
-            self.ui.usernameLabel.setText("Username: {}".format(configs["user"]))
-            self.ui.TNSLabel.setText("TNS Name: {}".format(configs["tns"]))
-            #Fallback configuration
-            self.ui.serviceLabel.setText("Service: {}".format(configs["service"]))
-            self.ui.hostnameLabel.setText("Hostname: {}".format(configs["hostname"]))
-            self.ui.portLabel.setText("Port: {}".format(configs["port"]))
-            
-        
-        #DB Status Message
-        self.ui.DBConnectionStatusLabel.setText("Status: {}".format(self.output.dbStatus))
-
 
     def displayFeedBack(self, theInfo):
 
@@ -284,7 +278,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         
 
-        #Construct the table using the values
+        # Construct the table using the values
         self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(theInfo[0]).split('>')[2]))
         self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(theInfo[0]).split('>')[3]))
         vBox1.addWidget(self.ui.tableWidget)
@@ -297,19 +291,16 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
          
        
-        #Enable this, and the output tab for the user
+        # Enable this, and the output tab for the user
         self.ui.tabWidget.setTabEnabled(2, True)
-        self.ui.tabWidget.setTabEnabled(3, True)
         
-        #Force the view to the feedback screen
+        # Force the view to the feedback screen
         self.ui.tabWidget.setCurrentIndex(2)
         
-        #connect the buttons to their functions
+        # connect the buttons to their functions
         self.ui.pushButton_5.clicked.connect(lambda: self.getNextColumn(self.x, theInfo))
         self.ui.pushButton_6.clicked.connect(lambda: self.seeExceptions(theInfo[self.x], 0))
         self.ui.pushButton_7.clicked.connect(lambda: self.seeExceptions(theInfo[self.x], 1))
-
-
 
 
     def seeExceptions(self, columnInfo, buttonId):
@@ -355,11 +346,21 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(theInfo[self.x]).split('>')[3]))
             
         else:
-            self.ui.pushButton_5.setEnabled(False)
+            self.ui.pushButton_5.setText("Continue")
+            self.ui.pushButton_5.clicked.disconnect()
+            self.ui.pushButton_5.clicked.connect(self.setup_output)
+            
         
     def setup_output(self):
+        #Enable the tab
+        self.ui.tabWidget.setTabEnabled(3, True)
+        self.ui.tabWidget.setCurrentIndex(3) # Force the view to the feedback screen
+        
         #Get a file writer object
         self.output = output.FILE_WRITER()
+        
+        #Perform final processing of data frame for output.
+        self.df = system.cleaned_data(self.df)
                 
         #Get FBS connection resource location
         ini = appctxt.get_resource('connection.ini')
@@ -382,7 +383,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.DBConnectionStatusLabel.setText("Status: {}".format(self.output.dbStatus))
         
         #While validation and cleaning are coupled, get final df here
-        self.df = system.cleaned_data(self.df)    
+        # self.df = system.cleaned_data(self.df)    
         
     def db_connect(self):
         #Get FBS connection resource location
@@ -460,6 +461,11 @@ class Worker2(QRunnable):
     def run(self):
 
         cleanedColumn = self.fn(self.columntoclean)
+        if(cleanedColumn != None):
+            newColumnName = cleanedColumn.name + "_cleaned"
+            self.df[newColumnName] = cleanedColumn
+        else:
+            print("No default cleaner set")
 
 class Worker3(QRunnable):
     def __init__(self, fn, path, unwanted):

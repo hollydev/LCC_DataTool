@@ -149,7 +149,7 @@ def recursive_concat(frames):
     @Returns:
         finalFrame - one dataframe made up of all the dataframes in frames
 '''
-def concat_data_frames(frames, signal):
+def concat_data_frames(frames, files, signal):
     size = len(frames)
     progressCap = 45
     
@@ -169,8 +169,11 @@ def concat_data_frames(frames, signal):
         frames1 = frames[:firstThird]
         frames2 = frames[firstThird:secondThird]
         frames3 = frames[secondThird:-1]
-    
-        concatFrames1 = pd.concat(frames1, sort = False)
+        files1 = files[:firstThird]
+        files2 = files[firstThird:secondThird]
+        files3 = files[secondThird:]
+        
+        concatFrames1 = pd.concat(frames1, sort = False, keys = files1)
     
     
     #For each deleted frame, concat to the new frame.
@@ -180,7 +183,7 @@ def concat_data_frames(frames, signal):
         # progressBar.update(1)
         # progressBar.display()
     
-        concatFrames2 = pd.concat(frames2, sort = False)
+        concatFrames2 = pd.concat(frames2, sort = False, keys = files2)
     
         for delFrame in frames2:
             recursive_concat(frames2)
@@ -188,7 +191,7 @@ def concat_data_frames(frames, signal):
         # progressBar.update(1)
         # progressBar.display()
 
-        concatFrames3 = pd.concat(frames3, sort = False)
+        concatFrames3 = pd.concat(frames3, sort = False, keys = files3)
     
         for delFrame in frames3:
             recursive_concat(frames3)
@@ -201,7 +204,7 @@ def concat_data_frames(frames, signal):
         # progressBar.close()
         signal.progress2.emit(remainder)
     else:
-        finalFrame = pd.concat(frames, sort = False)
+        finalFrame = pd.concat(frames, sort = False, keys = files)
         for delFrame in frames:
             recursive_concat(frames)
             signal.progress2.emit(increment)
@@ -232,7 +235,7 @@ def execute(path, unwanted, signal):
         
     else:
         readFiles = get_data_frames(files, signal)
-        ret = concat_data_frames(readFiles, signal)
+        ret = concat_data_frames(readFiles, files, signal)
 
     print("ok")   
     return ret
