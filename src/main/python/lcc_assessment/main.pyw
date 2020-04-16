@@ -323,6 +323,12 @@ class mywindow(QtWidgets.QMainWindow):
         wholeColumn = self.df.loc[ :,columnName]
         worker2 = Worker2(system.clean, wholeColumn)
         self.threadpool.start(worker2)
+        
+        worker2.signals.cleanedColumn.connect(self.assign_cleaned)
+    
+    def assign_cleaned(self, cleanedColumn):
+        if(cleanedColumn is not None):
+            self.df[cleanedColumn.name] = cleanedColumn
 
 
     def getNextColumn(self, x, theInfo):
@@ -420,7 +426,8 @@ class mywindow(QtWidgets.QMainWindow):
         
 class WorkerSignals(QObject):
     
-    returnVal = pyqtSignal(object)
+    returnVal = pyqtSignal(object) #Signal to return the information from the validators run
+    cleanedColumn = pyqtSignal(object) #Signal to return the cleaned column from the cleaner function
 
     progress2 = pyqtSignal(int)#signal for updating validator progress bar
     progress1 = pyqtSignal(int)#signal for updating apply button progress bar
@@ -455,15 +462,15 @@ class Worker2(QRunnable):
         super(Worker2, self).__init__()
         self.fn = fn
         self.columntoclean = columntoclean
-        self.signals = WorkerSignals
+        self.signals = WorkerSignals()
 
     @pyqtSlot()
     def run(self):
 
         cleanedColumn = self.fn(self.columntoclean)
-        if(cleanedColumn != None):
-            newColumnName = cleanedColumn.name + "_cleaned"
-            self.df[newColumnName] = cleanedColumn
+        if(cleanedColumn is not None):
+            cleanedColumn.name = cleanedColumn.name + "_cleaned"
+            self.signals.cleanedColumn.emit(cleanedColumn)
         else:
             print("No default cleaner set")
 

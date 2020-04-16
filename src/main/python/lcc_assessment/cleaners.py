@@ -46,22 +46,28 @@ class FUZZY_MATCHING:
         
         matchedList = list()
         for val in self.values:
-            match = matches[val]
+            try:
+                match = matches[val] #Look for a match for the given column item
+            except KeyError: #intercept when matches are invalid, such as NaN
+                match = ("None", "X")
 
+            #If a match is found, add it to the list; otherwise add the unmatched value to the list
             if(match != None):
                 matchedList.append(match[0])
             else:
                 matchedList.append(val)
 
             self.messages.append(CLEANERS.matchResult.format(val, match[0], match[1]))
-                    
+                  
+        matchedList = pd.Series(name = self.column.name, data=matchedList, index = self.column.index) #Convert the final list to a dataframe column.
         return matchedList
 
 
     def get_choice_matches(self, column, master, threshold=80):
         #Get a unique list of existing names
         choices = set()
-        for word in self.column: choices.add(word)
+        for word in self.column: choices.add(word) #Get a list of unique entries in the column, remove duplicates
+        choices = {word for word in choices if word == word} #Only keep words that are not NaN, since NaN != NaN
         
         #Generate a master list (top n) to match choices to
         master = set(master)
@@ -101,7 +107,7 @@ class FUZZY_MATCHING:
         column = column.str.strip()
         
         #Normalize to string before saving to object
-        column = column.apply(str)
+        # column = column.apply(str)
         
         iterator = 0
         

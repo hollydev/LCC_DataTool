@@ -170,7 +170,7 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
         print("\n")
     else:
         #Fill the vInfo variable for columns that don't have validators.
-        fakeInfo = ">Column [{}]>Validated with [{}]>Items Validated: [0] Warnings: [0] Errors: [0]".format(oneColumn.lower(), "SKIPPED")
+        fakeInfo = ">Column [{}]>Validated with [{}]>Items Validated: [0] Warnings: [0] Errors: [0]".format(oneColumn.lower(), "Skipped")
         stat = namedtuple('name', 'err warn')
         fakeStats = stat(err = [], warn = [])        
         vInfo.append((fakeInfo, fakeStats))
@@ -179,8 +179,11 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
 
 def callCleaner(columntoclean):
     
-    if(columntoclean.columns[0] == 'gradeitemname'):
-        cleanedColumn = fuzzyMatchingCleaner(columntoclean.gradeitemname, n_match=200)
+    if(columntoclean.columns[0] == 'gradeitemcategoryname'):
+        cleanedColumn = fuzzyMatchingCleaner(columntoclean['gradeitemcategoryname'], n_match=200)
+        return cleanedColumn
+    elif(columntoclean.columns[0] == 'gradeitemname'):
+        cleanedColumn = fuzzyMatchingCleaner(columntoclean['gradeitemname'], n_match=200)
         return cleanedColumn
     else:
         return None
