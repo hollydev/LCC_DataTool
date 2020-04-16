@@ -237,5 +237,4 @@ def execute(path, unwanted, signal):
         readFiles = get_data_frames(files, signal)
         ret = concat_data_frames(readFiles, files, signal)
 
-    print("ok")   
     return ret
