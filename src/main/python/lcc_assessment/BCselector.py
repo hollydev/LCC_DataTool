@@ -177,8 +177,16 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
         
     return(vInfo)
 
-def callCleaner(columntoclean):
-    
+def call_cleaner(columntoclean):
+    """ This function defines which cleanings are to be run on which columns.
+        
+        @Params:
+            columntoclean - A string indicating the column requested for cleaning.
+            
+        @Returns:
+            cleanedColumn - A cleaned version of the given column with the same indexes.
+            @None - When a column without a cleaner is requested, return None
+    """
     if(columntoclean.columns[0] == 'gradeitemcategoryname'):
         cleanedColumn = fuzzyMatchingCleaner(columntoclean['gradeitemcategoryname'], n_match=200)
         return cleanedColumn
@@ -187,6 +195,21 @@ def callCleaner(columntoclean):
         return cleanedColumn
     else:
         return None
+
+def cleaners_list():
+    """ This function returns a list of cleaners set to the column name. Used to 
+        provide context to the GUI when navigating columns.
+        
+        @Returns
+            cleanersList - A named dictionary of cleaners being applied.
+    """
+    
+    cleanersList = {"gradeitemcategoryname": ["Fuzzy Matching"],\
+                    "gradeitemname": ["Fuzzy Matching"]
+                   }
+                   
+    return cleanersList
+    
 
 #splits CourseOfferingCode into three columns and replaces it with the new columns
 def split_and_reorganize(theDataFrame):

@@ -41,12 +41,13 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.outputBrowseButton.clicked.connect(self.get_out_path)
         
         
-    def fill_columns_list(self):
+    def fill_columns_list(self):        
         _translate = QtCore.QCoreApplication.translate
         
         for i, columnName in enumerate(self.df.columns):
             item = self.ui.listWidget_3.item(i)
-            item.setText(_translate("MainWindow", columnName))
+            if item is not None:
+                item.setText(_translate("MainWindow", columnName))
                 
     def item_3_click(self, item):
         index = self.ui.listWidget_3.row(item)
@@ -85,6 +86,9 @@ class mywindow(QtWidgets.QMainWindow):
         self.output = None
         self.outPath = None
         self.applyFlag = 0
+        
+        self.ui.progressBar1.setValue(0)
+        self.ui.progressBar.setValue(0)
         
         self.ui.pushButton_5.setText("Next")
         try:
@@ -180,10 +184,9 @@ class mywindow(QtWidgets.QMainWindow):
                     worker3.signals.finished1.connect(self.print_instructors)
                     worker3.signals.finished2.connect(self.print_termcodes)
                     worker3.signals.progress2.connect(self.getFilesProgress)
+                    worker3.signals.finished2.connect(self.fill_columns_list)
                     self.threadpool.start(worker3)
                     self.applyFlag = 1
-                    #Fill the list of columns found in the 
-                    self.fill_columns_list()
             elif sb == QtWidgets.QDialogButtonBox.Discard: #DISCARD CLICKED
                 #Reset flow
                 self.start_up()
@@ -272,12 +275,12 @@ class mywindow(QtWidgets.QMainWindow):
         self.x = 0
         header = list()
         vBox1 = QVBoxLayout()
+        self.cleanersList = system.get_cleaners_list()
        
         header.append(str(theInfo[0]).split('>')[1])
         
         self.ui.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         
-
         # Construct the table using the values
         self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(theInfo[0]).split('>')[2]))
         self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(theInfo[0]).split('>')[3]))
@@ -285,13 +288,11 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.tableWidget.resizeRowsToContents()
         self.ui.tableWidget.resizeColumnsToContents()
         
-
         self.ui.tableWidget.setVerticalHeaderLabels(['Validator:', 'Info:'])
         self.ui.tableWidget.setHorizontalHeaderLabels(header)
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
-         
-       
-        # Enable this, and the output tab for the user
+        
+        # Enable this tab
         self.ui.tabWidget.setTabEnabled(2, True)
         
         # Force the view to the feedback screen
@@ -335,7 +336,8 @@ class mywindow(QtWidgets.QMainWindow):
         
         self.ui.exceptionsList.clear() #clear the exceptionsList box before moving to next column
 
-        if(self.x < len(theInfo)-1):    
+        if(self.x < len(theInfo)-1):           
+            
             if(self.ui.checkBox_2.isChecked() == True):
 
                 self.cleanColumn(str(theInfo[self.x]).split('>')[1])
@@ -356,11 +358,21 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.pushButton_5.clicked.disconnect()
             self.ui.pushButton_5.clicked.connect(self.setup_output)
             
+    
+        #Show which cleaners are applied to the column
+        try:
+            #Get a list of cleaners for this column.
+            columnName = re.findall(r'\[([^][]*[^][]*)]', str(theInfo[self.x]).split('>')[1])[0]
+            cleanerList = '\n'.join(self.cleanersList[columnName])
+            self.ui.cleanersAvailableLabel.setText("Cleaners Applied: {}".format(cleanerList))
+        except KeyError:
+            self.ui.cleanersAvailableLabel.setText("No Cleaners Available")
+        self.ui.cleanersAvailableLabel.adjustSize() 
         
     def setup_output(self):
         #Enable the tab
         self.ui.tabWidget.setTabEnabled(3, True)
-        self.ui.tabWidget.setCurrentIndex(3) # Force the view to the feedback screen
+        self.ui.tabWidget.setCurrentIndex(3) # Force the view to the output screen
         
         #Get a file writer object
         self.output = output.FILE_WRITER()
