@@ -187,7 +187,6 @@ class mywindow(QtWidgets.QMainWindow):
             elif sb == QtWidgets.QDialogButtonBox.Discard: #DISCARD CLICKED
                 #Reset flow
                 self.start_up()
-            self.ui.tabWidget.setTabEnabled(1, True)
         except AttributeError:
             return
             
@@ -226,6 +225,7 @@ class mywindow(QtWidgets.QMainWindow):
             item = self.ui.listWidget_2.item(index)
             item.setText(_translate("MainWindow", str(term)))
             index = index + 1
+        self.ui.tabWidget.setTabEnabled(1, True)
             
         self.ui.label_2.setText("Terms ({})".format(len(termList)))
             
