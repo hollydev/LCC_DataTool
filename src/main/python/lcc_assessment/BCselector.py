@@ -67,67 +67,67 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
     
     if(oneColumn.lower() == "username"):
         print("--username--")
-        vInfo.append(validateMixed(columnSeries))
+        vInfo.append(validateMixed(columnSeries,df))
         signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "firstname"):
         print("--firtname--")
-        vInfo.append(validatePlain(columnSeries))
+        vInfo.append(validatePlain(columnSeries,df))
         signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "lastname"):
         print("--lastname--")
-        vInfo.append(validatePlain(columnSeries))
+        vInfo.append(validatePlain(columnSeries,df))
         signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "roleid"):
         print("--roleid--")
-        vInfo.append(validateNum(columnSeries, 3))
+        vInfo.append(validateNum(columnSeries, 3,df))
         signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "rolename"):
         print("--rolename--")
-        vInfo.append(validatePlain(columnSeries))
+        vInfo.append(validatePlain(columnSeries,df))
         signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "courseofferingid"):
         print("--courseofferingid--")
-        vInfo.append(validateNum(columnSeries, 6))
+        vInfo.append(validateNum(columnSeries, 6,df))
         signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "courseofferingcode"):
         print("--courseofferingcode--")
-        vInfo.append(validateMixed(columnSeries))
+        vInfo.append(validateMixed(columnSeries,df))
         signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "courseofferingname"):
         print("--courseofferingname--")
-        vInfo.append(validateMixed(columnSeries))
+        vInfo.append(validateMixed(columnSeries,df))
         signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "section"):
         print("--section--")
-        vInfo.append(validateMixed(columnSeries))
+        vInfo.append(validateMixed(columnSeries,df))
         signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "crn"):
         print("--CRN--")
-        vInfo.append(validateCRN(columnSeries,allSections))
+        vInfo.append(validateCRN(columnSeries,allSections,df))
         signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "term"):
         print("--term--")
-        vInfo.append(validateNum(columnSeries, 6))
+        vInfo.append(validateNum(columnSeries, 6,df))
         signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "gradeitemcategoryid"):
         print("--gradeitemcategoryid--")
-        vInfo.append(validateNum(columnSeries, 7))
+        vInfo.append(validateNum(columnSeries, 7,df))
         signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "gradeitemcategoryname"):
         print("--gradeitemcategoryname--")
-        vInfo.append(validateMixed(columnSeries))
+        vInfo.append(validateMixed(columnSeries,df))
         signal.progress2.emit(percentage)
         print("\n")
         # cleaned = cleanFuzzyMatching(columnSeries, n_match=50)
@@ -135,12 +135,12 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
         # df[newName] = cleaned #Save the new column with a suffix
     elif(oneColumn.lower() == "gradeitemid"):
         print("--gradeitemid--")
-        vInfo.append(validateNum(columnSeries, 7))
+        vInfo.append(validateNum(columnSeries, 7,df))
         signal.progress2.emit(percentage)
         print("\n")
     elif(oneColumn.lower() == "gradeitemname"):
         print("--gradeitemname--")
-        vInfo.append(validateMixed(columnSeries))
+        vInfo.append(validateMixed(columnSeries,df))
         signal.progress2.emit(percentage)
         print("\n")
         # cleaned = cleanFuzzyMatching(columnSeries, n_match=200)
@@ -161,7 +161,7 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
     elif(oneColumn.lower() == "gradelastmodified"):
         print("--gradelastmodified--")
         signal.progress2.emit(percentage)
-        vInfo.append(validateDate(columnSeries))
+        vInfo.append(validateDate(columnSeries,df))
         print("\n")
     elif(oneColumn.lower() == "gradercomment"):
         print("no validator for %s", oneColumn)
@@ -255,8 +255,8 @@ def output_processing(df):
     return processedDf
     
 
-def validateMixed(df):
-    validateMixedID = MIXED_TEXT(df)
+def validateMixed(df, data):
+    validateMixedID = MIXED_TEXT(df,data)
     validateMixedID.run()
     info = validateMixedID.statistics()
     warnings = validateMixedID.get_warnings()
@@ -267,8 +267,8 @@ def validateMixed(df):
 
     return(info, theStats)
    
-def validatePlain(df):
-    validatePlainText = PLAIN_TEXT(df)
+def validatePlain(df,data):
+    validatePlainText = PLAIN_TEXT(df,data)
     validatePlainText.run()
     info = validatePlainText.statistics()
     warnings = validatePlainText.get_warnings()
@@ -279,8 +279,8 @@ def validatePlain(df):
 
     return(info, theStats)
 
-def validateNum(df, length):
-    validateNumeric = NUMERIC_ID(df)
+def validateNum(df, length, data):
+    validateNumeric = NUMERIC_ID(df,data)
     validateNumeric.run(length)
     info = validateNumeric.statistics()
     warnings = validateNumeric.get_warnings()
@@ -292,8 +292,8 @@ def validateNum(df, length):
     return(info, theStats)
 
 
-def validateDate(df):
-    validateDate = DATE(df)
+def validateDate(df,data):
+    validateDate = DATE(df,data)
     validateDate.run()
     info = validateDate.statistics()
     warnings = validateDate.get_warnings()
@@ -304,7 +304,7 @@ def validateDate(df):
 
     return(info, theStats)
 
-def validateCRN(df, allSections):
+def validateCRN(df, allSections,data):
     validateCRN = CRN(df, allSections)
     validateCRN.run()
 

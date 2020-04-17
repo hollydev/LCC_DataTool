@@ -16,7 +16,7 @@ import datetime
 import re
 
 class NUMERIC_ID:
-	def __init__(self, column):
+	def __init__(self, column, dataframe):
 		self.validate = VALIDATORS()
 		self.validated = SYSTEM()
 
@@ -26,6 +26,7 @@ class NUMERIC_ID:
 		self.name = column.name
 		self.length = len(self.values)
 		self.items  = 0
+		self.df = dataframe        
 
 	def run(self, length):
 
@@ -35,12 +36,16 @@ class NUMERIC_ID:
 			
 			#Validate Numeric (convert to string and remove brackets)
 			if not numpy.char.isnumeric(str(value)[1:-1]):
-				self.warnings.append(self.validate.notNumeric % (value, self.items))
+				code = self.df.iloc[self.items-1]['courseofferingcode']
+				#path = (self.df.loc[self.df["courseofferingcode"] == code].index)[0]
+				self.warnings.append(self.validate.notNumeric % (value, code))
 				
 
 			#Validate Length (convert value to string and remove the brackets)
 			if len(str(value)) != length:
-				self.warnings.append(self.validate.length % (value, len(str(value)), length, self.items))
+				code = self.df.iloc[self.items-1]['courseofferingcode']
+				#path = (self.df.loc[self.df["courseofferingcode"] == code].index)[0]
+				self.warnings.append(self.validate.length % (value, len(str(value)), length, code))
 
 	def statistics(self):
 		return(self.validated.validatorStats % (self.name, "Numeric ID", self.items, len(self.warnings), len(self.errors)))
@@ -53,7 +58,7 @@ class NUMERIC_ID:
 
 class MIXED_TEXT:
 
-	def __init__(self, column):
+	def __init__(self, column, dataframe):
 		self.validate = VALIDATORS()
 		self.validated = SYSTEM()
 
@@ -62,7 +67,8 @@ class MIXED_TEXT:
 		self.values = column
 		self.name = column.name
 		self.items = 0
-
+		self.df = dataframe
+        
 	def run(self):
 
 		for value in self.values:
@@ -71,7 +77,9 @@ class MIXED_TEXT:
 
 			#Check that the cell is not empty
 			if value != value:
-				self.warnings.append(self.validate.expectedNonEmpty % (value, self.items))
+				code = self.df.iloc[self.items-1]['courseofferingcode']
+				#path = (self.df.loc[self.df["courseofferingcode"] == code].index)[0]
+				self.warnings.append(self.validate.expectedNonEmpty % (value, code))
 
 	def statistics(self):
 		return(self.validated.validatorStats % (self.name, "Mixed ID", self.items, len(self.warnings), len(self.errors)))
@@ -85,7 +93,7 @@ class MIXED_TEXT:
 
 class PLAIN_TEXT:
 
-	def __init__(self, column):
+	def __init__(self, column, dataframe):
 		self.validate = VALIDATORS()
 		self.validated = SYSTEM()
 
@@ -94,7 +102,7 @@ class PLAIN_TEXT:
 		self.values = column.values
 		self.name = column.name
 		self.items = 0
-
+		self.df = dataframe
 	def run(self):
 
 	
@@ -104,15 +112,21 @@ class PLAIN_TEXT:
 
 			#check that the cell is not empty
 			if(value != value):
-				self.warnings.append(self.validate.expectedNonEmpty % (str(value)[1:-1], self.items))
+				code = self.df.iloc[self.items-1]['courseofferingcode']
+				#path = (self.df.loc[self.df["courseofferingcode"] == code].index)[0]
+				self.warnings.append(self.validate.expectedNonEmpty % (str(value)[1:-1], code))
 
 			#check that it contains no digits
 			if(bool(re.search(r'\d', str(value))) == True):
-				self.warnings.append(self.validate.expectedTextOnly % (value, self.items))
+				code = self.df.iloc[self.items-1]['courseofferingcode']
+				#path = (self.df.loc[self.df["courseofferingcode"] == code].index)[0]
+				self.warnings.append(self.validate.expectedTextOnly % (value, code))
 
 			#check that it contains no symbols
 			if(bool(re.search(r'[@_!#$%^&*()<>?/\|}{~:\"]', str(value)[1:-1])) == True):
-				self.warnings.append(self.validate.expectedNoSymbols % (value, self.items))
+				code = self.df.iloc[self.items-1]['courseofferingcode']
+				#path = (self.df.loc[self.df["courseofferingcode"] == code].index)[0]
+				self.warnings.append(self.validate.expectedNoSymbols % (value, code))
 
 	def statistics(self):
 		return(self.validated.validatorStats % (self.name, "PlainText", self.items, len(self.warnings), len(self.errors)))
@@ -125,7 +139,7 @@ class PLAIN_TEXT:
 
 class DATE:
 
-	def __init__(self, column):
+	def __init__(self, column, dataframe):
 
 		self.validate = VALIDATORS()
 		self.validated = SYSTEM()
@@ -136,14 +150,16 @@ class DATE:
 		self.name = column.name
 		self.r = re.compile(r'\d{4,4}-\d{2,2}-\d{2,2}T\d{2,2}:\d{2,2}:\d{2,2}.\d{3,3}')
 		self.items = 0
-
+		self.df = dataframe
 	def run(self):
 
 		
 		for value in self.values:
 			self.items += 1
 			if(self.r.match(str(value)) == None):
-				self.warnings.append(self.validate.unexpectedFormat % (value, self.items))
+				code = self.df.iloc[self.items-1]['courseofferingcode']
+				#path = (self.df.loc[self.df["courseofferingcode"] == code].index)[0]
+				self.warnings.append(self.validate.unexpectedFormat % (value, code))
 
 	
 	def statistics(self):
