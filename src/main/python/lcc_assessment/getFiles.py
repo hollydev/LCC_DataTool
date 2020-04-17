@@ -8,16 +8,10 @@
     and loads the csv data into a pandas dataframe
 
 """
-
 from messages.system import SYSTEM
 import os
 import pandas as pd
 import time
-
-
-#Progress Bar
-from tqdm import tqdm
-
 
 '''
     check_file takes a fileName and checks if the file contains "test" in the 
@@ -35,7 +29,6 @@ def check_file(fileName):
     ret = False
     if ('test' not in fileName.lower()) and (os.path.getsize(fileName) > 460):
         ret = True
-    
     return ret
 
 '''
@@ -96,14 +89,9 @@ def get_files(myPath, unwanted, signal):
                 else:
                     skippedFiles += 1
 
-    increment = 1
     for x in range(0, progressCap):
         time.sleep(0.01)
         signal.progress2.emit(1)
-        
-
-    print("Found {} files. ({} skipped)".format(len(files), skippedFiles))
-
                  
     return files
 
@@ -158,10 +146,7 @@ def concat_data_frames(frames, files, signal):
         signal.progress2.emit(45)
         return frames[0]
     
-    # progressBar = tqdm(total=3)
-    
     if size > 5:
-    
         increment = progressCap//len(frames)
         remainder = progressCap%(len(frames))
         firstThird = round(size/3)
@@ -171,37 +156,23 @@ def concat_data_frames(frames, files, signal):
         frames3 = frames[secondThird:-1]
         files1 = files[:firstThird]
         files2 = files[firstThird:secondThird]
-        files3 = files[secondThird:]
-        
+        files3 = files[secondThird:] 
         concatFrames1 = pd.concat(frames1, sort = False, keys = files1)
-    
     
     #For each deleted frame, concat to the new frame.
         for delFrame in frames1:
             recursive_concat(frames1)
         signal.progress2.emit(increment)
-        # progressBar.update(1)
-        # progressBar.display()
-    
         concatFrames2 = pd.concat(frames2, sort = False, keys = files2)
-    
         for delFrame in frames2:
             recursive_concat(frames2)
         signal.progress2.emit(increment)
-        # progressBar.update(1)
-        # progressBar.display()
-
         concatFrames3 = pd.concat(frames3, sort = False, keys = files3)
-    
         for delFrame in frames3:
             recursive_concat(frames3)
         signal.progress2.emit(increment)
-        # progressBar.update(1)
-        # progressBar.display()
-
         allFrames = [concatFrames1, concatFrames2, concatFrames3]
         finalFrame = pd.concat(allFrames, sort = False)
-        # progressBar.close()
         signal.progress2.emit(remainder)
     else:
         finalFrame = pd.concat(frames, sort = False, keys = files)
@@ -209,7 +180,6 @@ def concat_data_frames(frames, files, signal):
             recursive_concat(frames)
             signal.progress2.emit(increment)
         signal.progress2.emit(remainder)
-
     return finalFrame
 
 '''
@@ -228,13 +198,10 @@ def concat_data_frames(frames, files, signal):
 '''
 def execute(path, unwanted, signal):
     ret = pd.DataFrame()
-    files = get_files(path, unwanted, signal)
-    
+    files = get_files(path, unwanted, signal) 
     if(len(files) == 0):
-        print(SYSTEM.noFilesFound)
-        
+        print(SYSTEM.noFilesFound)   
     else:
         readFiles = get_data_frames(files, signal)
         ret = concat_data_frames(readFiles, files, signal)
-
     return ret
