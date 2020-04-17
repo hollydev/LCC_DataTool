@@ -33,9 +33,10 @@ def get_last(element):
     '''
     names = element.split()
     if(len(names) == 0):
-        print("Test")
-        return None
-    return last
+        ret = ""
+    else:
+        ret = names[-1]
+    return ret
     
 def get_instructors(data):
     '''
@@ -55,7 +56,7 @@ def get_instructors(data):
     
     ret_list = remove_duplicates(names) #Use a set to remove duplicates.
     ret_list.remove('') #Remove blank entries if they exist.
-    #ret_list.sort(key=get_last)
+    ret_list.sort(key=get_last)
     
     return ret_list
 
