@@ -146,12 +146,24 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.treeWidget.resizeColumnToContents(0)
     
     def get_path(self):
+        '''
+         Runs when 'Browse' button is clicked and gets the directory path and calls build_tree
+         to build the tree in the GUI
+         - Sets self.path to specified directory path
+         - Prints the path in self.ui.lineEdit (path line in GUI)
+         - Calls build_tree
+         - Prints number of files found and selected in GUI
+         @Params:
+             self
+         @Returns:
+             self.path - user specified directory path to all the files
+        '''
         self.tree_dict = {}
         self.ui.item = QtWidgets.QTreeWidgetItem(self.ui.treeWidget)
         try:
             _translate = QtCore.QCoreApplication.translate
         
-            self.path = QFileDialog.getExistingDirectory(None, 'Open File')
+            self.path = QFileDialog.getExistingDirectory(None, 'Select Directory')
             self.ui.lineEdit.setText(_translate("MainWindow", self.path))
             self.countFiles = 0
             self.numFiles = self.build_tree()
@@ -166,18 +178,37 @@ class mywindow(QtWidgets.QMainWindow):
         return self.path
     
     def check_state(self):
+        '''
+        Ckecks if a subfolder or file is unchecked in the GUI
+        If it is unchecked, the path is added to self.unwanted and will be skipped
+        @Params:
+            self
+        @Returns:
+            
+        '''
         self.unwanted = []
         for path in self.tree_dict:
             if self.tree_dict[path].checkState(0) == 0:
                 getFiles.add_unwanted_path(self.unwanted, path)
 
     def apply_discard_buttons(self, button): 
+        '''
+        Called when apply or discard button is clicked
+        Apply - builds the dataframe by calling getFiles.execute, and prints the
+                instructors and term codes found
+        Discard - Resets the GUI by calling start_up
+        @Params:
+            self
+            button - states if apply or discard is clicked
+        @Returns:
+            
+        '''
         try:
             self.threadpool = QThreadPool()
             self.currentValue2 = 0 #current value for progress of apply_button thread
             sb = self.ui.buttonBox.standardButton(button)
             if sb == QtWidgets.QDialogButtonBox.Apply: #APPLY CLICKED
-                if self.applyFlag == 0:
+                if self.applyFlag == 0: #If 0 apply has not been clicked already
                     self.check_state()
                     worker3 = Worker3(getFiles.execute, self.path, self.unwanted)
                     worker3.signals.dataframe.connect(self.setFrame)
@@ -186,7 +217,7 @@ class mywindow(QtWidgets.QMainWindow):
                     worker3.signals.progress2.connect(self.getFilesProgress)
                     worker3.signals.finished2.connect(self.fill_columns_list)
                     self.threadpool.start(worker3)
-                    self.applyFlag = 1
+                    self.applyFlag = 1 # Set to 1 - Apply cannot be clicked until GUI is reset
             elif sb == QtWidgets.QDialogButtonBox.Discard: #DISCARD CLICKED
                 #Reset flow
                 self.start_up()
@@ -194,34 +225,50 @@ class mywindow(QtWidgets.QMainWindow):
             return
             
     def print_instructors(self):
+        '''
+        Gets the instructors found in the dataframe from system.get_instructors
+        and creates listWidgetItems and prints them in GUI.
+        @Params:
+            self
+        @Returns:
+            
+        '''
         _translate = QtCore.QCoreApplication.translate
         index = 0
         
         self.ui.listWidget.clear()
-        instructorList = system.get_instructors(self.df)
+        instructorList = system.get_instructors(self.df) # Gets a list of instructors sorted by last name
         
         if(instructorList == None):
             instructorList = []
-            
+        # For an instructor in the list, build a listWidgetItem print it in listWidget
         for instructor in instructorList:
             item = QtWidgets.QListWidgetItem()
             self.ui.listWidget.addItem(item)
             item = self.ui.listWidget.item(index)
             item.setText(_translate("MainWindow", str(instructor)))
             index = index + 1
-           
+        #prints the number of instructors found
         self.ui.label.setText("Instructors ({})".format(len(instructorList)))
         
     def print_termcodes(self):
+        '''
+        Gets the term codes found in the dataframe from system.get_termcodes
+        and creates listWidgetItems and prints them in GUI.
+        @Params:
+            self
+        @Returns:
+                   
+        '''
         _translate = QtCore.QCoreApplication.translate
         index = 0
         
         self.ui.listWidget_2.clear()
-        termList = system.get_termcodes(self.df)
+        termList = system.get_termcodes(self.df) # Gets a list of term codes
         
         if(termList == None):
             termList = []
-            
+        # For a term in the list, build a listWidgetItem print it in listWidget_2    
         for term in termList:
             item = QtWidgets.QListWidgetItem()
             self.ui.listWidget_2.addItem(item)
@@ -229,10 +276,19 @@ class mywindow(QtWidgets.QMainWindow):
             item.setText(_translate("MainWindow", str(term)))
             index = index + 1
         self.ui.tabWidget.setTabEnabled(1, True)
-            
+        #prints the number of term codes found
         self.ui.label_2.setText("Terms ({})".format(len(termList)))
             
     def build_tree(self):
+        '''
+        Creates the first 'node' of the tree but getting the basename of the path
+        the user selected, sets the checkState to checked, and then calls recurr
+        to recursively traverse the directory and build the tree
+        @Params:
+            self
+        @Returns:
+            
+        '''
         _translate = QtCore.QCoreApplication.translate
         self.ui.item.setText(0, _translate("MainWindow", os.path.basename(self.path)))
         self.ui.item.setCheckState(0, QtCore.Qt.Checked)
@@ -246,6 +302,20 @@ class mywindow(QtWidgets.QMainWindow):
        
 
     def recurr(self,path, parent):
+        '''
+        Recursively walks through the directory
+            - if it is a csv file, it will create a node under its parent and 
+                adds the file to self.tree_dict
+            - if it is not a file(a directory), it will create a node under its parent
+                and then call recurr to traverse into the directory
+        *All nodes are set to checked when created
+        @Params:
+            self
+            path - the path of the node to be investigated(file or directory?)
+            parent - the node above the current path
+        @Returns:
+            
+        '''
         _translate = QtCore.QCoreApplication.translate
         for folder in os.listdir(path):
             if os.path.isfile(os.path.join(path, folder)):
