@@ -47,7 +47,7 @@ def get_base_column(dataframe, selectedColumns, signal):
         if(count == 18):
             df = orderedData.iloc[ : , :20]
         else:
-            df = orderedData.loc[ :,selectedColumns]
+            df = orderedData.reindex(columns = selectedColumns)
         percentage = 65//(count)
         remainder = 65%(count)
         for oneColumn in df:

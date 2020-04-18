@@ -43,11 +43,10 @@ class mywindow(QtWidgets.QMainWindow):
         
     def fill_columns_list(self):        
         _translate = QtCore.QCoreApplication.translate
-        
+            
         for i, columnName in enumerate(self.df.columns):
-            item = self.ui.listWidget_3.item(i)
-            if item is not None:
-                item.setText(_translate("MainWindow", columnName))
+            if columnName is not None:
+                self.ui.listWidget_3.addItem(columnName)
                 
     def item_3_click(self, item):
         index = self.ui.listWidget_3.row(item)
@@ -74,6 +73,8 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.lineEdit.clear()
         self.ui.listWidget.clear()
         self.ui.listWidget_2.clear()
+        self.ui.listWidget_3.clear()
+        self.ui.listWidget_4.clear()
         self.ui.treeWidget.clear()
         self.ui.label.setText("Instructors:")
         self.ui.label_2.setText("Terms:")

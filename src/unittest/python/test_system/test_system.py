@@ -1,5 +1,5 @@
 import unittest
-import src.main.python.lcc_assessment.system as system
+import system as system
 
 class test_system(unittest.TestCase):
     def test_get_last(self):
