@@ -41,11 +41,11 @@ class NUMERIC_ID:
 				self.warnings.append(self.validate.notNumeric % (value, code))
 				
 
-			#Validate Length (convert value to string and remove the brackets)
-			if len(str(value)) != length:
-				code = self.df.iloc[self.items-1]['courseofferingcode']
-				#path = (self.df.loc[self.df["courseofferingcode"] == code].index)[0]
-				self.warnings.append(self.validate.length % (value, len(str(value)), length, code))
+			# #Validate Length (convert value to string and remove the brackets)
+			# if len(str(value)) != length:
+			# 	code = self.df.iloc[self.items-1]['courseofferingcode']
+			# 	#path = (self.df.loc[self.df["courseofferingcode"] == code].index)[0]
+			# 	self.warnings.append(self.validate.length % (value, len(str(value)), length, code))
 
 	def statistics(self):
 		return(self.validated.validatorStats % (self.name, "Numeric ID", self.items, len(self.warnings), len(self.errors)))

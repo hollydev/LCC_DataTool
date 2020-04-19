@@ -88,8 +88,8 @@ class mywindow(QtWidgets.QMainWindow):
         self.outPath = None
         self.applyFlag = 0
         
-        self.ui.progressBar1.setValue(0)
         self.ui.progressBar.setValue(0)
+        self.ui.progressBar_2.setValue(0)
         
         self.ui.pushButton_5.setText("Next")
         try:
@@ -97,14 +97,25 @@ class mywindow(QtWidgets.QMainWindow):
         except TypeError:
             pass
 
-    #function for updating the progress bar in validate tab
+    #functions for updating the progress bars
     def validatorProgress(self, n):
         self.currentValue1 += n
         self.ui.progressBar.setValue(self.currentValue1)
 
     def getFilesProgress(self, n):
         self.currentValue2 += n
-        self.ui.progressBar1.setValue(self.currentValue2)
+        self.ui.progressBar_2.setValue(self.currentValue2)
+
+    def cleanerProgress(self, n):
+        self.currentValue3 += n
+        self.ui.progressBar_3.setValue(self.currentValue3)
+
+        if(self.currentValue3 == 100):
+            self.ui.pushButton_5.setEnabled(True)
+            self.ui.pushButton_6.setEnabled(True)
+            self.ui.pushButton_7.setEnabled(True)
+            self.ui.progressBar_3.setValue(0)
+            self.ui.label_8.setText("")
 
 
     #catches the signal from BCselector and getFiles, assigns the returned frame to self.df
@@ -345,58 +356,63 @@ class mywindow(QtWidgets.QMainWindow):
         #Initialize variables
         self.x = 0
         header = list()
-        vBox1 = QVBoxLayout()
         self.cleanersList = system.get_cleaners_list()
        
         header.append(str(theInfo[0]).split('>')[1])
         
         self.ui.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         
-        # Construct the table using the values
-        self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(theInfo[0]).split('>')[2]))
-        self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(theInfo[0]).split('>')[3]))
-        vBox1.addWidget(self.ui.tableWidget)
-        self.ui.tableWidget.resizeRowsToContents()
-        self.ui.tableWidget.resizeColumnsToContents()
-        
+        # # Construct the table using the values
+        application.resize(800, 800)
         self.ui.tableWidget.setVerticalHeaderLabels(['Validator:', 'Info:'])
         self.ui.tableWidget.setHorizontalHeaderLabels(header)
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(theInfo[0]).split('>')[2]))
+        self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(theInfo[0]).split('>')[3]))
+        
+        
+        self.ui.tableWidget.resizeRowsToContents()
+        self.ui.tableWidget.resizeColumnsToContents()
+        
         
         # Enable this tab
-        self.ui.tabWidget.setTabEnabled(2, True)
         
+        self.ui.tabWidget.setTabEnabled(2, True)
         # Force the view to the feedback screen
         self.ui.tabWidget.setCurrentIndex(2)
         
         # connect the buttons to their functions
-        self.ui.pushButton_5.clicked.connect(lambda: self.getNextColumn(self.x, theInfo))
-        self.ui.pushButton_6.clicked.connect(lambda: self.seeExceptions(theInfo[self.x], 0))
-        self.ui.pushButton_7.clicked.connect(lambda: self.seeExceptions(theInfo[self.x], 1))
+        self.ui.pushButton_5.clicked.connect(lambda: self.getNextColumn(self.x, theInfo))#next button
+        self.ui.pushButton_7.clicked.connect(lambda: self.seeExceptions(theInfo[self.x], 0))#see warnings button
+        self.ui.pushButton_6.clicked.connect(lambda: self.seeExceptions(theInfo[self.x], 1))#see errors button
 
 
     def seeExceptions(self, columnInfo, buttonId):
 
-        self.ui.exceptionsList.clear()
+        self.ui.listWidget_5.clear()
         i = 0
         if(buttonId == 0):
             for element in columnInfo[1].warn:
-                self.ui.exceptionsList.insertItem(i, element)
+                self.ui.listWidget_5.insertItem(i, element)
                 i += 1
         else:
             for element in columnInfo[1].err:
-                self.ui.exceptionsList.insertItem(i, element)
+                self.ui.listWidget_5.insertItem(i, element)
                 i += 1
 
 
     def cleanColumn(self, columnName):
         self.threadpool = QThreadPool()
         columnName = re.findall(r'\[([^][]*[^][]*)]', columnName)
+        self.currentValue3 = 0
         wholeColumn = self.df.loc[ :,columnName]
         worker2 = Worker2(system.clean, wholeColumn)
+        worker2.signals.cleanedColumn.connect(self.assign_cleaned)
+        worker2.signals.progress3.connect(self.cleanerProgress)
         self.threadpool.start(worker2)
         
-        worker2.signals.cleanedColumn.connect(self.assign_cleaned)
+        
+        
     
     def assign_cleaned(self, cleanedColumn):
         if(cleanedColumn is not None):
@@ -405,14 +421,28 @@ class mywindow(QtWidgets.QMainWindow):
 
     def getNextColumn(self, x, theInfo):
         
-        self.ui.exceptionsList.clear() #clear the exceptionsList box before moving to next column
+        self.ui.listWidget_5.clear() #clear the listWidget_5 box before moving to next column
 
         if(self.x < len(theInfo)-1):           
             
-            if(self.ui.checkBox_2.isChecked() == True):
+            if(self.ui.checkBox.isChecked() == True):
 
                 self.cleanColumn(str(theInfo[self.x]).split('>')[1])
-                self.ui.checkBox_2.toggle()
+                self.ui.checkBox.toggle()
+                #Show which cleaners are applied to the column
+                try:
+                    #Get a list of cleaners for this column.
+                    columnName = re.findall(r'\[([^][]*[^][]*)]', str(theInfo[self.x]).split('>')[1])[0]
+                    cleanerList = '\n'.join(self.cleanersList[columnName])
+                    self.ui.label_8.setText("Cleaners Applied: {}".format(cleanerList))
+                    self.ui.pushButton_5.setEnabled(False)
+                    self.ui.pushButton_6.setEnabled(False)
+                    self.ui.pushButton_7.setEnabled(False)
+                except KeyError:
+                    self.ui.label_8.setText("No Cleaners Available")
+                self.ui.label_8.adjustSize() 
+            else:
+                self.ui.label_8.setText("")
                 
             
             self.x += 1
@@ -430,21 +460,12 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.pushButton_5.clicked.connect(self.setup_output)
             
     
-        #Show which cleaners are applied to the column
-        try:
-            #Get a list of cleaners for this column.
-            columnName = re.findall(r'\[([^][]*[^][]*)]', str(theInfo[self.x]).split('>')[1])[0]
-            cleanerList = '\n'.join(self.cleanersList[columnName])
-            self.ui.cleanersAvailableLabel.setText("Cleaners Applied: {}".format(cleanerList))
-        except KeyError:
-            self.ui.cleanersAvailableLabel.setText("No Cleaners Available")
-        self.ui.cleanersAvailableLabel.adjustSize() 
         
     def setup_output(self):
         #Enable the tab
         self.ui.tabWidget.setTabEnabled(3, True)
         self.ui.tabWidget.setCurrentIndex(3) # Force the view to the output screen
-        
+        application.resize(800, 600)
         #Get a file writer object
         self.output = output.FILE_WRITER()
         
@@ -512,8 +533,9 @@ class WorkerSignals(QObject):
     returnVal = pyqtSignal(object) #Signal to return the information from the validators run
     cleanedColumn = pyqtSignal(object) #Signal to return the cleaned column from the cleaner function
 
-    progress2 = pyqtSignal(int)#signal for updating validator progress bar
     progress1 = pyqtSignal(int)#signal for updating apply button progress bar
+    progress2 = pyqtSignal(int)#signal for updating validator progress bar
+    progress3 = pyqtSignal(int)#signal for updating cleaner progress bar
 
     dataframe = pyqtSignal(object)
 
@@ -550,7 +572,7 @@ class Worker2(QRunnable):
     @pyqtSlot()
     def run(self):
 
-        cleanedColumn = self.fn(self.columntoclean)
+        cleanedColumn = self.fn(self.columntoclean, self.signals)
         if(cleanedColumn is not None):
             cleanedColumn.name = cleanedColumn.name + "_cleaned"
             self.signals.cleanedColumn.emit(cleanedColumn)

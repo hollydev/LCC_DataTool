@@ -177,7 +177,7 @@ def callValidators(oneColumn, columnSeries, df, allSections, vInfo, percentage, 
         
     return(vInfo)
 
-def call_cleaner(columntoclean):
+def call_cleaner(columntoclean, signal):
     """ This function defines which cleanings are to be run on which columns.
         
         @Params:
@@ -188,10 +188,10 @@ def call_cleaner(columntoclean):
             @None - When a column without a cleaner is requested, return None
     """
     if(columntoclean.columns[0] == 'gradeitemcategoryname'):
-        cleanedColumn = fuzzyMatchingCleaner(columntoclean['gradeitemcategoryname'], n_match=200)
+        cleanedColumn = fuzzyMatchingCleaner(columntoclean['gradeitemcategoryname'], signal, n_match=200)
         return cleanedColumn
     elif(columntoclean.columns[0] == 'gradeitemname'):
-        cleanedColumn = fuzzyMatchingCleaner(columntoclean['gradeitemname'], n_match=200)
+        cleanedColumn = fuzzyMatchingCleaner(columntoclean['gradeitemname'], signal,n_match=200)
         return cleanedColumn
     else:
         return None
@@ -320,9 +320,9 @@ def validateCRN(df, allSections,data):
     return(info, theStats)
 
 
-def fuzzyMatchingCleaner(df, threshold=80, n_match=None):
+def fuzzyMatchingCleaner(df, signal, threshold=80, n_match=None):
     cleanFuzzyMatching = FUZZY_MATCHING(df)
-    cleanedColumn = cleanFuzzyMatching.run(threshold= threshold, n_match = n_match)
+    cleanedColumn = cleanFuzzyMatching.run(signal, threshold= threshold, n_match = n_match)
 
     info = cleanFuzzyMatching.statistics()
     

@@ -30,8 +30,7 @@ class FUZZY_MATCHING:
         self.errors = list()
         self.items = len(column)
 
-
-    def run(self, threshold=80, n_match=None):
+    def run(self, signal, threshold=80, n_match=None):
         #Set default parameter at 10% of data
         pct_10 = int(len(self.column)*0.10)
         if(pct_10 == 0):
@@ -41,8 +40,12 @@ class FUZZY_MATCHING:
         if(n_match == None):
             n_match = pct_10
         
-        master = self.get_master_list(self.column, n_match)
-        matches = self.get_choice_matches(self.values, master.keys(), threshold)
+        master = self.get_master_list(self.column, signal,  n_match)
+        matches = self.get_choice_matches(self.values, master.keys(), signal, threshold)
+
+        percentage = 60
+        oneSegment = len(self.values)//percentage
+        counter = 0
         
         matchedList = list()
         for val in self.values:
@@ -58,26 +61,35 @@ class FUZZY_MATCHING:
                 matchedList.append(val)
 
             self.messages.append(CLEANERS.matchResult.format(val, match[0], match[1]))
+            if(counter >= oneSegment):
+                signal.progress3.emit(1)
+                counter = 0
+            counter += 1
                   
         matchedList = pd.Series(name = self.column.name, data=matchedList, index = self.column.index) #Convert the final list to a dataframe column.
         return matchedList
 
 
-    def get_choice_matches(self, column, master, threshold=80):
+    def get_choice_matches(self, column, master, signal, threshold=80):
         #Get a unique list of existing names
+
         choices = set()
         for word in self.column: choices.add(word) #Get a list of unique entries in the column, remove duplicates
         choices = {word for word in choices if word == word} #Only keep words that are not NaN, since NaN != NaN
+        percentage = 40
+        oneSegment = len(choices)//percentage
+
         
         #Generate a master list (top n) to match choices to
-        master = set(master)
-               
+        master = set(master)    
         matches = dict()
-        progBar = tqdm(total = len(choices))
+        counter = 0
         
         for value in choices:
-            progBar.update(1)
-            progBar.display()
+            if(counter == oneSegment):
+                signal.progress3.emit(1)
+                counter = 0
+            
             """
             #Remove the current matched value if 
             try:
@@ -93,14 +105,17 @@ class FUZZY_MATCHING:
                 matches.update({value:("None", "X")})
             else:
                 matches.update({value:chosen})
+            counter += 1
 
             
-        progBar.close()
+        
         return matches
     
-    def get_master_list(self, column, n_match):
+    def get_master_list(self, column, signal, n_match):
         #Get the count of values over the entire list.
         master = dict()
+        # percentage = 45
+        # oneSegment = len(column)//percentage
         
         #Normalize to reduce duplication chance
         column = column.str.lower()
@@ -110,10 +125,15 @@ class FUZZY_MATCHING:
         # column = column.apply(str)
         
         iterator = 0
-        
-        for key, val in tqdm(column.value_counts().items()):
+        counter = 0
+        for key, val in column.value_counts().items():
             master.update({key : val})
             iterator += 1
+            counter += 1
+
+            # if(counter >= oneSegment):
+            #     signal.progress3.emit(1)
+            #     counter = 0
             
             if(iterator == n_match):
                 break
@@ -138,7 +158,7 @@ class DATE:
     
 
     def __init__(self, column):
-        self.items = len(columns)
+        self.items = len(column)
         self.column = column
 
     def run(self,gradeItemName):
