@@ -465,6 +465,9 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.label_8.setText("Cleaners Applied: {}".format(cleanerList))
         except KeyError:
             self.ui.label_8.setText("No Cleaners Available")
+            self.ui.pushButton_5.setEnabled(True)
+            self.ui.pushButton_6.setEnabled(True)
+            self.ui.pushButton_7.setEnabled(True)
         self.ui.label_8.adjustSize()     
     
         
