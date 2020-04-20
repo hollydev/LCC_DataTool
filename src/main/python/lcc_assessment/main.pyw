@@ -417,6 +417,11 @@ class mywindow(QtWidgets.QMainWindow):
     def assign_cleaned(self, cleanedColumn):
         if(cleanedColumn is not None):
             self.df[cleanedColumn.name] = cleanedColumn
+        
+        #Enable buttons after cleaner finishes.
+        self.ui.pushButton_5.setEnabled(True)
+        self.ui.pushButton_6.setEnabled(True)
+        self.ui.pushButton_7.setEnabled(True)
 
 
     def getNextColumn(self, x, theInfo):
@@ -426,21 +431,13 @@ class mywindow(QtWidgets.QMainWindow):
         if(self.x < len(theInfo)-1):           
             
             if(self.ui.checkBox.isChecked() == True):
+                #Disable the buttons while the cleaner runs
+                self.ui.pushButton_5.setEnabled(False)
+                self.ui.pushButton_6.setEnabled(False)
+                self.ui.pushButton_7.setEnabled(False)
 
                 self.cleanColumn(str(theInfo[self.x]).split('>')[1])
                 self.ui.checkBox.toggle()
-                #Show which cleaners are applied to the column
-                try:
-                    #Get a list of cleaners for this column.
-                    columnName = re.findall(r'\[([^][]*[^][]*)]', str(theInfo[self.x]).split('>')[1])[0]
-                    cleanerList = '\n'.join(self.cleanersList[columnName])
-                    self.ui.label_8.setText("Cleaners Applied: {}".format(cleanerList))
-                    self.ui.pushButton_5.setEnabled(False)
-                    self.ui.pushButton_6.setEnabled(False)
-                    self.ui.pushButton_7.setEnabled(False)
-                except KeyError:
-                    self.ui.label_8.setText("No Cleaners Available")
-                self.ui.label_8.adjustSize() 
             else:
                 self.ui.label_8.setText("")
                 
@@ -458,7 +455,17 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.pushButton_5.setText("Continue")
             self.ui.pushButton_5.clicked.disconnect()
             self.ui.pushButton_5.clicked.connect(self.setup_output)
+        
             
+        #Show which cleaners are applied to the column
+        try:
+            #Get a list of cleaners for this column.
+            columnName = re.findall(r'\[([^][]*[^][]*)]', str(theInfo[self.x]).split('>')[1])[0]
+            cleanerList = ', '.join(self.cleanersList[columnName])
+            self.ui.label_8.setText("Cleaners Applied: {}".format(cleanerList))
+        except KeyError:
+            self.ui.label_8.setText("No Cleaners Available")
+        self.ui.label_8.adjustSize()     
     
         
     def setup_output(self):
