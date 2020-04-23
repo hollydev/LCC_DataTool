@@ -1,9 +1,6 @@
 from messages.system import SYSTEM, LOG
 import lcc_assessment.BCselector as base_selector
 import lcc_assessment.output as outputs
-# from src.main.python.messages.system import SYSTEM, LOG
-# import src.main.python.lcc_assessment.BCselector as base_selector
-# import src.main.python.lcc_assessment.output as outputs
 import os
 import numpy as np
 
@@ -144,10 +141,26 @@ def cleaned_data(df):
     return base_selector.output_processing(df)
     
 def clean(df, signal):
+    """
+        Calls the call_cleaner function from BCSelector to get the cleanedColumn
+        @Params:
+            df - The column to be cleaned
+            signal - 
+        @Returns:
+            the cleaned column
+    """
     cleanedColumn = base_selector.call_cleaner(df, signal)
     return cleanedColumn
     
 def get_cleaners_list():
+    """
+        Calls the cleaners_list function from BCSelector to be list of cleaners
+        set to a column name
+        @Params:
+            
+        @Returns:
+            a named dictionary being applied
+    """
     return base_selector.cleaners_list()
 
 def main(selectedColumns, data, signal):

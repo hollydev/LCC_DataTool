@@ -10,7 +10,6 @@ import lcc_assessment.output as output
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from messages.system import SYSTEM
 
-import sys
 
 class mywindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -39,24 +38,42 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.DBLoadButton.clicked.connect(self.db_load)
         
         self.ui.outputBrowseButton.clicked.connect(self.get_out_path)
+
         
-        
-    def fill_columns_list(self):        
-        _translate = QtCore.QCoreApplication.translate
+    def fill_columns_list(self): 
+        """
+            Gets all the column names from dataframe to add to listWidget_3
+        """
             
         for i, columnName in enumerate(self.df.columns):
             if columnName is not None:
                 self.ui.listWidget_3.addItem(columnName)
                 
     def item_3_click(self, item):
+        """
+            Adds [item] from listWidget_3 to listWidget_4
+            (**selecting the column name in the GUI)
+            @Params:
+                item - the column name to be added to the list
+        """
         index = self.ui.listWidget_3.row(item)
         self.ui.listWidget_4.addItem(self.ui.listWidget_3.takeItem(index))
 
     def item_4_click(self, item):
+        """
+            Adds [item] from listWidget_4 to listWidget_3 
+            (**unselecting the column name in the GUI)
+            @Params:
+                item - the column name to be deselected from the list and added
+                back to original column
+        """
         index = self.ui.listWidget_4.row(item)
         self.ui.listWidget_3.addItem(self.ui.listWidget_4.takeItem(index))
        
     def all_columns_button(self):
+        """
+            Adds all columns to list
+        """
         x  = self.ui.listWidget_3.count()
         while(x >= 0):
             oneItem = self.ui.listWidget_3.takeItem(x)
@@ -64,6 +81,10 @@ class mywindow(QtWidgets.QMainWindow):
             x -= 1
         
     def start_up(self):
+        """
+            Runs on startup to clear all widgets and labels to generate a clean
+            'new' GUI
+        """
         self.ui.tabWidget.setTabEnabled(1, False)
         self.ui.tabWidget.setTabEnabled(2, False)
         self.ui.tabWidget.setTabEnabled(3, False)
@@ -101,11 +122,13 @@ class mywindow(QtWidgets.QMainWindow):
     def validatorProgress(self, n):
         self.currentValue1 += n
         self.ui.progressBar.setValue(self.currentValue1)
-
+        
+    #function for updating progress bar for getFiles
     def getFilesProgress(self, n):
         self.currentValue2 += n
         self.ui.progressBar_2.setValue(self.currentValue2)
-
+        
+    #function for updating progress bar for cleaners
     def cleanerProgress(self, n):
         self.currentValue3 += n
         self.ui.progressBar_3.setValue(self.currentValue3)
@@ -120,10 +143,9 @@ class mywindow(QtWidgets.QMainWindow):
 
     #catches the signal from BCselector and getFiles, assigns the returned frame to self.df
     def setFrame(self, dataframe):
-
         self.df = dataframe
 
-    
+    #Runs when validate button is clinked in GUI
     def validate_button(self):
         self.threadpool = QThreadPool()
         self.currentValue1 = 0 #holds current value of progress bar for validator thread
@@ -352,6 +374,11 @@ class mywindow(QtWidgets.QMainWindow):
 
 
     def displayFeedBack(self, theInfo):
+        """
+            Displays feedback in GUI
+            @Params:
+                theInfo - info for the given column
+        """
 
         #Initialize variables
         self.x = 0
@@ -525,7 +552,8 @@ class mywindow(QtWidgets.QMainWindow):
             #Do the DB Load
             pass
             
-    def get_out_path(self):        
+    def get_out_path(self):  
+        #Gets the location of where the user would like to save the data
         try:
             _translate = QtCore.QCoreApplication.translate
             
@@ -536,7 +564,7 @@ class mywindow(QtWidgets.QMainWindow):
             self.output.write_csv(self.df)
         
         except FileNotFoundError:
-            print('FileNotFound') #CHANGE TO LOG FILE?
+            print('FileNotFound')
         
 class WorkerSignals(QObject):
     

@@ -11,10 +11,8 @@ import glob as gb
 from lcc_assessment.validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID, CRN
 from lcc_assessment.cleaners import FUZZY_MATCHING, BOOLEAN_CLEANER
 from lcc_assessment.main import Worker, WorkerSignals
-# from src.main.python.lcc_assessment.validators import MIXED_TEXT, PLAIN_TEXT, DATE, NUMERIC_ID, CRN
-# from src.main.python.lcc_assessment.cleaners import FUZZY_MATCHING, BOOLEAN_CLEANER
 from collections import namedtuple
-#from cleaners import GRADE_ITEM_NAME
+
 
 
 def get_base_column(dataframe, selectedColumns, signal):
